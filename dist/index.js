@@ -7,9 +7,10 @@ function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'defau
 var React = require('react');
 var React__default = _interopDefault(React);
 var lodash = require('lodash');
-var core = require('@material-ui/core');
+var Button = _interopDefault(require('@material-ui/core/Button'));
 var styles = require('@material-ui/core/styles');
 var TextField = _interopDefault(require('@material-ui/core/TextField'));
+var core = require('@material-ui/core');
 var formik = require('formik');
 
 /*! *****************************************************************************
@@ -175,29 +176,58 @@ var MLFormContent = function (props) {
         return (React__default.createElement(BuildFormRow, { key: rowId, rowId: rowId, schema: configRow, formikProps: formikProps }));
     })));
 };
+var MLFormAction = function (props) {
+    var formId = props.formId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, containerClassNames = props.containerClassNames, _b = props.submitButtonLayout, submitButtonLayout = _b === void 0 ? 'center' : _b, _c = props.submitButtonText, submitButtonText = _c === void 0 ? "Submit" : _c, submitButtonProps = props.submitButtonProps;
+    var classes = useFormStyles();
+    if (props.actionContent)
+        return (React__default.cloneElement(props.actionContent || React__default.createElement("div", null), { formikProps: formikProps }));
+    var layoutClassName = "action-" + submitButtonLayout + ";";
+    return (React__default.createElement("div", { className: clsx(classes.actionContainer, layoutClassName, containerClassNames) }, (props.actionContent) ?
+        (React__default.cloneElement(props.actionContent || React__default.createElement("div", null), { formikProps: formikProps, formId: formId }))
+        : (React__default.createElement(React__default.Fragment, null,
+            React__default.createElement(Button, __assign({ variant: "contained", color: "primary" }, submitButtonProps), submitButtonText)))));
+};
 var MLFormBuilder = function (props) {
-    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a;
+    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.actionConfig, actionConfig = _b === void 0 ? {} : _b;
     return (React__default.createElement("form", { onSubmit: formikProps.handleSubmit },
         React__default.createElement(MLFormContent, __assign({}, props)),
-        React__default.createElement(core.Button, { type: "submit" }, "Submit")));
+        (actionConfig.displayActions !== false) &&
+            (React__default.createElement(MLFormAction, __assign({ formId: props.formId, formikProps: formikProps }, actionConfig)))));
 };
 var useFormStyles = styles.makeStyles(function () {
     return (styles.createStyles({
         row: {
             display: 'flex'
         },
-        column: {}
+        column: {},
+        actionContainer: {
+            display: 'flex',
+            justifyContent: 'center',
+            '& .action-center': {
+                justifyContent: 'center'
+            },
+            '& .action-right': {
+                justifyContent: 'right'
+            },
+            '& .action-fullwidth > button': {
+                flex: 1
+            }
+        }
     }));
 });
 
-var MLForm = function (props) {
+var ReactForm = function (props) {
     var config = props.config, formId = props.formId, _a = props.initialValues, initialValues = _a === void 0 ? {} : _a, onSubmit = props.onSubmit, formikProps = __rest(props, ["config", "formId", "initialValues", "onSubmit"]);
     return (React__default.createElement(formik.Formik, __assign({ initialValues: initialValues, onSubmit: onSubmit }, formikProps), function (formProps) { return (React__default.createElement(MLFormBuilder, { schema: config, formId: formId, formikProps: formProps })); }));
 };
 
+var index = './lib/ReactForm';
+
 exports.BuildFormRow = BuildFormRow;
-exports.MLForm = MLForm;
+exports.MLFormAction = MLFormAction;
 exports.MLFormBuilder = MLFormBuilder;
 exports.MLFormContent = MLFormContent;
+exports.ReactForm = ReactForm;
 exports.attachField = attachField;
+exports.default = index;
 //# sourceMappingURL=index.js.map

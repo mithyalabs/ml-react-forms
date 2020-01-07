@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { get, isString, map, isEmpty, indexOf, isArray, uniqueId } from 'lodash';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormControlLabel, Checkbox, Button } from '@material-ui/core';
+import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormControlLabel, Checkbox } from '@material-ui/core';
 import { Formik } from 'formik';
 
 /*! *****************************************************************************
@@ -168,25 +169,53 @@ var MLFormContent = function (props) {
         return (React.createElement(BuildFormRow, { key: rowId, rowId: rowId, schema: configRow, formikProps: formikProps }));
     })));
 };
+var MLFormAction = function (props) {
+    var formId = props.formId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, containerClassNames = props.containerClassNames, _b = props.submitButtonLayout, submitButtonLayout = _b === void 0 ? 'center' : _b, _c = props.submitButtonText, submitButtonText = _c === void 0 ? "Submit" : _c, submitButtonProps = props.submitButtonProps;
+    var classes = useFormStyles();
+    if (props.actionContent)
+        return (React.cloneElement(props.actionContent || React.createElement("div", null), { formikProps: formikProps }));
+    var layoutClassName = "action-" + submitButtonLayout + ";";
+    return (React.createElement("div", { className: clsx(classes.actionContainer, layoutClassName, containerClassNames) }, (props.actionContent) ?
+        (React.cloneElement(props.actionContent || React.createElement("div", null), { formikProps: formikProps, formId: formId }))
+        : (React.createElement(React.Fragment, null,
+            React.createElement(Button, __assign({ variant: "contained", color: "primary" }, submitButtonProps), submitButtonText)))));
+};
 var MLFormBuilder = function (props) {
-    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a;
+    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.actionConfig, actionConfig = _b === void 0 ? {} : _b;
     return (React.createElement("form", { onSubmit: formikProps.handleSubmit },
         React.createElement(MLFormContent, __assign({}, props)),
-        React.createElement(Button, { type: "submit" }, "Submit")));
+        (actionConfig.displayActions !== false) &&
+            (React.createElement(MLFormAction, __assign({ formId: props.formId, formikProps: formikProps }, actionConfig)))));
 };
 var useFormStyles = makeStyles(function () {
     return (createStyles({
         row: {
             display: 'flex'
         },
-        column: {}
+        column: {},
+        actionContainer: {
+            display: 'flex',
+            justifyContent: 'center',
+            '& .action-center': {
+                justifyContent: 'center'
+            },
+            '& .action-right': {
+                justifyContent: 'right'
+            },
+            '& .action-fullwidth > button': {
+                flex: 1
+            }
+        }
     }));
 });
 
-var MLForm = function (props) {
+var ReactForm = function (props) {
     var config = props.config, formId = props.formId, _a = props.initialValues, initialValues = _a === void 0 ? {} : _a, onSubmit = props.onSubmit, formikProps = __rest(props, ["config", "formId", "initialValues", "onSubmit"]);
     return (React.createElement(Formik, __assign({ initialValues: initialValues, onSubmit: onSubmit }, formikProps), function (formProps) { return (React.createElement(MLFormBuilder, { schema: config, formId: formId, formikProps: formProps })); }));
 };
 
-export { BuildFormRow, MLForm, MLFormBuilder, MLFormContent, attachField };
+var index = './lib/ReactForm';
+
+export default index;
+export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, ReactForm, attachField };
 //# sourceMappingURL=index.es.js.map

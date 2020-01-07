@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from 'react';
 import { map, isArray, uniqueId } from 'lodash';
-import { Button } from '@material-ui/core';
+import Button, { ButtonProps } from '@material-ui/core/Button';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormikValues } from 'formik';
@@ -24,10 +24,20 @@ export interface FormRowProps {
     formikProps?: FormikValues
 }
 
+type submitButtonLayout = "right" | "center" | "fullwidth";
+export interface IFormActionProps {
+    submitButtonText?: string,
+    submitButtonProps?: ButtonProps
+    submitButtonLayout?: submitButtonLayout,
+    actionContent?: JSX.Element,
+    containerClassNames?: string | string[],
+    displayActions?: boolean
+}
 export interface BuilderProps {
     schema: Array<Array<FormConfig> | FormConfig>
     formId: string
-    formikProps?: FormikValues
+    formikProps?: FormikValues,
+    actionConfig?: IFormActionProps
 }
 
 export interface IFieldProps {
@@ -110,12 +120,38 @@ export const MLFormContent: FC<BuilderProps> = props => {
         </>
     )
 }
+
+export const MLFormAction: FC<IFormActionProps & Pick<BuilderProps, 'formId' | 'formikProps'>> = (props) => {
+    const { formId, formikProps = {} as FormikValues, containerClassNames, submitButtonLayout = 'center', submitButtonText = "Submit", submitButtonProps } = props;
+    const classes = useFormStyles();
+    if (props.actionContent)
+        return (React.cloneElement(props.actionContent || <div />, { formikProps }));
+    const layoutClassName = `action-${submitButtonLayout};`
+    return (
+        <div className={clsx(classes.actionContainer, layoutClassName, containerClassNames)}>
+            {
+                (props.actionContent) ?
+                    (React.cloneElement(props.actionContent || <div />, { formikProps, formId }))
+                    : (
+                        <>
+                            <Button variant="contained" color="primary" {...submitButtonProps}>{submitButtonText}</Button>
+                        </>
+                    )
+            }
+        </div>
+    )
+}
+
 export const MLFormBuilder: FC<BuilderProps> = props => {
-    const { formikProps = {} as FormikValues } = props;
+    const { formikProps = {} as FormikValues, actionConfig = {} as IFormActionProps } = props;
     return (
         <form onSubmit={formikProps.handleSubmit}>
             <MLFormContent {...props} />
-            <Button type="submit">Submit</Button>
+            {
+                (actionConfig.displayActions !== false) &&
+                (<MLFormAction formId={props.formId} formikProps={formikProps} {...actionConfig} />)
+            }
+
         </form>
     )
 }
@@ -126,7 +162,20 @@ const useFormStyles = makeStyles<Theme>(() => {
         row: {
             display: 'flex'
         },
-        column: {}
+        column: {},
+        actionContainer: {
+            display: 'flex',
+            justifyContent: 'center',
+            '& .action-center': {
+                justifyContent: 'center'
+            },
+            '& .action-right': {
+                justifyContent: 'right'
+            },
+            '& .action-fullwidth > button': {
+                flex: 1
+            }
+        }
     }))
 })
 
