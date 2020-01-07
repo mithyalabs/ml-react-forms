@@ -200,7 +200,7 @@ var useFormStyles = makeStyles(function () {
                 justifyContent: 'center'
             },
             '&.action-right': {
-                justifyContent: 'right'
+                justifyContent: 'flex-end'
             },
             '&.action-fullwidth > button': {
                 flex: 1
