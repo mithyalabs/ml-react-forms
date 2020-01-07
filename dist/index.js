@@ -181,7 +181,7 @@ var MLFormAction = function (props) {
     var classes = useFormStyles();
     if (props.actionContent)
         return (React__default.cloneElement(props.actionContent || React__default.createElement("div", null), { formikProps: formikProps }));
-    var layoutClassName = "action-" + submitButtonLayout + ";";
+    var layoutClassName = "action-" + submitButtonLayout;
     return (React__default.createElement("div", { className: clsx(classes.actionContainer, layoutClassName, containerClassNames) }, (props.actionContent) ?
         (React__default.cloneElement(props.actionContent || React__default.createElement("div", null), { formikProps: formikProps, formId: formId }))
         : (React__default.createElement(React__default.Fragment, null,

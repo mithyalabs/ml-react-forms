@@ -126,7 +126,7 @@ export const MLFormAction: FC<IFormActionProps & Pick<BuilderProps, 'formId' | '
     const classes = useFormStyles();
     if (props.actionContent)
         return (React.cloneElement(props.actionContent || <div />, { formikProps }));
-    const layoutClassName = `action-${submitButtonLayout};`
+    const layoutClassName = `action-${submitButtonLayout}`
     return (
         <div className={clsx(classes.actionContainer, layoutClassName, containerClassNames)}>
             {
