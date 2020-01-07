@@ -13,11 +13,11 @@ export * from './ml-form-builder';
  */
 
 
-export interface IMLFormProps extends FormikValues {
+export interface IReactFormProps extends FormikValues {
     config: Array<Array<FormConfig> | FormConfig>,
     formId: string
 }
-export const MLForm: FC<IMLFormProps> = (props) => {
+export const ReactForm: FC<IReactFormProps> = (props) => {
     const { config, formId, initialValues = {}, onSubmit, ...formikProps } = props;
     return (
         <Formik
@@ -34,4 +34,4 @@ export const MLForm: FC<IMLFormProps> = (props) => {
 }
 
 
-export default MLForm;
+export default ReactForm;

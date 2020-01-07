@@ -1,1 +1,2 @@
-export * from './lib/MLForm';
+export * from './lib/ReactForm';
+export default './lib/ReactForm';
