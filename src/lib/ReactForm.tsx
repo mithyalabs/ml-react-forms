@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { MLFormBuilder, FormConfig } from './ml-form-builder';
+import { MLFormBuilder, FormConfig, IFormActionProps } from './ml-form-builder';
 import { Formik, FormikValues } from 'formik';
 export * from './ml-form-builder';
 
@@ -15,10 +15,11 @@ export * from './ml-form-builder';
 
 export interface IReactFormProps extends FormikValues {
     config: Array<Array<FormConfig> | FormConfig>,
-    formId: string
+    formId: string,
+    actionConfig: IFormActionProps
 }
 export const ReactForm: FC<IReactFormProps> = (props) => {
-    const { config, formId, initialValues = {}, onSubmit, ...formikProps } = props;
+    const { config, formId, initialValues = {}, onSubmit, actionConfig, ...formikProps } = props;
     return (
         <Formik
             initialValues={initialValues}
@@ -26,7 +27,7 @@ export const ReactForm: FC<IReactFormProps> = (props) => {
             {...formikProps}
         >
             {
-                formProps => (<MLFormBuilder schema={config} formId={formId} formikProps={formProps} />)
+                formProps => (<MLFormBuilder schema={config} formId={formId} actionConfig={actionConfig} formikProps={formProps} />)
             }
         </Formik>
 

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { FormConfig } from './ml-form-builder';
+import { FormConfig, IFormActionProps } from './ml-form-builder';
 import { FormikValues } from 'formik';
 export * from './ml-form-builder';
 /**
@@ -11,6 +11,7 @@ export * from './ml-form-builder';
 export interface IReactFormProps extends FormikValues {
     config: Array<Array<FormConfig> | FormConfig>;
     formId: string;
+    actionConfig: IFormActionProps;
 }
 export declare const ReactForm: FC<IReactFormProps>;
 export default ReactForm;
