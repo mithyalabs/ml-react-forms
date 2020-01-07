@@ -196,13 +196,13 @@ var useFormStyles = makeStyles(function () {
         actionContainer: {
             display: 'flex',
             justifyContent: 'center',
-            '& .action-center': {
+            '&.action-center': {
                 justifyContent: 'center'
             },
-            '& .action-right': {
+            '&.action-right': {
                 justifyContent: 'right'
             },
-            '& .action-fullwidth > button': {
+            '&.action-fullwidth > button': {
                 flex: 1
             }
         }
