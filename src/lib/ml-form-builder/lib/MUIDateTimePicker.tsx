@@ -21,6 +21,8 @@ export const MUIDatePicker: FC<IFieldProps & { fieldProps?: DatePickerProps }> =
             }
         }
     };
+
+    console.log('Field updated props', updatedProps);
     return (
         <DatePicker
             {...updatedProps}

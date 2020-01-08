@@ -135,6 +135,7 @@ var MUIDatePicker = function (props) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
+    console.log('Field updated props', updatedProps);
     return (React.createElement(DatePicker, __assign({}, updatedProps)));
 };
 var MUITimePicker = function (props) {
