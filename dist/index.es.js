@@ -205,7 +205,7 @@ var MLFormAction = function (props) {
     return (React.createElement("div", { className: clsx(classes.actionContainer, layoutClassName, containerClassNames) }, (props.actionContent) ?
         (React.cloneElement(props.actionContent || React.createElement("div", null), { formikProps: formikProps, formId: formId }))
         : (React.createElement(React.Fragment, null,
-            React.createElement(Button, __assign({ variant: "contained", color: "primary" }, submitButtonProps), submitButtonText)))));
+            React.createElement(Button, __assign({ type: "submit", variant: "contained", color: "primary" }, submitButtonProps), submitButtonText)))));
 };
 var MLFormBuilder = function (props) {
     var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.actionConfig, actionConfig = _b === void 0 ? {} : _b;
