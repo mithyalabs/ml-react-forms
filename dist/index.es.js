@@ -129,19 +129,18 @@ var MUICheckBox = function (props) {
 var MUIDatePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var fieldError = get(formikProps, "errors." + fieldProps.name);
-    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: formikProps.handleChange, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
+    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (date) { return formikProps.setFieldValue(fieldProps.name, date, false); }, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    console.log('Field updated props', updatedProps);
     return (React.createElement(DatePicker, __assign({}, updatedProps)));
 };
 var MUITimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var fieldError = get(formikProps, "errors." + fieldProps.name);
-    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: formikProps.handleChange, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
+    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (time) { return formikProps.setFieldValue(fieldProps.name, time, false); }, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
