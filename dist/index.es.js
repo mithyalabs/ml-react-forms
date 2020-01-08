@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormControlLabel, Checkbox } from '@material-ui/core';
+import { DatePicker, TimePicker } from '@material-ui/pickers';
 import { Formik } from 'formik';
 
 /*! *****************************************************************************
@@ -125,6 +126,29 @@ var MUICheckBox = function (props) {
             (React.createElement(FormHelperText, null, fieldError || helperText))));
 };
 
+var MUIDatePicker = function (props) {
+    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
+    var fieldError = get(formikProps, "errors." + fieldProps.name);
+    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: formikProps.handleChange, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
+            // handle as a side effect
+            if (error !== fieldError) {
+                formikProps.setFieldError(fieldProps.name, error);
+            }
+        } });
+    return (React.createElement(DatePicker, __assign({}, updatedProps)));
+};
+var MUITimePicker = function (props) {
+    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
+    var fieldError = get(formikProps, "errors." + fieldProps.name);
+    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: formikProps.handleChange, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
+            // handle as a side effect
+            if (error !== fieldError) {
+                formikProps.setFieldError(fieldProps.name, error);
+            }
+        } });
+    return (React.createElement(TimePicker, __assign({}, updatedProps)));
+};
+
 var ComponentMapConfig = {};
 var attachField = function (type, component, props) {
     if (isArray(type)) {
@@ -137,6 +161,9 @@ attachField('text', React.createElement(MUITextField, null), { type: 'text' });
 attachField('password', React.createElement(MUITextField, null), { type: 'password' });
 attachField('select', React.createElement(MUISelectField, null));
 attachField('checkbox', React.createElement(MUICheckBox, null));
+attachField('date-picker', React.createElement(MUIDatePicker, null), { variant: 'inline', label: 'Select Date' });
+attachField('time-picker', React.createElement(MUITimePicker, null), { variant: 'inline', label: 'Select Time' });
+console.log('Component config map', ComponentMapConfig);
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps;
     var colItems = (!isArray(schema) ? [schema] : schema);
