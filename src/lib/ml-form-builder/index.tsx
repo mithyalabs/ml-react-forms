@@ -137,7 +137,7 @@ export const MLFormAction: FC<IFormActionProps & Pick<BuilderProps, 'formId' | '
                     (React.cloneElement(props.actionContent || <div />, { formikProps, formId }))
                     : (
                         <>
-                            <Button variant="contained" color="primary" {...submitButtonProps}>{submitButtonText}</Button>
+                            <Button type="submit" variant="contained" color="primary" {...submitButtonProps}>{submitButtonText}</Button>
                         </>
                     )
             }
