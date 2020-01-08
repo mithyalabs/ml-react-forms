@@ -12,7 +12,7 @@ export const MUIDatePicker: FC<IFieldProps & { fieldProps?: DatePickerProps }> =
         ...fieldProps,
         error: !!fieldError,
         helperText: (fieldError || ''),
-        onChange: formikProps.handleChange,
+        onChange: (date: any) => formikProps.setFieldValue(fieldProps.name, date, false),
         value: get(formikProps, `values.${fieldProps.name}`) || '',
         onError: (error: string) => {
             // handle as a side effect
@@ -22,7 +22,6 @@ export const MUIDatePicker: FC<IFieldProps & { fieldProps?: DatePickerProps }> =
         }
     };
 
-    console.log('Field updated props', updatedProps);
     return (
         <DatePicker
             {...updatedProps}
@@ -37,7 +36,7 @@ export const MUITimePicker: FC<IFieldProps & { fieldProps?: TimePickerProps }> =
         ...fieldProps,
         error: !!fieldError,
         helperText: (fieldError || ''),
-        onChange: formikProps.handleChange,
+        onChange: (time: any) => formikProps.setFieldValue(fieldProps.name, time, false),
         value: get(formikProps, `values.${fieldProps.name}`) || '',
         onError: (error: string) => {
             // handle as a side effect
