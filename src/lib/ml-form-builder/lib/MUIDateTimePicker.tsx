@@ -4,15 +4,22 @@ import { FormikValues } from 'formik';
 import { IFieldProps } from '../index';
 import { get } from 'lodash';
 
+export interface IMUIDatePickerProps extends DatePickerProps {
+    outputFormat?: string
+}
 
-export const MUIDatePicker: FC<IFieldProps & { fieldProps?: DatePickerProps }> = (props) => {
-    const { fieldProps = {} as DatePickerProps, formikProps = {} as FormikValues } = props;
+export const MUIDatePicker: FC<IFieldProps & { fieldProps?: IMUIDatePickerProps }> = (props) => {
+    const { fieldProps = {} as IMUIDatePickerProps, formikProps = {} as FormikValues } = props;
     const fieldError = get(formikProps, `errors.${fieldProps.name}`);
+    const { outputFormat, ...datePickerProps } = fieldProps;
     const updatedProps = {
-        ...fieldProps,
+        ...datePickerProps,
         error: !!fieldError,
         helperText: (fieldError || ''),
-        onChange: (date: any) => formikProps.setFieldValue(fieldProps.name, date, false),
+        onChange: (date: any) => {
+            const dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
+            formikProps.setFieldValue(fieldProps.name, dateValue, false)
+        },
         value: get(formikProps, `values.${fieldProps.name}`) || '',
         onError: (error: string) => {
             // handle as a side effect

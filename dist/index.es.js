@@ -129,7 +129,11 @@ var MUICheckBox = function (props) {
 var MUIDatePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var fieldError = get(formikProps, "errors." + fieldProps.name);
-    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (date) { return formikProps.setFieldValue(fieldProps.name, date, false); }, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
+    var outputFormat = fieldProps.outputFormat, datePickerProps = __rest(fieldProps, ["outputFormat"]);
+    var updatedProps = __assign(__assign({}, datePickerProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (date) {
+            var dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
+            formikProps.setFieldValue(fieldProps.name, dateValue, false);
+        }, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
