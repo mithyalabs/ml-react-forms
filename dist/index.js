@@ -207,7 +207,7 @@ var SearchField = function (props) {
             React__default.createElement(core.IconButton, { "aria-label": "remove selected place", edge: "end", onClick: function () { return resetField(); } },
                 React__default.createElement(icons.Close, null))))
     }) : {};
-    var fieldInputProps = __assign(__assign({}, textFieldProps.InputProps), { inputProps: inputProps });
+    var fieldInputProps = __assign(__assign({}, textFieldProps.InputProps), inputProps);
     /* const fieldError = get(formikProps, `errors.${fieldProps.name}`);
     const updatedProps = {
         ...fieldProps,

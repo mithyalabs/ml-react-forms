@@ -89,7 +89,7 @@ const SearchField: FC<ISearchFieldProps> = props => {
             </InputAdornment>
         )
     }) : {};
-    const fieldInputProps = { ...textFieldProps.InputProps, inputProps };
+    const fieldInputProps = { ...textFieldProps.InputProps, ...inputProps };
     /* const fieldError = get(formikProps, `errors.${fieldProps.name}`);
     const updatedProps = {
         ...fieldProps,
