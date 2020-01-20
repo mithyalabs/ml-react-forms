@@ -8,6 +8,7 @@ import { MUITextField } from './lib/MUITextField';
 import { MUISelectField } from './lib/MUISelectField';
 import { MUICheckBox } from './lib/MUICheckBox';
 import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
+import { MUIPlaceSuggest } from './lib/MUIPlaceSuggest';
 
 export interface FormConfig {
     type: string
@@ -63,8 +64,8 @@ attachField('select', <MUISelectField />);
 attachField('checkbox', <MUICheckBox />);
 attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
 attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
+attachField('location-suggest', <MUIPlaceSuggest />);
 
-console.log('Component config map', ComponentMapConfig);
 
 
 export const BuildFormRow: FC<FormRowProps> = props => {

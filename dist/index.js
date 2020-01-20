@@ -12,6 +12,9 @@ var styles = require('@material-ui/core/styles');
 var TextField = _interopDefault(require('@material-ui/core/TextField'));
 var core = require('@material-ui/core');
 var pickers = require('@material-ui/pickers');
+var PlacesAutocomplete = require('react-places-autocomplete');
+var PlacesAutocomplete__default = _interopDefault(PlacesAutocomplete);
+var icons = require('@material-ui/icons');
 var formik = require('formik');
 
 /*! *****************************************************************************
@@ -50,6 +53,43 @@ function __rest(s, e) {
                 t[p[i]] = s[p[i]];
         }
     return t;
+}
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
+function __generator(thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
 }
 
 function toVal(mix) {
@@ -160,6 +200,89 @@ var MUITimePicker = function (props) {
     return (React__default.createElement(pickers.TimePicker, __assign({}, updatedProps)));
 };
 
+var SearchField = function (props) {
+    var address = props.address, _a = props.textFieldProps, textFieldProps = _a === void 0 ? {} : _a, _b = props.placeAutocompleteProps, placeAutocompleteProps = _b === void 0 ? {} : _b, value = props.value, resetField = props.resetField;
+    var inputProps = (value && value.lat && value.lng) ? ({
+        endAdornment: (React__default.createElement(core.InputAdornment, { position: "end" },
+            React__default.createElement(core.IconButton, { "aria-label": "remove selected place", edge: "end", onClick: function () { return resetField(); } },
+                React__default.createElement(icons.Close, null))))
+    }) : {};
+    var fieldInputProps = __assign(__assign({}, textFieldProps.InputProps), { inputProps: inputProps });
+    /* const fieldError = get(formikProps, `errors.${fieldProps.name}`);
+    const updatedProps = {
+        ...fieldProps,
+        error: !!fieldError,
+        helperText: (fieldError || ''),
+        onChange: formikProps.handleChange,
+        value: get(formikProps, `values.${fieldProps.name}`) || ''
+    }; */
+    return (React__default.createElement("div", null,
+        React__default.createElement(core.TextField, __assign({ value: address || '' }, placeAutocompleteProps.getInputProps({
+            label: textFieldProps.label || 'Search Places',
+            className: 'location-search-input'
+        }), __assign(__assign({}, textFieldProps), { InputProps: fieldInputProps })))));
+};
+var PlaceList = function (props) {
+    var _a = props.placeAutocompleteProps, placeAutocompleteProps = _a === void 0 ? {} : _a, listProps = props.listProps, listItemProps = props.listItemProps;
+    var suggestions = placeAutocompleteProps.suggestions, getSuggestionItemProps = placeAutocompleteProps.getSuggestionItemProps;
+    return (React__default.createElement("div", { className: "autocomplete-dropdown-container" },
+        React__default.createElement(core.List, __assign({}, listProps), suggestions.map(function (suggestion) {
+            var className = suggestion.active
+                ? 'suggestion-item--active'
+                : 'suggestion-item';
+            // inline style for demonstration purpose
+            var style = suggestion.active
+                ? { backgroundColor: '#fafafa', cursor: 'pointer' }
+                : { backgroundColor: '#ffffff', cursor: 'pointer' };
+            return (React__default.createElement(core.ListItem, __assign({ disableGutters: true, dense: true, key: suggestion.placeId }, getSuggestionItemProps(suggestion, {
+                className: className,
+                style: style,
+            }), __assign({}, listItemProps)),
+                React__default.createElement(core.ListItemText, { primary: suggestion.formattedSuggestion.mainText, secondary: suggestion.formattedSuggestion.secondaryText })));
+        }))));
+};
+var FieldLayout = function (props) {
+    var currentAddress = props.currentAddress, selectedValue = props.selectedValue;
+    return (React__default.createElement("div", null,
+        React__default.createElement(SearchField, { resetField: props.resetField, address: currentAddress, value: selectedValue }),
+        React__default.createElement(PlaceList, null)));
+};
+var MUIPlaceSuggest = function (props) {
+    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
+    var _c = React.useState(''), address = _c[0], setAddress = _c[1];
+    var _d = React.useState({ lat: 0, lng: 0 }), selectedValue = _d[0], setSelectedValue = _d[1];
+    var placeAutocompleteProps = fieldProps.placeAutocompleteProps, fieldLayoutProps = __rest(fieldProps, ["placeAutocompleteProps"]);
+    var fieldName = fieldProps.name || '';
+    React__default.useEffect(function () {
+        console.log('Fetch address by lat lng', formikProps.values[fieldName]);
+    }, []);
+    var handleChange = function (address) {
+        setAddress(address);
+    };
+    var handleSelect = function (address) { return __awaiter(void 0, void 0, void 0, function () {
+        var geoAdress, latLng;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, PlacesAutocomplete.geocodeByAddress(address)];
+                case 1:
+                    geoAdress = _a.sent();
+                    return [4 /*yield*/, PlacesAutocomplete.getLatLng(geoAdress[0])];
+                case 2:
+                    latLng = _a.sent();
+                    formikProps.setFieldValue(fieldProps.name, latLng);
+                    setSelectedValue(latLng);
+                    return [2 /*return*/];
+            }
+        });
+    }); };
+    var resetField = function () {
+        setAddress('');
+        formikProps.setFieldValue(fieldProps.name);
+        setSelectedValue({ lat: 0, lng: 0 });
+    };
+    return (React__default.createElement(PlacesAutocomplete__default, __assign({ value: address, onChange: handleChange, onSelect: handleSelect }, placeAutocompleteProps), function (placeCompleteProps) { return React__default.createElement(FieldLayout, __assign({}, placeCompleteProps, { resetField: resetField, currentAddress: address, selectedValue: selectedValue }, fieldLayoutProps)); }));
+};
+
 var ComponentMapConfig = {};
 var attachField = function (type, component, props) {
     if (lodash.isArray(type)) {
@@ -174,7 +297,7 @@ attachField('select', React__default.createElement(MUISelectField, null));
 attachField('checkbox', React__default.createElement(MUICheckBox, null));
 attachField('date-picker', React__default.createElement(MUIDatePicker, null), { variant: 'inline', label: 'Select Date' });
 attachField('time-picker', React__default.createElement(MUITimePicker, null), { variant: 'inline', label: 'Select Time' });
-console.log('Component config map', ComponentMapConfig);
+attachField('location-suggest', React__default.createElement(MUIPlaceSuggest, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps;
     var colItems = (!lodash.isArray(schema) ? [schema] : schema);
