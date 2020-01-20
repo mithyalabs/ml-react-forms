@@ -250,8 +250,9 @@ var FieldLayout = function (props) {
 var MUIPlaceSuggest = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var _c = React.useState(''), address = _c[0], setAddress = _c[1];
-    var _d = React.useState({ lat: 0, lng: 0 }), selectedValue = _d[0], setSelectedValue = _d[1];
     var placeAutocompleteProps = fieldProps.placeAutocompleteProps, locationName = fieldProps.locationName, outputResult = fieldProps.outputResult, fieldLayoutProps = __rest(fieldProps, ["placeAutocompleteProps", "locationName", "outputResult"]);
+    var fieldName = fieldProps.name || '';
+    var selectedValue = formikProps[fieldName];
     React__default.useEffect(function () {
         setAddress(locationName || '');
     }, []);
@@ -259,19 +260,21 @@ var MUIPlaceSuggest = function (props) {
         setAddress(address);
     };
     var handleSelect = function (address) { return __awaiter(void 0, void 0, void 0, function () {
-        var geoAdress, latLng;
+        var geoAdress, selectedAddress, latLng;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, PlacesAutocomplete.geocodeByAddress(address)];
                 case 1:
                     geoAdress = _a.sent();
-                    return [4 /*yield*/, PlacesAutocomplete.getLatLng(geoAdress[0])];
+                    selectedAddress = geoAdress[0];
+                    if (!selectedAddress)
+                        return [2 /*return*/];
+                    return [4 /*yield*/, PlacesAutocomplete.getLatLng(selectedAddress)];
                 case 2:
                     latLng = _a.sent();
                     formikProps.setFieldValue(fieldProps.name, latLng);
-                    setSelectedValue(latLng);
                     if (outputResult)
-                        formikProps.setFieldValue(outputResult, geoAdress);
+                        formikProps.setFieldValue(outputResult, selectedAddress);
                     return [2 /*return*/];
             }
         });
@@ -279,7 +282,6 @@ var MUIPlaceSuggest = function (props) {
     var resetField = function () {
         setAddress('');
         formikProps.setFieldValue(fieldProps.name);
-        setSelectedValue({ lat: 0, lng: 0 });
     };
     return (React__default.createElement(PlacesAutocomplete__default, __assign({ value: address, onChange: handleChange, onSelect: handleSelect }, placeAutocompleteProps), function (placeCompleteProps) { return (React__default.createElement(FieldLayout, __assign({ placeAutocompleteProps: placeCompleteProps, resetField: resetField, currentAddress: address, selectedValue: selectedValue, formikProps: formikProps }, fieldLayoutProps))); }));
 };

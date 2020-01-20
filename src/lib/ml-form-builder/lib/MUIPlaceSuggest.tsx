@@ -163,8 +163,9 @@ const FieldLayout: FC<IFieldLayoutProps> = props => {
 export const MUIPlaceSuggest: FC<IProps> = (props) => {
     const { fieldProps = {} as PlaceSuggestProps, formikProps = {} as FormikValues } = props;
     const [address, setAddress] = useState('');
-    const [selectedValue, setSelectedValue] = useState<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
     const { placeAutocompleteProps, locationName, outputResult, ...fieldLayoutProps } = fieldProps;
+    const fieldName = fieldProps.name || '';
+    const selectedValue = formikProps[fieldName];
 
     React.useEffect(() => {
         setAddress(locationName || '');
@@ -175,16 +176,17 @@ export const MUIPlaceSuggest: FC<IProps> = (props) => {
     }
     const handleSelect = async (address: string) => {
         const geoAdress = await geocodeByAddress(address);
-        const latLng = await getLatLng(geoAdress[0]);
+        const selectedAddress = geoAdress[0];
+        if (!selectedAddress)
+            return;
+        const latLng = await getLatLng(selectedAddress);
         formikProps.setFieldValue(fieldProps.name, latLng);
-        setSelectedValue(latLng);
         if (outputResult)
-            formikProps.setFieldValue(outputResult, geoAdress);
+            formikProps.setFieldValue(outputResult, selectedAddress);
     }
     const resetField = () => {
         setAddress('');
         formikProps.setFieldValue(fieldProps.name);
-        setSelectedValue({ lat: 0, lng: 0 })
     }
     return (
         <PlacesAutocomplete value={address}
