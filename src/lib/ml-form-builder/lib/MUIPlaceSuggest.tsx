@@ -47,10 +47,11 @@ export interface PlaceSuggestProps {
     placeAutocompleteProps?: PropTypes
 }
 
-interface IFieldLayoutProps extends Omit<PlaceSuggestProps, 'placeAutocompleteProps'> {
+interface IFieldLayoutProps {
     resetField: () => void,
     currentAddress?: string,
-    selectedValue?: google.maps.LatLngLiteral
+    selectedValue?: google.maps.LatLngLiteral,
+    placeAutocompleteProps?: PlacesAutocompleteChildrenProps
 }
 
 export interface IProps extends IFieldProps {
@@ -140,15 +141,16 @@ const PlaceList: FC<IPlaceListProps> = props => {
     )
 }
 
-const FieldLayout: FC<PlacesAutocompleteChildrenProps & IFieldLayoutProps> = props => {
-    const { currentAddress, selectedValue } = props;
+const FieldLayout: FC<IFieldLayoutProps> = props => {
+    const { currentAddress, selectedValue, placeAutocompleteProps } = props;
     return (
         <div>
             <SearchField resetField={props.resetField}
                 address={currentAddress}
                 value={selectedValue}
+                placeAutocompleteProps={placeAutocompleteProps}
             />
-            <PlaceList />
+            <PlaceList placeAutocompleteProps={placeAutocompleteProps} />
         </div>
     )
 }
@@ -182,11 +184,14 @@ export const MUIPlaceSuggest: FC<IProps> = (props) => {
             onSelect={handleSelect}
             {...placeAutocompleteProps}
         >
-            {(placeCompleteProps: PlacesAutocompleteChildrenProps) => <FieldLayout {...placeCompleteProps}
-                resetField={resetField}
-                currentAddress={address}
-                selectedValue={selectedValue}
-                {...fieldLayoutProps} />}
+            {(placeCompleteProps: PlacesAutocompleteChildrenProps) => (
+                <FieldLayout
+                    placeAutocompleteProps={placeCompleteProps}
+                    resetField={resetField}
+                    currentAddress={address}
+                    selectedValue={selectedValue}
+                    {...fieldLayoutProps}
+                />)}
         </PlacesAutocomplete>
     )
 }
