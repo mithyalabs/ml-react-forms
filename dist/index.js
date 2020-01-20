@@ -242,10 +242,10 @@ var PlaceList = function (props) {
         }))));
 };
 var FieldLayout = function (props) {
-    var currentAddress = props.currentAddress, selectedValue = props.selectedValue;
+    var currentAddress = props.currentAddress, selectedValue = props.selectedValue, placeAutocompleteProps = props.placeAutocompleteProps;
     return (React__default.createElement("div", null,
-        React__default.createElement(SearchField, { resetField: props.resetField, address: currentAddress, value: selectedValue }),
-        React__default.createElement(PlaceList, null)));
+        React__default.createElement(SearchField, { resetField: props.resetField, address: currentAddress, value: selectedValue, placeAutocompleteProps: placeAutocompleteProps }),
+        React__default.createElement(PlaceList, { placeAutocompleteProps: placeAutocompleteProps })));
 };
 var MUIPlaceSuggest = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
@@ -280,7 +280,7 @@ var MUIPlaceSuggest = function (props) {
         formikProps.setFieldValue(fieldProps.name);
         setSelectedValue({ lat: 0, lng: 0 });
     };
-    return (React__default.createElement(PlacesAutocomplete__default, __assign({ value: address, onChange: handleChange, onSelect: handleSelect }, placeAutocompleteProps), function (placeCompleteProps) { return React__default.createElement(FieldLayout, __assign({}, placeCompleteProps, { resetField: resetField, currentAddress: address, selectedValue: selectedValue }, fieldLayoutProps)); }));
+    return (React__default.createElement(PlacesAutocomplete__default, __assign({ value: address, onChange: handleChange, onSelect: handleSelect }, placeAutocompleteProps), function (placeCompleteProps) { return (React__default.createElement(FieldLayout, __assign({ placeAutocompleteProps: placeCompleteProps, resetField: resetField, currentAddress: address, selectedValue: selectedValue }, fieldLayoutProps))); }));
 };
 
 var ComponentMapConfig = {};
