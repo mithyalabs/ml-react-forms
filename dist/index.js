@@ -11,7 +11,6 @@ var Button = _interopDefault(require('@material-ui/core/Button'));
 var styles = require('@material-ui/core/styles');
 var TextField = _interopDefault(require('@material-ui/core/TextField'));
 var core = require('@material-ui/core');
-var pickers = require('@material-ui/pickers');
 var PlacesAutocomplete = require('react-places-autocomplete');
 var PlacesAutocomplete__default = _interopDefault(PlacesAutocomplete);
 var icons = require('@material-ui/icons');
@@ -173,86 +172,54 @@ var MUICheckBox = function (props) {
             (React__default.createElement(core.FormHelperText, null, fieldError || helperText))));
 };
 
-var MUIDatePicker = function (props) {
-    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
-    var fieldError = lodash.get(formikProps, "errors." + fieldProps.name);
-    var outputFormat = fieldProps.outputFormat, datePickerProps = __rest(fieldProps, ["outputFormat"]);
-    var updatedProps = __assign(__assign({}, datePickerProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (date) {
-            var dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
-            formikProps.setFieldValue(fieldProps.name, dateValue, false);
-        }, value: lodash.get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
-            // handle as a side effect
-            if (error !== fieldError) {
-                formikProps.setFieldError(fieldProps.name, error);
-            }
-        } });
-    return (React__default.createElement(pickers.DatePicker, __assign({}, updatedProps)));
-};
-var MUITimePicker = function (props) {
-    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
-    var fieldError = lodash.get(formikProps, "errors." + fieldProps.name);
-    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (time) { return formikProps.setFieldValue(fieldProps.name, time, false); }, value: lodash.get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
-            // handle as a side effect
-            if (error !== fieldError) {
-                formikProps.setFieldError(fieldProps.name, error);
-            }
-        } });
-    return (React__default.createElement(pickers.TimePicker, __assign({}, updatedProps)));
-};
-
 var SearchField = function (props) {
-    var address = props.address, _a = props.textFieldProps, textFieldProps = _a === void 0 ? {} : _a, _b = props.placeAutocompleteProps, placeAutocompleteProps = _b === void 0 ? {} : _b, value = props.value, resetField = props.resetField;
+    var address = props.address, fieldProps = props.fieldProps, _a = props.placeAutocompleteProps, placeAutocompleteProps = _a === void 0 ? {} : _a, value = props.value, resetField = props.resetField, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var inputProps = (value && value.lat && value.lng) ? ({
         endAdornment: (React__default.createElement(core.InputAdornment, { position: "end" },
             React__default.createElement(core.IconButton, { "aria-label": "remove selected place", edge: "end", onClick: function () { return resetField(); } },
                 React__default.createElement(icons.Close, null))))
     }) : {};
+    var _c = fieldProps.textFieldProps, textFieldProps = _c === void 0 ? {} : _c;
     var fieldInputProps = __assign(__assign({}, textFieldProps.InputProps), inputProps);
-    /* const fieldError = get(formikProps, `errors.${fieldProps.name}`);
-    const updatedProps = {
-        ...fieldProps,
-        error: !!fieldError,
-        helperText: (fieldError || ''),
-        onChange: formikProps.handleChange,
-        value: get(formikProps, `values.${fieldProps.name}`) || ''
-    }; */
+    var fieldError = lodash.get(formikProps, "errors." + fieldProps.name);
+    var updatedProps = __assign(__assign({}, __assign(__assign({}, textFieldProps), { InputProps: fieldInputProps })), { error: !!fieldError, helperText: (fieldError || '') });
     return (React__default.createElement("div", null,
         React__default.createElement(core.TextField, __assign({ value: address || '' }, placeAutocompleteProps.getInputProps({
             label: textFieldProps.label || 'Search Places',
             className: 'location-search-input'
-        }), __assign(__assign({}, textFieldProps), { InputProps: fieldInputProps })))));
+        }), updatedProps))));
 };
+var LIST_CONTAINER_STYLES = { position: 'absolute', left: 0, top: '100%', right: 0, zIndex: 500 };
 var PlaceList = function (props) {
-    var _a = props.placeAutocompleteProps, placeAutocompleteProps = _a === void 0 ? {} : _a, listProps = props.listProps, listItemProps = props.listItemProps;
+    var _a = props.placeAutocompleteProps, placeAutocompleteProps = _a === void 0 ? {} : _a, listProps = props.listProps, listItemProps = props.listItemProps, listContainerStyle = props.listContainerStyle;
     var suggestions = placeAutocompleteProps.suggestions, getSuggestionItemProps = placeAutocompleteProps.getSuggestionItemProps;
     return (React__default.createElement("div", { className: "autocomplete-dropdown-container" },
-        React__default.createElement(core.List, __assign({}, listProps), suggestions.map(function (suggestion) {
-            var className = suggestion.active
-                ? 'suggestion-item--active'
-                : 'suggestion-item';
-            // inline style for demonstration purpose
-            var style = suggestion.active
-                ? { backgroundColor: '#fafafa', cursor: 'pointer' }
-                : { backgroundColor: '#ffffff', cursor: 'pointer' };
-            return (React__default.createElement(core.ListItem, __assign({ disableGutters: true, dense: true, key: suggestion.placeId }, getSuggestionItemProps(suggestion, {
-                className: className,
-                style: style,
-            }), __assign({}, listItemProps)),
-                React__default.createElement(core.ListItemText, { primary: suggestion.formattedSuggestion.mainText, secondary: suggestion.formattedSuggestion.secondaryText })));
-        }))));
+        React__default.createElement(core.Paper, { style: __assign(__assign(__assign({}, LIST_CONTAINER_STYLES), listContainerStyle), { visibility: ((suggestions.length) ? 'visible' : 'hidden') }) },
+            React__default.createElement(core.List, __assign({}, listProps), suggestions.map(function (suggestion) {
+                var className = suggestion.active
+                    ? 'suggestion-item--active'
+                    : 'suggestion-item';
+                // inline style for demonstration purpose
+                var style = { cursor: 'pointer' };
+                return (React__default.createElement(core.ListItem, __assign({ disableGutters: true, dense: true, selected: suggestion.active, key: suggestion.placeId }, getSuggestionItemProps(suggestion, {
+                    className: className,
+                    style: style
+                }), __assign({}, listItemProps)),
+                    React__default.createElement(core.ListItemText, { primary: suggestion.formattedSuggestion.mainText, secondary: suggestion.formattedSuggestion.secondaryText })));
+            })))));
 };
 var FieldLayout = function (props) {
-    var currentAddress = props.currentAddress, selectedValue = props.selectedValue, placeAutocompleteProps = props.placeAutocompleteProps;
+    var currentAddress = props.currentAddress, selectedValue = props.selectedValue, placeAutocompleteProps = props.placeAutocompleteProps, name = props.name, id = props.id, textFieldProps = props.textFieldProps;
     return (React__default.createElement("div", null,
-        React__default.createElement(SearchField, { resetField: props.resetField, address: currentAddress, value: selectedValue, placeAutocompleteProps: placeAutocompleteProps, textFieldProps: props.textFieldProps, formikProps: props.formikProps }),
-        React__default.createElement(PlaceList, { placeAutocompleteProps: placeAutocompleteProps })));
+        React__default.createElement(SearchField, { resetField: props.resetField, address: currentAddress, value: selectedValue, placeAutocompleteProps: placeAutocompleteProps, formikProps: props.formikProps, fieldProps: { name: name, id: id, textFieldProps: textFieldProps } }),
+        React__default.createElement(PlaceList, { placeAutocompleteProps: placeAutocompleteProps, listContainerStyle: props.listContainerStyle })));
 };
 var MUIPlaceSuggest = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var _c = React.useState(''), address = _c[0], setAddress = _c[1];
-    var placeAutocompleteProps = fieldProps.placeAutocompleteProps, locationName = fieldProps.locationName, outputResult = fieldProps.outputResult, fieldLayoutProps = __rest(fieldProps, ["placeAutocompleteProps", "locationName", "outputResult"]);
-    var fieldName = fieldProps.name || '';
-    var selectedValue = formikProps.values[fieldName];
+    var placeAutocompleteProps = fieldProps.placeAutocompleteProps, locationNameKey = fieldProps.locationNameKey, outputResult = fieldProps.outputResult, fieldLayoutProps = __rest(fieldProps, ["placeAutocompleteProps", "locationNameKey", "outputResult"]);
+    var selectedValue = formikProps.values[(fieldProps.name || '')];
+    var locationName = formikProps.values[(locationNameKey || '')];
     React__default.useEffect(function () {
         setAddress(locationName || '');
     }, []);
@@ -273,6 +240,9 @@ var MUIPlaceSuggest = function (props) {
                 case 2:
                     latLng = _a.sent();
                     formikProps.setFieldValue(fieldProps.name, latLng);
+                    setAddress(selectedAddress.formatted_address);
+                    if (locationName)
+                        formikProps.setFieldValue(locationNameKey, selectedAddress.formatted_address);
                     if (outputResult)
                         formikProps.setFieldValue(outputResult, selectedAddress);
                     return [2 /*return*/];
@@ -283,7 +253,8 @@ var MUIPlaceSuggest = function (props) {
         setAddress('');
         formikProps.setFieldValue(fieldProps.name);
     };
-    return (React__default.createElement(PlacesAutocomplete__default, __assign({ value: address, onChange: handleChange, onSelect: handleSelect }, placeAutocompleteProps), function (placeCompleteProps) { return (React__default.createElement(FieldLayout, __assign({ placeAutocompleteProps: placeCompleteProps, resetField: resetField, currentAddress: address, selectedValue: selectedValue, formikProps: formikProps }, fieldLayoutProps))); }));
+    return (React__default.createElement("div", { style: { position: 'relative' } },
+        React__default.createElement(PlacesAutocomplete__default, __assign({ value: address, onChange: handleChange, onSelect: handleSelect }, placeAutocompleteProps), function (placeCompleteProps) { return (React__default.createElement(FieldLayout, __assign({ placeAutocompleteProps: placeCompleteProps, resetField: resetField, currentAddress: address, selectedValue: selectedValue, formikProps: formikProps }, fieldLayoutProps))); })));
 };
 
 var ComponentMapConfig = {};
@@ -298,8 +269,8 @@ attachField('text', React__default.createElement(MUITextField, null), { type: 't
 attachField('password', React__default.createElement(MUITextField, null), { type: 'password' });
 attachField('select', React__default.createElement(MUISelectField, null));
 attachField('checkbox', React__default.createElement(MUICheckBox, null));
-attachField('date-picker', React__default.createElement(MUIDatePicker, null), { variant: 'inline', label: 'Select Date' });
-attachField('time-picker', React__default.createElement(MUITimePicker, null), { variant: 'inline', label: 'Select Time' });
+// attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
+// attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', React__default.createElement(MUIPlaceSuggest, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps;

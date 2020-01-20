@@ -43,8 +43,9 @@ export interface PlaceSuggestProps {
     listProps?: ListProps;
     listItemProps?: IListItemProps;
     placeAutocompleteProps?: PropTypes;
-    locationName?: string;
+    locationNameKey?: string;
     outputResult?: string;
+    listContainerStyle?: object;
 }
 export interface IProps extends IFieldProps {
     fieldProps?: PlaceSuggestProps;

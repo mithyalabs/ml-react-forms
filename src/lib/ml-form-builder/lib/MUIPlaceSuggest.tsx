@@ -2,9 +2,9 @@ import React, { FC, useState } from 'react';
 import PlacesAutocomplete, { Suggestion, getLatLng, geocodeByAddress, PropTypes } from 'react-places-autocomplete';
 import { FormikValues } from 'formik';
 import { IFieldProps } from '../index';
-// import { get } from 'lodash';
+import { get } from 'lodash';
 
-import { TextField, List, ListItem, ListItemText, InputAdornment, IconButton, TextFieldProps, ListProps, ListItemProps } from '@material-ui/core';
+import { TextField, List, ListItem, ListItemText, InputAdornment, IconButton, TextFieldProps, ListProps, ListItemProps, Paper } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
 
 type IListItemProps = Omit<ListItemProps, 'button'>;
@@ -45,8 +45,9 @@ export interface PlaceSuggestProps {
     listProps?: ListProps,
     listItemProps?: IListItemProps,
     placeAutocompleteProps?: PropTypes,
-    locationName?: string,
-    outputResult?: string
+    locationNameKey?: string,
+    outputResult?: string,
+    listContainerStyle?: object
 }
 
 interface IFieldLayoutProps extends Omit<PlaceSuggestProps, 'placeAutocompleteProps'> {
@@ -64,21 +65,22 @@ export interface IProps extends IFieldProps {
 interface ISearchFieldProps {
     address?: string,
     value?: google.maps.LatLngLiteral,
-    textFieldProps?: TextFieldProps,
     placeAutocompleteProps?: PlacesAutocompleteChildrenProps,
     resetField: () => void,
-    formikProps?: FormikValues
+    formikProps?: FormikValues,
+    fieldProps: Pick<PlaceSuggestProps, 'name' | 'id' | 'textFieldProps'>
 }
 
 interface IPlaceListProps {
     placeAutocompleteProps?: PlacesAutocompleteChildrenProps,
     listProps?: ListProps,
-    listItemProps?: IListItemProps
+    listItemProps?: IListItemProps,
+    listContainerStyle?: object
 }
 
 
 const SearchField: FC<ISearchFieldProps> = props => {
-    const { address, textFieldProps = {} as TextFieldProps, placeAutocompleteProps = {} as PlacesAutocompleteChildrenProps, value, resetField } = props;
+    const { address, fieldProps, placeAutocompleteProps = {} as PlacesAutocompleteChildrenProps, value, resetField, formikProps = {} as FormikValues } = props;
     const inputProps = (value && value.lat && value.lng) ? ({
         endAdornment: (
             <InputAdornment position="end">
@@ -92,70 +94,70 @@ const SearchField: FC<ISearchFieldProps> = props => {
             </InputAdornment>
         )
     }) : {};
+    const { textFieldProps = {} as TextFieldProps } = fieldProps;
     const fieldInputProps = { ...textFieldProps.InputProps, ...inputProps };
-    /* const fieldError = get(formikProps, `errors.${fieldProps.name}`);
+    const fieldError = get(formikProps, `errors.${fieldProps.name}`);
     const updatedProps = {
-        ...fieldProps,
+        ...{ ...textFieldProps, InputProps: fieldInputProps },
         error: !!fieldError,
-        helperText: (fieldError || ''),
-        onChange: formikProps.handleChange,
-        value: get(formikProps, `values.${fieldProps.name}`) || ''
-    }; */
+        helperText: (fieldError || '')
+    };
     return (
         <div>
             <TextField value={address || ''}   {...placeAutocompleteProps.getInputProps({
                 label: textFieldProps.label || 'Search Places',
                 className: 'location-search-input'
-            })} {...{ ...textFieldProps, InputProps: fieldInputProps }} />
+            })} {...updatedProps} />
         </div>
     )
 }
 
-
+const LIST_CONTAINER_STYLES: object = { position: 'absolute', left: 0, top: '100%', right: 0, zIndex: 500 };
 
 const PlaceList: FC<IPlaceListProps> = props => {
-    const { placeAutocompleteProps = {} as PlacesAutocompleteChildrenProps, listProps, listItemProps } = props;
+    const { placeAutocompleteProps = {} as PlacesAutocompleteChildrenProps, listProps, listItemProps, listContainerStyle } = props;
     const { suggestions, getSuggestionItemProps } = placeAutocompleteProps;
     return (
         <div className="autocomplete-dropdown-container">
-
-            <List {...listProps}>
-                {suggestions.map(suggestion => {
-                    const className = suggestion.active
-                        ? 'suggestion-item--active'
-                        : 'suggestion-item';
-                    // inline style for demonstration purpose
-                    const style = suggestion.active
-                        ? { backgroundColor: '#fafafa', cursor: 'pointer' }
-                        : { backgroundColor: '#ffffff', cursor: 'pointer' };
-                    return (
-                        <ListItem disableGutters={true} dense={true} key={suggestion.placeId} {...getSuggestionItemProps(suggestion, {
-                            className,
-                            style,
-                        })} {...{ ...listItemProps }} >
-                            <ListItemText primary={suggestion.formattedSuggestion.mainText}
-                                secondary={suggestion.formattedSuggestion.secondaryText} />
-                        </ListItem>
-                    )
-                })}
-            </List>
-
+            <Paper style={{ ...LIST_CONTAINER_STYLES, ...listContainerStyle, visibility: ((suggestions.length) ? 'visible' : 'hidden') }}>
+                <List {...listProps} >
+                    {suggestions.map(suggestion => {
+                        const className = suggestion.active
+                            ? 'suggestion-item--active'
+                            : 'suggestion-item';
+                        // inline style for demonstration purpose
+                        const style = { cursor: 'pointer' };
+                        return (
+                            <ListItem disableGutters={true} dense={true} selected={suggestion.active} key={suggestion.placeId} {...getSuggestionItemProps(suggestion, {
+                                className,
+                                style
+                            })} {...{ ...listItemProps }} >
+                                <ListItemText primary={suggestion.formattedSuggestion.mainText}
+                                    secondary={suggestion.formattedSuggestion.secondaryText} />
+                            </ListItem>
+                        )
+                    })}
+                </List>
+            </Paper>
         </div>
     )
 }
 
 const FieldLayout: FC<IFieldLayoutProps> = props => {
-    const { currentAddress, selectedValue, placeAutocompleteProps } = props;
+    const { currentAddress, selectedValue, placeAutocompleteProps, name, id, textFieldProps } = props;
     return (
         <div>
             <SearchField resetField={props.resetField}
                 address={currentAddress}
                 value={selectedValue}
                 placeAutocompleteProps={placeAutocompleteProps}
-                textFieldProps={props.textFieldProps}
                 formikProps={props.formikProps}
+                fieldProps={{ name, id, textFieldProps }}
             />
-            <PlaceList placeAutocompleteProps={placeAutocompleteProps} />
+            <PlaceList
+                placeAutocompleteProps={placeAutocompleteProps}
+                listContainerStyle={props.listContainerStyle}
+            />
         </div>
     )
 }
@@ -163,9 +165,9 @@ const FieldLayout: FC<IFieldLayoutProps> = props => {
 export const MUIPlaceSuggest: FC<IProps> = (props) => {
     const { fieldProps = {} as PlaceSuggestProps, formikProps = {} as FormikValues } = props;
     const [address, setAddress] = useState('');
-    const { placeAutocompleteProps, locationName, outputResult, ...fieldLayoutProps } = fieldProps;
-    const fieldName = fieldProps.name || '';
-    const selectedValue = formikProps.values[fieldName];
+    const { placeAutocompleteProps, locationNameKey, outputResult, ...fieldLayoutProps } = fieldProps;
+    const selectedValue = formikProps.values[(fieldProps.name || '')];
+    const locationName = formikProps.values[(locationNameKey || '')];
 
     React.useEffect(() => {
         setAddress(locationName || '');
@@ -181,6 +183,9 @@ export const MUIPlaceSuggest: FC<IProps> = (props) => {
             return;
         const latLng = await getLatLng(selectedAddress);
         formikProps.setFieldValue(fieldProps.name, latLng);
+        setAddress(selectedAddress.formatted_address);
+        if (locationName)
+            formikProps.setFieldValue(locationNameKey, selectedAddress.formatted_address);
         if (outputResult)
             formikProps.setFieldValue(outputResult, selectedAddress);
     }
@@ -189,20 +194,22 @@ export const MUIPlaceSuggest: FC<IProps> = (props) => {
         formikProps.setFieldValue(fieldProps.name);
     }
     return (
-        <PlacesAutocomplete value={address}
-            onChange={handleChange}
-            onSelect={handleSelect}
-            {...placeAutocompleteProps}
-        >
-            {(placeCompleteProps: PlacesAutocompleteChildrenProps) => (
-                <FieldLayout
-                    placeAutocompleteProps={placeCompleteProps}
-                    resetField={resetField}
-                    currentAddress={address}
-                    selectedValue={selectedValue}
-                    formikProps={formikProps}
-                    {...fieldLayoutProps}
-                />)}
-        </PlacesAutocomplete>
+        <div style={{ position: 'relative' }}>
+            <PlacesAutocomplete value={address}
+                onChange={handleChange}
+                onSelect={handleSelect}
+                {...placeAutocompleteProps}
+            >
+                {(placeCompleteProps: PlacesAutocompleteChildrenProps) => (
+                    <FieldLayout
+                        placeAutocompleteProps={placeCompleteProps}
+                        resetField={resetField}
+                        currentAddress={address}
+                        selectedValue={selectedValue}
+                        formikProps={formikProps}
+                        {...fieldLayoutProps}
+                    />)}
+            </PlacesAutocomplete>
+        </div>
     )
 }

@@ -7,7 +7,7 @@ import { FormikValues } from 'formik';
 import { MUITextField } from './lib/MUITextField';
 import { MUISelectField } from './lib/MUISelectField';
 import { MUICheckBox } from './lib/MUICheckBox';
-import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
+
 import { MUIPlaceSuggest } from './lib/MUIPlaceSuggest';
 
 export interface FormConfig {
@@ -62,8 +62,8 @@ attachField('text', <MUITextField />, { type: 'text' });
 attachField('password', <MUITextField />, { type: 'password' });
 attachField('select', <MUISelectField />);
 attachField('checkbox', <MUICheckBox />);
-attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
-attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
+// attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
+// attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', <MUIPlaceSuggest />);
 
 
