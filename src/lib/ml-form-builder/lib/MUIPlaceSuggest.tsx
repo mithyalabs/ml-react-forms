@@ -47,11 +47,12 @@ export interface PlaceSuggestProps {
     placeAutocompleteProps?: PropTypes
 }
 
-interface IFieldLayoutProps {
+interface IFieldLayoutProps extends Omit<PlaceSuggestProps, 'placeAutocompleteProps'> {
     resetField: () => void,
     currentAddress?: string,
     selectedValue?: google.maps.LatLngLiteral,
     placeAutocompleteProps?: PlacesAutocompleteChildrenProps
+    formikProps?: FormikValues
 }
 
 export interface IProps extends IFieldProps {
@@ -149,6 +150,8 @@ const FieldLayout: FC<IFieldLayoutProps> = props => {
                 address={currentAddress}
                 value={selectedValue}
                 placeAutocompleteProps={placeAutocompleteProps}
+                textFieldProps={props.textFieldProps}
+                formikProps={props.formikProps}
             />
             <PlaceList placeAutocompleteProps={placeAutocompleteProps} />
         </div>
@@ -190,6 +193,7 @@ export const MUIPlaceSuggest: FC<IProps> = (props) => {
                     resetField={resetField}
                     currentAddress={address}
                     selectedValue={selectedValue}
+                    formikProps={formikProps}
                     {...fieldLayoutProps}
                 />)}
         </PlacesAutocomplete>

@@ -236,7 +236,7 @@ var PlaceList = function (props) {
 var FieldLayout = function (props) {
     var currentAddress = props.currentAddress, selectedValue = props.selectedValue, placeAutocompleteProps = props.placeAutocompleteProps;
     return (React.createElement("div", null,
-        React.createElement(SearchField, { resetField: props.resetField, address: currentAddress, value: selectedValue, placeAutocompleteProps: placeAutocompleteProps }),
+        React.createElement(SearchField, { resetField: props.resetField, address: currentAddress, value: selectedValue, placeAutocompleteProps: placeAutocompleteProps, textFieldProps: props.textFieldProps, formikProps: props.formikProps }),
         React.createElement(PlaceList, { placeAutocompleteProps: placeAutocompleteProps })));
 };
 var MUIPlaceSuggest = function (props) {
@@ -272,7 +272,7 @@ var MUIPlaceSuggest = function (props) {
         formikProps.setFieldValue(fieldProps.name);
         setSelectedValue({ lat: 0, lng: 0 });
     };
-    return (React.createElement(PlacesAutocomplete, __assign({ value: address, onChange: handleChange, onSelect: handleSelect }, placeAutocompleteProps), function (placeCompleteProps) { return (React.createElement(FieldLayout, __assign({ placeAutocompleteProps: placeCompleteProps, resetField: resetField, currentAddress: address, selectedValue: selectedValue }, fieldLayoutProps))); }));
+    return (React.createElement(PlacesAutocomplete, __assign({ value: address, onChange: handleChange, onSelect: handleSelect }, placeAutocompleteProps), function (placeCompleteProps) { return (React.createElement(FieldLayout, __assign({ placeAutocompleteProps: placeCompleteProps, resetField: resetField, currentAddress: address, selectedValue: selectedValue, formikProps: formikProps }, fieldLayoutProps))); }));
 };
 
 var ComponentMapConfig = {};
