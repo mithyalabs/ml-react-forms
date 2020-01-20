@@ -252,7 +252,7 @@ var MUIPlaceSuggest = function (props) {
     var _c = React.useState(''), address = _c[0], setAddress = _c[1];
     var placeAutocompleteProps = fieldProps.placeAutocompleteProps, locationName = fieldProps.locationName, outputResult = fieldProps.outputResult, fieldLayoutProps = __rest(fieldProps, ["placeAutocompleteProps", "locationName", "outputResult"]);
     var fieldName = fieldProps.name || '';
-    var selectedValue = formikProps[fieldName];
+    var selectedValue = formikProps.values[fieldName];
     React__default.useEffect(function () {
         setAddress(locationName || '');
     }, []);

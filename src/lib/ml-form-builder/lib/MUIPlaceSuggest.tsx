@@ -165,7 +165,7 @@ export const MUIPlaceSuggest: FC<IProps> = (props) => {
     const [address, setAddress] = useState('');
     const { placeAutocompleteProps, locationName, outputResult, ...fieldLayoutProps } = fieldProps;
     const fieldName = fieldProps.name || '';
-    const selectedValue = formikProps[fieldName];
+    const selectedValue = formikProps.values[fieldName];
 
     React.useEffect(() => {
         setAddress(locationName || '');
