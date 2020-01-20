@@ -172,6 +172,17 @@ var MUICheckBox = function (props) {
             (React__default.createElement(core.FormHelperText, null, fieldError || helperText))));
 };
 
+var MUISwitch = function (props) {
+    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b;
+    var label = fieldProps.label, switchProps = __rest(fieldProps, ["label"]);
+    var value = lodash.get(formikProps, "values." + fieldProps.name);
+    console.log('MUISwitch', formikProps);
+    var handleOnChange = function () {
+        formikProps.setFieldValue(fieldProps.name, !value);
+    };
+    return (React__default.createElement(core.FormControlLabel, { control: React__default.createElement(core.Switch, __assign({ checked: !!value, onChange: handleOnChange, inputProps: { 'aria-label': 'secondary checkbox' }, value: value }, switchProps)), label: label || '' }));
+};
+
 var SearchField = function (props) {
     var address = props.address, fieldProps = props.fieldProps, _a = props.placeAutocompleteProps, placeAutocompleteProps = _a === void 0 ? {} : _a, value = props.value, resetField = props.resetField, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var inputProps = (value && value.lat && value.lng) ? ({
@@ -272,6 +283,7 @@ attachField('checkbox', React__default.createElement(MUICheckBox, null));
 // attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
 // attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', React__default.createElement(MUIPlaceSuggest, null));
+attachField('switch', React__default.createElement(MUISwitch, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps;
     var colItems = (!lodash.isArray(schema) ? [schema] : schema);

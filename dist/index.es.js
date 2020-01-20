@@ -3,7 +3,7 @@ import { get, isString, map, isEmpty, indexOf, isArray, uniqueId } from 'lodash'
 import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormControlLabel, Checkbox, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText } from '@material-ui/core';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormControlLabel, Checkbox, Switch, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText } from '@material-ui/core';
 import PlacesAutocomplete, { getLatLng, geocodeByAddress } from 'react-places-autocomplete';
 import { Close } from '@material-ui/icons';
 import { Formik } from 'formik';
@@ -164,6 +164,17 @@ var MUICheckBox = function (props) {
             (React.createElement(FormHelperText, null, fieldError || helperText))));
 };
 
+var MUISwitch = function (props) {
+    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b;
+    var label = fieldProps.label, switchProps = __rest(fieldProps, ["label"]);
+    var value = get(formikProps, "values." + fieldProps.name);
+    console.log('MUISwitch', formikProps);
+    var handleOnChange = function () {
+        formikProps.setFieldValue(fieldProps.name, !value);
+    };
+    return (React.createElement(FormControlLabel, { control: React.createElement(Switch, __assign({ checked: !!value, onChange: handleOnChange, inputProps: { 'aria-label': 'secondary checkbox' }, value: value }, switchProps)), label: label || '' }));
+};
+
 var SearchField = function (props) {
     var address = props.address, fieldProps = props.fieldProps, _a = props.placeAutocompleteProps, placeAutocompleteProps = _a === void 0 ? {} : _a, value = props.value, resetField = props.resetField, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var inputProps = (value && value.lat && value.lng) ? ({
@@ -264,6 +275,7 @@ attachField('checkbox', React.createElement(MUICheckBox, null));
 // attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
 // attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', React.createElement(MUIPlaceSuggest, null));
+attachField('switch', React.createElement(MUISwitch, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps;
     var colItems = (!isArray(schema) ? [schema] : schema);

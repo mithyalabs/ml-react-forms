@@ -7,6 +7,7 @@ import { FormikValues } from 'formik';
 import { MUITextField } from './lib/MUITextField';
 import { MUISelectField } from './lib/MUISelectField';
 import { MUICheckBox } from './lib/MUICheckBox';
+import { MUISwitch } from './lib/MUISwitch';
 
 import { MUIPlaceSuggest } from './lib/MUIPlaceSuggest';
 
@@ -65,6 +66,7 @@ attachField('checkbox', <MUICheckBox />);
 // attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
 // attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', <MUIPlaceSuggest />);
+attachField('switch', <MUISwitch />);
 
 
 
