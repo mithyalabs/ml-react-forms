@@ -251,10 +251,9 @@ var MUIPlaceSuggest = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var _c = React.useState(''), address = _c[0], setAddress = _c[1];
     var _d = React.useState({ lat: 0, lng: 0 }), selectedValue = _d[0], setSelectedValue = _d[1];
-    var placeAutocompleteProps = fieldProps.placeAutocompleteProps, fieldLayoutProps = __rest(fieldProps, ["placeAutocompleteProps"]);
-    var fieldName = fieldProps.name || '';
+    var placeAutocompleteProps = fieldProps.placeAutocompleteProps, locationName = fieldProps.locationName, outputResult = fieldProps.outputResult, fieldLayoutProps = __rest(fieldProps, ["placeAutocompleteProps", "locationName", "outputResult"]);
     React__default.useEffect(function () {
-        console.log('Fetch address by lat lng', formikProps.values[fieldName]);
+        setAddress(locationName || '');
     }, []);
     var handleChange = function (address) {
         setAddress(address);
@@ -271,6 +270,8 @@ var MUIPlaceSuggest = function (props) {
                     latLng = _a.sent();
                     formikProps.setFieldValue(fieldProps.name, latLng);
                     setSelectedValue(latLng);
+                    if (outputResult)
+                        formikProps.setFieldValue(outputResult, geoAdress);
                     return [2 /*return*/];
             }
         });

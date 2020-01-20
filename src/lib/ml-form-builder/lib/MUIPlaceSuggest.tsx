@@ -44,7 +44,9 @@ export interface PlaceSuggestProps {
     textFieldProps?: TextFieldProps,
     listProps?: ListProps,
     listItemProps?: IListItemProps,
-    placeAutocompleteProps?: PropTypes
+    placeAutocompleteProps?: PropTypes,
+    locationName?: string,
+    outputResult?: string
 }
 
 interface IFieldLayoutProps extends Omit<PlaceSuggestProps, 'placeAutocompleteProps'> {
@@ -162,11 +164,12 @@ export const MUIPlaceSuggest: FC<IProps> = (props) => {
     const { fieldProps = {} as PlaceSuggestProps, formikProps = {} as FormikValues } = props;
     const [address, setAddress] = useState('');
     const [selectedValue, setSelectedValue] = useState<google.maps.LatLngLiteral>({ lat: 0, lng: 0 });
-    const { placeAutocompleteProps, ...fieldLayoutProps } = fieldProps;
-    const fieldName = fieldProps.name || '';
+    const { placeAutocompleteProps, locationName, outputResult, ...fieldLayoutProps } = fieldProps;
+
     React.useEffect(() => {
-        console.log('Fetch address by lat lng', formikProps.values[fieldName]);
-    }, [])
+        setAddress(locationName || '');
+    }, []);
+
     const handleChange = (address: string) => {
         setAddress(address);
     }
@@ -175,6 +178,8 @@ export const MUIPlaceSuggest: FC<IProps> = (props) => {
         const latLng = await getLatLng(geoAdress[0]);
         formikProps.setFieldValue(fieldProps.name, latLng);
         setSelectedValue(latLng);
+        if (outputResult)
+            formikProps.setFieldValue(outputResult, geoAdress);
     }
     const resetField = () => {
         setAddress('');
