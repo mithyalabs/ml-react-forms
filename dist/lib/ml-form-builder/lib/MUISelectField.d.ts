@@ -1,10 +1,7 @@
 import { FC } from 'react';
 import { SelectProps } from '@material-ui/core';
 import { IFieldProps } from '../index';
-export declare type MenuOptions = Array<string> | Array<{
-    name: string;
-    value: string;
-}>;
+import { MenuOptions } from '../Utils';
 export interface IMUISelectProps extends SelectProps {
     label?: string;
     options?: MenuOptions;

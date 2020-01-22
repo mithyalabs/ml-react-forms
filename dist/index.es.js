@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { get, isString, map, isEmpty, indexOf, isArray, uniqueId } from 'lodash';
+import { get, map, isString, isEmpty, indexOf, isArray, uniqueId } from 'lodash';
 import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
@@ -128,17 +128,21 @@ var MUITextField = function (props) {
     return (React.createElement(TextField, __assign({}, updatedProps)));
 };
 
+var getMenuOptions = function (options) {
+    return map(options, function (item) {
+        if (isString(item))
+            return { name: item, value: item };
+        return item;
+    });
+};
+
 var MUISelectField = function (props) {
     var _a = props.fieldConfig, fieldConfig = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.fieldProps, fieldProps = _c === void 0 ? {} : _c;
     var label = fieldProps.label, _d = fieldProps.options, options = _d === void 0 ? [] : _d, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, selectProps = __rest(fieldProps, ["label", "options", "emptyItem", "helperText"]);
     var labelId = fieldConfig.id + "_label";
     var fieldError = get(formikProps, "errors." + fieldProps.name);
     var emptyItemText = (isString(emptyItem) ? emptyItem : 'None');
-    var menuOptions = map(options, function (item) {
-        if (isString(item))
-            return { name: item, value: item };
-        return item;
-    });
+    var menuOptions = getMenuOptions(options);
     var value = get(formikProps, "values." + fieldProps.name) || ((selectProps.multiple) ? [] : '');
     return (React.createElement(FormControl, { error: !!fieldError },
         label &&
@@ -178,11 +182,7 @@ var MUIRadio = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var header = fieldProps.header, _c = fieldProps.options, options = _c === void 0 ? [] : _c, headerProps = fieldProps.headerProps, helperText = fieldProps.helperText, radioProps = fieldProps.radioProps, radioGroupProps = fieldProps.radioGroupProps;
     var value = get(formikProps, "values." + fieldProps.name) || '';
-    var menuOptions = map(options, function (item) {
-        if (isString(item))
-            return { name: item, value: item };
-        return item;
-    });
+    var menuOptions = getMenuOptions(options);
     var fieldError = get(formikProps, "errors." + fieldProps.name);
     return (React.createElement(FormControl, { error: !!fieldError },
         (header) &&

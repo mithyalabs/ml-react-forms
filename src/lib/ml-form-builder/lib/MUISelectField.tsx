@@ -3,8 +3,8 @@ import { Select, FormControl, FormHelperText, MenuItem, InputLabel, SelectProps 
 import { IFieldProps, FormConfig } from '../index';
 import { FormikValues } from 'formik';
 import { get, map, isString } from 'lodash';
+import { MenuOptions, MenuOptionObject, getMenuOptions } from '../Utils';
 
-export type MenuOptions = Array<string> | Array<{ name: string, value: string }>;
 export interface IMUISelectProps extends SelectProps {
     label?: string
     options?: MenuOptions
@@ -22,11 +22,7 @@ export const MUISelectField: FC<IProps> = (props) => {
     const labelId = `${fieldConfig.id}_label`;
     const fieldError = get(formikProps, `errors.${fieldProps.name}`);
     const emptyItemText = (isString(emptyItem) ? emptyItem : 'None');
-    const menuOptions = map(options, (item) => {
-        if (isString(item))
-            return { name: item, value: item };
-        return item;
-    });
+    const menuOptions = getMenuOptions(options);
     const value = get(formikProps, `values.${fieldProps.name}`) || ((selectProps.multiple) ? [] : '');
 
     return (
@@ -49,7 +45,7 @@ export const MUISelectField: FC<IProps> = (props) => {
                     </MenuItem>)
                 }
                 {
-                    map(menuOptions, (item: { name: string, value: string }, index: number) => (<MenuItem key={`${fieldConfig.id}_menu_item_${index}`} value={item.value}>{item.name}</MenuItem>))
+                    map(menuOptions, (item: MenuOptionObject, index: number) => (<MenuItem key={`${fieldConfig.id}_menu_item_${index}`} value={item.value}>{item.name}</MenuItem>))
                 }
             </Select>
             {

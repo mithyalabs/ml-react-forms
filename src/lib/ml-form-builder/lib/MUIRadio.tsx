@@ -2,9 +2,10 @@ import React, { FC } from 'react';
 import { IFieldProps } from '../index';
 import { FormikValues } from 'formik';
 import { FormLabel, FormControlLabel, FormHelperText, FormControl, RadioGroup, RadioGroupProps, Radio, RadioProps, FormControlLabelProps, FormLabelProps } from '@material-ui/core';
-import { get, map, isString } from 'lodash';
+import { get, map } from 'lodash';
+import { MenuOptionObject, getMenuOptions } from '../Utils';
 
-export type MenuOptionObj = { name: string, value: string, controlProps?: FormControlLabelProps };
+export type MenuOptionObj = MenuOptionObject & { controlProps?: FormControlLabelProps };
 export type MenuOptions = Array<string> | Array<MenuOptionObj>;
 export interface IMUIRadioProps {
     options?: MenuOptions
@@ -25,11 +26,7 @@ export const MUIRadio: FC<IProps> = props => {
     const { fieldProps = {} as IMUIRadioProps, formikProps = {} as FormikValues } = props;
     const { header, options = [], headerProps, helperText, radioProps, radioGroupProps } = fieldProps;
     const value = get(formikProps, `values.${fieldProps.name}`) || '';
-    const menuOptions = map(options, (item) => {
-        if (isString(item))
-            return { name: item, value: item };
-        return item;
-    });
+    const menuOptions = getMenuOptions(options);
     const fieldError = get(formikProps, `errors.${fieldProps.name}`);
     return (
         <FormControl error={!!fieldError}>
