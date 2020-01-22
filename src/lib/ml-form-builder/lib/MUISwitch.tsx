@@ -17,7 +17,6 @@ export const MUISwitch: FC<IProps> = (props) => {
     const { formikProps = {} as FormikValues, fieldProps = {} as IMUISwitchProps } = props;
     const { label, ...switchProps } = fieldProps;
     const value = get(formikProps, `values.${fieldProps.name}`);
-    console.log('MUISwitch', formikProps);
 
     const handleOnChange = () => {
         formikProps.setFieldValue(fieldProps.name, !value);

@@ -8,7 +8,7 @@ import { MUITextField } from './lib/MUITextField';
 import { MUISelectField } from './lib/MUISelectField';
 import { MUICheckBox } from './lib/MUICheckBox';
 import { MUISwitch } from './lib/MUISwitch';
-
+import { MUIRadio } from './lib/MUIRadio';
 import { MUIPlaceSuggest } from './lib/MUIPlaceSuggest';
 
 export interface FormConfig {
@@ -67,6 +67,7 @@ attachField('checkbox', <MUICheckBox />);
 // attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', <MUIPlaceSuggest />);
 attachField('switch', <MUISwitch />);
+attachField('radio', <MUIRadio />);
 
 
 

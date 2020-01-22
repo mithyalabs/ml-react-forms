@@ -176,11 +176,31 @@ var MUISwitch = function (props) {
     var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b;
     var label = fieldProps.label, switchProps = __rest(fieldProps, ["label"]);
     var value = lodash.get(formikProps, "values." + fieldProps.name);
-    console.log('MUISwitch', formikProps);
     var handleOnChange = function () {
         formikProps.setFieldValue(fieldProps.name, !value);
     };
     return (React__default.createElement(core.FormControlLabel, { control: React__default.createElement(core.Switch, __assign({ checked: !!value, onChange: handleOnChange, inputProps: { 'aria-label': 'secondary checkbox' }, value: value }, switchProps)), label: label || '' }));
+};
+
+var MUIRadio = function (props) {
+    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
+    var header = fieldProps.header, _c = fieldProps.options, options = _c === void 0 ? [] : _c, headerProps = fieldProps.headerProps, helperText = fieldProps.helperText, radioProps = fieldProps.radioProps, radioGroupProps = fieldProps.radioGroupProps;
+    var value = lodash.get(formikProps, "values." + fieldProps.name) || '';
+    var menuOptions = lodash.map(options, function (item) {
+        if (lodash.isString(item))
+            return { name: item, value: item };
+        return item;
+    });
+    var fieldError = lodash.get(formikProps, "errors." + fieldProps.name);
+    return (React__default.createElement(core.FormControl, { error: !!fieldError },
+        (header) &&
+            (React__default.createElement(core.FormLabel, __assign({}, headerProps), header)),
+        React__default.createElement(core.RadioGroup, __assign({ name: fieldProps.name, value: value, onChange: formikProps.handleChange }, radioGroupProps), lodash.map(menuOptions, function (option, index) {
+            var value = option.value, name = option.name, rest = __rest(option, ["value", "name"]);
+            return (React__default.createElement(core.FormControlLabel, __assign({ key: fieldProps.id + "_option_item_" + index, value: value, label: name, control: React__default.createElement(core.Radio, __assign({}, radioProps)) }, rest)));
+        })),
+        (fieldError || helperText) &&
+            (React__default.createElement(core.FormHelperText, null, fieldError || helperText))));
 };
 
 var SearchField = function (props) {
@@ -284,6 +304,7 @@ attachField('checkbox', React__default.createElement(MUICheckBox, null));
 // attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', React__default.createElement(MUIPlaceSuggest, null));
 attachField('switch', React__default.createElement(MUISwitch, null));
+attachField('radio', React__default.createElement(MUIRadio, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps;
     var colItems = (!lodash.isArray(schema) ? [schema] : schema);
