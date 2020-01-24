@@ -166,12 +166,14 @@ var MUISelectField = function (props) {
 
 var MUICheckBox = function (props) {
     var _a = props.fieldConfig, fieldConfig = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.fieldProps, fieldProps = _c === void 0 ? {} : _c;
-    var label = fieldProps.label, helperText = fieldProps.helperText, selectOptions = fieldProps.selectOptions, checkboxProps = __rest(fieldProps, ["label", "helperText", "selectOptions"]);
+    var label = fieldProps.label, helperText = fieldProps.helperText, selectOptions = fieldProps.selectOptions, header = fieldProps.header, headerProps = fieldProps.headerProps, groupProps = fieldProps.groupProps, checkboxProps = __rest(fieldProps, ["label", "helperText", "selectOptions", "header", "headerProps", "groupProps"]);
     var fieldError = lodash.get(formikProps, "errors." + fieldProps.name);
     var value = lodash.get(formikProps, "values." + fieldProps.name);
     return (React__default.createElement(core.FormControl, { error: !!fieldError },
-        (!lodash.isEmpty(selectOptions)) ?
-            (lodash.map(selectOptions, function (item, index) { return (React__default.createElement(core.FormControlLabel, { key: fieldConfig.id + "_check_" + index, control: React__default.createElement(core.Checkbox, __assign({ checked: (lodash.indexOf(value, item) > -1), onChange: formikProps.handleChange, value: item }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item || '' })); })) : (React__default.createElement(core.FormControlLabel, { control: React__default.createElement(core.Checkbox, __assign({ checked: (value || false), onChange: formikProps.handleChange }, checkboxProps)), label: label || '' })),
+        (header) &&
+            (React__default.createElement(core.FormLabel, __assign({}, headerProps), header)),
+        React__default.createElement(core.FormGroup, __assign({}, groupProps), (!lodash.isEmpty(selectOptions)) ?
+            (lodash.map(selectOptions, function (item, index) { return (React__default.createElement(core.FormControlLabel, { key: fieldConfig.id + "_check_" + index, control: React__default.createElement(core.Checkbox, __assign({ checked: (lodash.indexOf(value, item) > -1), onChange: formikProps.handleChange, value: item }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item || '' })); })) : (React__default.createElement(core.FormControlLabel, { control: React__default.createElement(core.Checkbox, __assign({ checked: (value || false), onChange: formikProps.handleChange }, checkboxProps)), label: label || '' }))),
         (fieldError || helperText) &&
             (React__default.createElement(core.FormHelperText, null, fieldError || helperText))));
 };

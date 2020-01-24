@@ -3,7 +3,7 @@ import { get, map, isString, isEmpty, indexOf, isArray, uniqueId } from 'lodash'
 import Button from '@material-ui/core/Button';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormControlLabel, Checkbox, Switch, FormLabel, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText } from '@material-ui/core';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText } from '@material-ui/core';
 import PlacesAutocomplete, { getLatLng, geocodeByAddress } from 'react-places-autocomplete';
 import { Close } from '@material-ui/icons';
 import { Formik } from 'formik';
@@ -158,12 +158,14 @@ var MUISelectField = function (props) {
 
 var MUICheckBox = function (props) {
     var _a = props.fieldConfig, fieldConfig = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.fieldProps, fieldProps = _c === void 0 ? {} : _c;
-    var label = fieldProps.label, helperText = fieldProps.helperText, selectOptions = fieldProps.selectOptions, checkboxProps = __rest(fieldProps, ["label", "helperText", "selectOptions"]);
+    var label = fieldProps.label, helperText = fieldProps.helperText, selectOptions = fieldProps.selectOptions, header = fieldProps.header, headerProps = fieldProps.headerProps, groupProps = fieldProps.groupProps, checkboxProps = __rest(fieldProps, ["label", "helperText", "selectOptions", "header", "headerProps", "groupProps"]);
     var fieldError = get(formikProps, "errors." + fieldProps.name);
     var value = get(formikProps, "values." + fieldProps.name);
     return (React.createElement(FormControl, { error: !!fieldError },
-        (!isEmpty(selectOptions)) ?
-            (map(selectOptions, function (item, index) { return (React.createElement(FormControlLabel, { key: fieldConfig.id + "_check_" + index, control: React.createElement(Checkbox, __assign({ checked: (indexOf(value, item) > -1), onChange: formikProps.handleChange, value: item }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item || '' })); })) : (React.createElement(FormControlLabel, { control: React.createElement(Checkbox, __assign({ checked: (value || false), onChange: formikProps.handleChange }, checkboxProps)), label: label || '' })),
+        (header) &&
+            (React.createElement(FormLabel, __assign({}, headerProps), header)),
+        React.createElement(FormGroup, __assign({}, groupProps), (!isEmpty(selectOptions)) ?
+            (map(selectOptions, function (item, index) { return (React.createElement(FormControlLabel, { key: fieldConfig.id + "_check_" + index, control: React.createElement(Checkbox, __assign({ checked: (indexOf(value, item) > -1), onChange: formikProps.handleChange, value: item }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item || '' })); })) : (React.createElement(FormControlLabel, { control: React.createElement(Checkbox, __assign({ checked: (value || false), onChange: formikProps.handleChange }, checkboxProps)), label: label || '' }))),
         (fieldError || helperText) &&
             (React.createElement(FormHelperText, null, fieldError || helperText))));
 };
