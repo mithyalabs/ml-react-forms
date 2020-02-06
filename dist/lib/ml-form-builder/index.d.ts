@@ -11,10 +11,22 @@ export interface FormConfig {
     styles?: object;
     classNames?: Array<string>;
 }
+interface RowSettingsProps {
+    horiontalSpacing?: number;
+    verticalSpacing?: number;
+    columnHorizontalPadding?: number;
+}
+export interface BuilderSettingsProps extends RowSettingsProps {
+}
+export declare type RowSchema = Array<FormConfig> | FormConfig | {
+    columns: Array<FormConfig>;
+    settings?: RowSettingsProps;
+};
 export interface FormRowProps {
-    schema: Array<FormConfig> | FormConfig;
+    schema: RowSchema;
     rowId: string;
     formikProps?: FormikValues;
+    settings?: BuilderSettingsProps;
 }
 declare type submitButtonLayout = "right" | "center" | "fullwidth";
 export interface IFormActionProps {
@@ -26,10 +38,11 @@ export interface IFormActionProps {
     displayActions?: boolean;
 }
 export interface BuilderProps {
-    schema: Array<Array<FormConfig> | FormConfig>;
+    schema: Array<RowSchema>;
     formId: string;
     formikProps?: FormikValues;
     actionConfig?: IFormActionProps;
+    settings?: BuilderSettingsProps;
 }
 export interface IFieldProps {
     formikProps?: FormikValues;

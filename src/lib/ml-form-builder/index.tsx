@@ -1,15 +1,9 @@
 import React, { FC, useEffect, useState } from 'react';
-import { map, isArray, uniqueId } from 'lodash';
+import { map, isArray, uniqueId, get } from 'lodash';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormikValues } from 'formik';
-/* import { MUITextField } from './lib/MUITextField';
-import { MUISelectField } from './lib/MUISelectField';
-import { MUICheckBox } from './lib/MUICheckBox';
-import { MUISwitch } from './lib/MUISwitch';
-import { MUIRadio } from './lib/MUIRadio';
-import { MUIPlaceSuggest } from './lib/MUIPlaceSuggest'; */
 import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest } from './lib';
 
 export interface FormConfig {
@@ -22,11 +16,25 @@ export interface FormConfig {
     styles?: object
     classNames?: Array<string>
 }
-export interface FormRowProps {
-    schema: Array<FormConfig> | FormConfig
-    rowId: string
-    formikProps?: FormikValues
+
+interface RowSettingsProps {
+    horiontalSpacing?: number
+    verticalSpacing?: number
+    columnHorizontalPadding?: number
 }
+export interface BuilderSettingsProps extends RowSettingsProps {
+
+}
+
+export type RowSchema = Array<FormConfig> | FormConfig | { columns: Array<FormConfig>, settings?: RowSettingsProps };
+export interface FormRowProps {
+    schema: RowSchema
+    rowId: string
+    formikProps?: FormikValues,
+    settings?: BuilderSettingsProps
+}
+
+
 
 type submitButtonLayout = "right" | "center" | "fullwidth";
 export interface IFormActionProps {
@@ -38,10 +46,11 @@ export interface IFormActionProps {
     displayActions?: boolean
 }
 export interface BuilderProps {
-    schema: Array<Array<FormConfig> | FormConfig>
+    schema: Array<RowSchema>
     formId: string
     formikProps?: FormikValues,
     actionConfig?: IFormActionProps
+    settings?: BuilderSettingsProps
 }
 
 export interface IFieldProps {
@@ -73,14 +82,18 @@ attachField('radio', <MUIRadio />);
 
 
 export const BuildFormRow: FC<FormRowProps> = props => {
-    const { schema, rowId, formikProps } = props;
-    const colItems = (!isArray(schema) ? [schema] : schema);
+    const { schema, rowId, formikProps, settings = { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } } = props;
+    let columnItems = get(schema, 'columns') as Array<FormConfig>;
+    let rowSettings = { ...settings, ...get(schema, 'settings') } as RowSettingsProps;
+    const colItems = (isArray(schema) ? schema : ((isArray(columnItems) ? columnItems : [schema])));
     const classes = useFormStyles();
+    const rowStyle = { marginBottom: (rowSettings.verticalSpacing || 10) };
     return (
-        <div className={classes.row}>
+        <div className={classes.row} style={rowStyle}>
             {
                 map(colItems, (item: FormConfig, index) => {
                     const componentConfig = ComponentMapConfig[item.type];
+                    const horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horiontalSpacing || 10);
                     if (!componentConfig)
                         return <div key={`${rowId}_field_${index}`} />;
 
@@ -88,7 +101,15 @@ export const BuildFormRow: FC<FormRowProps> = props => {
                     const fieldProps = { id: item.id, name: (item.name || item.valueKey), ...componentConfig.props, ...item.fieldProps };
                     const Component = componentConfig.component;
                     return (
-                        <div key={`${rowId}_field_${index}`} className={clsx(item.classNames, classes.column)} style={{ flex: (item.flex || 1), ...item.styles }}>
+                        <div key={`${rowId}_field_${index}`} className={clsx(item.classNames, classes.column)} style={
+                            {
+                                flex: (item.flex || 1),
+                                marginRight: horizontalSpacing,
+                                paddingLeft: rowSettings.columnHorizontalPadding,
+                                paddingRight: rowSettings.columnHorizontalPadding,
+                                ...item.styles
+                            }
+                        }>
                             {
 
                                 React.cloneElement(Component, { fieldProps, formikProps, fieldConfig: item })
@@ -102,7 +123,7 @@ export const BuildFormRow: FC<FormRowProps> = props => {
     )
 }
 
-const getUpdateSchema = (schema: Array<Array<FormConfig> | FormConfig>, formId: string) => {
+const getUpdateSchema = (schema: Array<RowSchema>, formId: string) => {
     return map(schema, schemaItem => {
         if (isArray(schemaItem)) {
             return map(schemaItem, item => ({ ...item, id: `${formId}_${uniqueId()}` }));
@@ -112,8 +133,8 @@ const getUpdateSchema = (schema: Array<Array<FormConfig> | FormConfig>, formId: 
 }
 
 export const MLFormContent: FC<BuilderProps> = props => {
-    const { schema, formId, formikProps } = props;
-    const [formSchema, setFormSchema] = useState<Array<Array<FormConfig> | FormConfig>>(schema);
+    const { schema, formId, formikProps, settings } = props;
+    const [formSchema, setFormSchema] = useState<Array<RowSchema>>(schema);
     useEffect(() => {
         setFormSchema(getUpdateSchema(schema, formId));
     }, [schema])
@@ -122,7 +143,7 @@ export const MLFormContent: FC<BuilderProps> = props => {
             {
                 map(formSchema, (configRow, index) => {
                     const rowId = `${formId}_row_${index}`;
-                    return (<BuildFormRow key={rowId} rowId={rowId} schema={configRow} formikProps={formikProps} />);
+                    return (<BuildFormRow key={rowId} rowId={rowId} schema={configRow} formikProps={formikProps} settings={settings} />);
                 })
             }
         </>

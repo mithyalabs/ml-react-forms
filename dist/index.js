@@ -308,16 +308,20 @@ attachField('location-suggest', React__default.createElement(MUIPlaceSuggest, nu
 attachField('switch', React__default.createElement(MUISwitch, null));
 attachField('radio', React__default.createElement(MUIRadio, null));
 var BuildFormRow = function (props) {
-    var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps;
-    var colItems = (!lodash.isArray(schema) ? [schema] : schema);
+    var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps, _a = props.settings, settings = _a === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _a;
+    var columnItems = lodash.get(schema, 'columns');
+    var rowSettings = __assign(__assign({}, settings), lodash.get(schema, 'settings'));
+    var colItems = (lodash.isArray(schema) ? schema : ((lodash.isArray(columnItems) ? columnItems : [schema])));
     var classes = useFormStyles();
-    return (React__default.createElement("div", { className: classes.row }, lodash.map(colItems, function (item, index) {
+    var rowStyle = { marginBottom: (rowSettings.verticalSpacing || 10) };
+    return (React__default.createElement("div", { className: classes.row, style: rowStyle }, lodash.map(colItems, function (item, index) {
         var componentConfig = ComponentMapConfig[item.type];
+        var horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horiontalSpacing || 10);
         if (!componentConfig)
             return React__default.createElement("div", { key: rowId + "_field_" + index });
         var fieldProps = __assign(__assign({ id: item.id, name: (item.name || item.valueKey) }, componentConfig.props), item.fieldProps);
         var Component = componentConfig.component;
-        return (React__default.createElement("div", { key: rowId + "_field_" + index, className: clsx(item.classNames, classes.column), style: __assign({ flex: (item.flex || 1) }, item.styles) }, React__default.cloneElement(Component, { fieldProps: fieldProps, formikProps: formikProps, fieldConfig: item })));
+        return (React__default.createElement("div", { key: rowId + "_field_" + index, className: clsx(item.classNames, classes.column), style: __assign({ flex: (item.flex || 1), marginRight: horizontalSpacing, paddingLeft: rowSettings.columnHorizontalPadding, paddingRight: rowSettings.columnHorizontalPadding }, item.styles) }, React__default.cloneElement(Component, { fieldProps: fieldProps, formikProps: formikProps, fieldConfig: item })));
     })));
 };
 var getUpdateSchema = function (schema, formId) {
@@ -329,14 +333,14 @@ var getUpdateSchema = function (schema, formId) {
     });
 };
 var MLFormContent = function (props) {
-    var schema = props.schema, formId = props.formId, formikProps = props.formikProps;
+    var schema = props.schema, formId = props.formId, formikProps = props.formikProps, settings = props.settings;
     var _a = React.useState(schema), formSchema = _a[0], setFormSchema = _a[1];
     React.useEffect(function () {
         setFormSchema(getUpdateSchema(schema, formId));
     }, [schema]);
     return (React__default.createElement(React__default.Fragment, null, lodash.map(formSchema, function (configRow, index) {
         var rowId = formId + "_row_" + index;
-        return (React__default.createElement(BuildFormRow, { key: rowId, rowId: rowId, schema: configRow, formikProps: formikProps }));
+        return (React__default.createElement(BuildFormRow, { key: rowId, rowId: rowId, schema: configRow, formikProps: formikProps, settings: settings }));
     })));
 };
 var MLFormAction = function (props) {
@@ -380,8 +384,8 @@ var useFormStyles = styles.makeStyles(function () {
 });
 
 var ReactForm = function (props) {
-    var config = props.config, formId = props.formId, _a = props.initialValues, initialValues = _a === void 0 ? {} : _a, onSubmit = props.onSubmit, actionConfig = props.actionConfig, formikProps = __rest(props, ["config", "formId", "initialValues", "onSubmit", "actionConfig"]);
-    return (React__default.createElement(formik.Formik, __assign({ initialValues: initialValues, onSubmit: onSubmit }, formikProps), function (formProps) { return (React__default.createElement(MLFormBuilder, { schema: config, formId: formId, actionConfig: actionConfig, formikProps: formProps })); }));
+    var config = props.config, formId = props.formId, _a = props.initialValues, initialValues = _a === void 0 ? {} : _a, onSubmit = props.onSubmit, actionConfig = props.actionConfig, formSettings = props.formSettings, formikProps = __rest(props, ["config", "formId", "initialValues", "onSubmit", "actionConfig", "formSettings"]);
+    return (React__default.createElement(formik.Formik, __assign({ initialValues: initialValues, onSubmit: onSubmit }, formikProps), function (formProps) { return (React__default.createElement(MLFormBuilder, { schema: config, formId: formId, actionConfig: actionConfig, settings: formSettings, formikProps: formProps })); }));
 };
 
 var index = './lib/ReactForm';
