@@ -4,12 +4,13 @@ import Button, { ButtonProps } from '@material-ui/core/Button';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormikValues } from 'formik';
-import { MUITextField } from './lib/MUITextField';
+/* import { MUITextField } from './lib/MUITextField';
 import { MUISelectField } from './lib/MUISelectField';
 import { MUICheckBox } from './lib/MUICheckBox';
 import { MUISwitch } from './lib/MUISwitch';
 import { MUIRadio } from './lib/MUIRadio';
-import { MUIPlaceSuggest } from './lib/MUIPlaceSuggest';
+import { MUIPlaceSuggest } from './lib/MUIPlaceSuggest'; */
+import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest } from './lib';
 
 export interface FormConfig {
     type: string
