@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { ButtonProps } from '@material-ui/core/Button';
+import { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import { FormikValues } from 'formik';
 export interface FormConfig {
     type: string;
@@ -36,6 +37,7 @@ export interface IFormActionProps {
     actionContent?: JSX.Element;
     containerClassNames?: string | string[];
     displayActions?: boolean;
+    loaderProps?: CircularProgressProps;
 }
 export interface BuilderProps {
     schema: Array<RowSchema>;
@@ -43,6 +45,7 @@ export interface BuilderProps {
     formikProps?: FormikValues;
     actionConfig?: IFormActionProps;
     settings?: BuilderSettingsProps;
+    isInProgress?: boolean;
 }
 export interface IFieldProps {
     formikProps?: FormikValues;

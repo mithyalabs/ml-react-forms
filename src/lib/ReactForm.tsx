@@ -41,9 +41,11 @@ export interface IReactFormProps extends FormikValues {
     formId: string,
     actionConfig: IFormActionProps
     formSettings?: BuilderSettingsProps
+    isInProgress?: boolean
 }
 export const ReactForm: FC<IReactFormProps> = (props) => {
-    const { config, formId, initialValues = {}, onSubmit, actionConfig, formSettings, ...formikProps } = props;
+    const { config, formId, initialValues = {}, onSubmit, actionConfig, formSettings, isInProgress = false, ...formikProps } = props;
+
     return (
         <Formik
             initialValues={initialValues}
@@ -51,7 +53,14 @@ export const ReactForm: FC<IReactFormProps> = (props) => {
             {...formikProps}
         >
             {
-                formProps => (<MLFormBuilder schema={config} formId={formId} actionConfig={actionConfig} settings={formSettings} formikProps={formProps} />)
+                formProps => (<MLFormBuilder
+                    schema={config}
+                    formId={formId}
+                    actionConfig={actionConfig}
+                    settings={formSettings}
+                    formikProps={formProps}
+                    isInProgress={isInProgress}
+                />)
             }
         </Formik>
 

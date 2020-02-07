@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { map, isArray, uniqueId, get } from 'lodash';
 import Button, { ButtonProps } from '@material-ui/core/Button';
+import CircularProgress, { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormikValues } from 'formik';
@@ -44,6 +45,7 @@ export interface IFormActionProps {
     actionContent?: JSX.Element,
     containerClassNames?: string | string[],
     displayActions?: boolean
+    loaderProps?: CircularProgressProps
 }
 export interface BuilderProps {
     schema: Array<RowSchema>
@@ -51,6 +53,7 @@ export interface BuilderProps {
     formikProps?: FormikValues,
     actionConfig?: IFormActionProps
     settings?: BuilderSettingsProps
+    isInProgress?: boolean
 }
 
 export interface IFieldProps {
@@ -151,11 +154,11 @@ export const MLFormContent: FC<BuilderProps> = props => {
 }
 
 export const MLFormAction: FC<IFormActionProps & Pick<BuilderProps, 'formId' | 'formikProps'>> = (props) => {
-    const { formId, formikProps = {} as FormikValues, containerClassNames, submitButtonLayout = 'center', submitButtonText = "Submit", submitButtonProps } = props;
+    const { formId, formikProps = {} as FormikValues, containerClassNames, submitButtonLayout = 'center', submitButtonText = "Submit", submitButtonProps, loaderProps } = props;
     const classes = useFormStyles();
     if (props.actionContent)
         return (React.cloneElement(props.actionContent || <div />, { formikProps }));
-    const layoutClassName = `action-${submitButtonLayout}`
+    const layoutClassName = `action-${submitButtonLayout}`;
     return (
         <div className={clsx(classes.actionContainer, layoutClassName, containerClassNames)}>
             {
@@ -163,16 +166,24 @@ export const MLFormAction: FC<IFormActionProps & Pick<BuilderProps, 'formId' | '
                     (React.cloneElement(props.actionContent || <div />, { formikProps, formId }))
                     : (
                         <>
-                            <Button type="submit" variant="contained" color="primary" {...submitButtonProps}>{submitButtonText}</Button>
+                            <Button type="submit" disabled={formikProps.isSubmitting} variant="contained" color="primary" {...submitButtonProps}>{submitButtonText}</Button>
+                            {
+                                (formikProps.isSubmitting) && (<CircularProgress size={24} color="secondary" className={classes.submitLoader} {...loaderProps} />)
+                            }
                         </>
                     )
             }
+
         </div>
     )
 }
 
 export const MLFormBuilder: FC<BuilderProps> = props => {
-    const { formikProps = {} as FormikValues, actionConfig = {} as IFormActionProps } = props;
+    const { formikProps = {} as FormikValues, isInProgress = false, actionConfig = {} as IFormActionProps } = props;
+    useEffect(() => {
+        if (isInProgress === false)
+            formikProps.setSubmitting(false);
+    }, [isInProgress])
     return (
         <form onSubmit={formikProps.handleSubmit}>
             <MLFormContent {...props} />
@@ -193,6 +204,7 @@ const useFormStyles = makeStyles<Theme>(() => {
         },
         column: {},
         actionContainer: {
+            position: 'relative',
             display: 'flex',
             justifyContent: 'center',
             '&.action-center': {
@@ -204,6 +216,13 @@ const useFormStyles = makeStyles<Theme>(() => {
             '&.action-fullwidth > button': {
                 flex: 1
             }
+        },
+        submitLoader: {
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%,-50%)',
+            marginTop: -5
         }
     }))
 })

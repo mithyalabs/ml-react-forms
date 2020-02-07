@@ -34,6 +34,7 @@ export interface IReactFormProps extends FormikValues {
     formId: string;
     actionConfig: IFormActionProps;
     formSettings?: BuilderSettingsProps;
+    isInProgress?: boolean;
 }
 export declare const ReactForm: FC<IReactFormProps>;
 export default ReactForm;

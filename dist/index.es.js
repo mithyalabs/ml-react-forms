@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { get, map, isString, isEmpty, indexOf, isArray, uniqueId } from 'lodash';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText } from '@material-ui/core';
@@ -336,7 +337,7 @@ var MLFormContent = function (props) {
     })));
 };
 var MLFormAction = function (props) {
-    var formId = props.formId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, containerClassNames = props.containerClassNames, _b = props.submitButtonLayout, submitButtonLayout = _b === void 0 ? 'center' : _b, _c = props.submitButtonText, submitButtonText = _c === void 0 ? "Submit" : _c, submitButtonProps = props.submitButtonProps;
+    var formId = props.formId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, containerClassNames = props.containerClassNames, _b = props.submitButtonLayout, submitButtonLayout = _b === void 0 ? 'center' : _b, _c = props.submitButtonText, submitButtonText = _c === void 0 ? "Submit" : _c, submitButtonProps = props.submitButtonProps, loaderProps = props.loaderProps;
     var classes = useFormStyles();
     if (props.actionContent)
         return (React.cloneElement(props.actionContent || React.createElement("div", null), { formikProps: formikProps }));
@@ -344,10 +345,15 @@ var MLFormAction = function (props) {
     return (React.createElement("div", { className: clsx(classes.actionContainer, layoutClassName, containerClassNames) }, (props.actionContent) ?
         (React.cloneElement(props.actionContent || React.createElement("div", null), { formikProps: formikProps, formId: formId }))
         : (React.createElement(React.Fragment, null,
-            React.createElement(Button, __assign({ type: "submit", variant: "contained", color: "primary" }, submitButtonProps), submitButtonText)))));
+            React.createElement(Button, __assign({ type: "submit", disabled: formikProps.isSubmitting, variant: "contained", color: "primary" }, submitButtonProps), submitButtonText),
+            (formikProps.isSubmitting) && (React.createElement(CircularProgress, __assign({ size: 24, color: "secondary", className: classes.submitLoader }, loaderProps)))))));
 };
 var MLFormBuilder = function (props) {
-    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.actionConfig, actionConfig = _b === void 0 ? {} : _b;
+    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.isInProgress, isInProgress = _b === void 0 ? false : _b, _c = props.actionConfig, actionConfig = _c === void 0 ? {} : _c;
+    useEffect(function () {
+        if (isInProgress === false)
+            formikProps.setSubmitting(false);
+    }, [isInProgress]);
     return (React.createElement("form", { onSubmit: formikProps.handleSubmit },
         React.createElement(MLFormContent, __assign({}, props)),
         (actionConfig.displayActions !== false) &&
@@ -360,6 +366,7 @@ var useFormStyles = makeStyles(function () {
         },
         column: {},
         actionContainer: {
+            position: 'relative',
             display: 'flex',
             justifyContent: 'center',
             '&.action-center': {
@@ -371,13 +378,20 @@ var useFormStyles = makeStyles(function () {
             '&.action-fullwidth > button': {
                 flex: 1
             }
+        },
+        submitLoader: {
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%,-50%)',
+            marginTop: -5
         }
     }));
 });
 
 var ReactForm = function (props) {
-    var config = props.config, formId = props.formId, _a = props.initialValues, initialValues = _a === void 0 ? {} : _a, onSubmit = props.onSubmit, actionConfig = props.actionConfig, formSettings = props.formSettings, formikProps = __rest(props, ["config", "formId", "initialValues", "onSubmit", "actionConfig", "formSettings"]);
-    return (React.createElement(Formik, __assign({ initialValues: initialValues, onSubmit: onSubmit }, formikProps), function (formProps) { return (React.createElement(MLFormBuilder, { schema: config, formId: formId, actionConfig: actionConfig, settings: formSettings, formikProps: formProps })); }));
+    var config = props.config, formId = props.formId, _a = props.initialValues, initialValues = _a === void 0 ? {} : _a, onSubmit = props.onSubmit, actionConfig = props.actionConfig, formSettings = props.formSettings, _b = props.isInProgress, isInProgress = _b === void 0 ? false : _b, formikProps = __rest(props, ["config", "formId", "initialValues", "onSubmit", "actionConfig", "formSettings", "isInProgress"]);
+    return (React.createElement(Formik, __assign({ initialValues: initialValues, onSubmit: onSubmit }, formikProps), function (formProps) { return (React.createElement(MLFormBuilder, { schema: config, formId: formId, actionConfig: actionConfig, settings: formSettings, formikProps: formProps, isInProgress: isInProgress })); }));
 };
 
 var index = './lib/ReactForm';
