@@ -6,6 +6,7 @@ import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormikValues } from 'formik';
 import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest } from './lib';
+import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
 
 export interface FormConfig {
     type: string
@@ -76,8 +77,8 @@ attachField('text', <MUITextField />, { type: 'text' });
 attachField('password', <MUITextField />, { type: 'password' });
 attachField('select', <MUISelectField />);
 attachField('checkbox', <MUICheckBox />);
-// attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
-// attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
+attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
+attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', <MUIPlaceSuggest />);
 attachField('switch', <MUISwitch />);
 attachField('radio', <MUIRadio />);
