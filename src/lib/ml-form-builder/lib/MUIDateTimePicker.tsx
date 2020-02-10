@@ -1,10 +1,10 @@
 import React, { FC } from 'react';
-import { DatePicker, DatePickerProps, TimePicker, TimePickerProps } from '@material-ui/pickers';
+import { KeyboardDatePicker, KeyboardDatePickerProps, TimePicker, TimePickerProps } from '@material-ui/pickers';
 import { FormikValues } from 'formik';
 import { IFieldProps } from '../index';
 import { get } from 'lodash';
 
-export interface IMUIDatePickerProps extends DatePickerProps {
+export interface IMUIDatePickerProps extends KeyboardDatePickerProps {
     outputFormat?: string
 }
 
@@ -20,7 +20,7 @@ export const MUIDatePicker: FC<IFieldProps & { fieldProps?: IMUIDatePickerProps 
             const dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
             formikProps.setFieldValue(fieldProps.name, dateValue, false)
         },
-        value: get(formikProps, `values.${fieldProps.name}`) || '',
+        value: get(formikProps, `values.${fieldProps.name}`) || null,
         onError: (error: string) => {
             // handle as a side effect
             if (error !== fieldError) {
@@ -30,7 +30,7 @@ export const MUIDatePicker: FC<IFieldProps & { fieldProps?: IMUIDatePickerProps 
     };
 
     return (
-        <DatePicker
+        <KeyboardDatePicker
             {...updatedProps}
         />
     )

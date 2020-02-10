@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import { DatePickerProps, TimePickerProps } from '@material-ui/pickers';
+import { KeyboardDatePickerProps, TimePickerProps } from '@material-ui/pickers';
 import { IFieldProps } from '../index';
-export interface IMUIDatePickerProps extends DatePickerProps {
+export interface IMUIDatePickerProps extends KeyboardDatePickerProps {
     outputFormat?: string;
 }
 export declare const MUIDatePicker: FC<IFieldProps & {

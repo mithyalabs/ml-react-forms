@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText } from '@material-ui/core';
 import PlacesAutocomplete, { getLatLng, geocodeByAddress } from 'react-places-autocomplete';
 import { Close } from '@material-ui/icons';
-import { DatePicker, TimePicker } from '@material-ui/pickers';
+import { KeyboardDatePicker, TimePicker } from '@material-ui/pickers';
 import { Formik } from 'formik';
 
 /*! *****************************************************************************
@@ -291,13 +291,13 @@ var MUIDatePicker = function (props) {
     var updatedProps = __assign(__assign({}, datePickerProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (date) {
             var dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
             formikProps.setFieldValue(fieldProps.name, dateValue, false);
-        }, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
+        }, value: get(formikProps, "values." + fieldProps.name) || null, onError: function (error) {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    return (React.createElement(DatePicker, __assign({}, updatedProps)));
+    return (React.createElement(KeyboardDatePicker, __assign({}, updatedProps)));
 };
 var MUITimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
