@@ -293,6 +293,7 @@ var MUIDatePicker = function (props) {
                 formikProps.setFieldValue(fieldProps.name, '', false);
                 return;
             }
+            console.log('Date changed', date, fieldProps.format);
             var dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
             formikProps.setFieldValue(fieldProps.name, dateValue, false);
         }, value: get(formikProps, "values." + fieldProps.name) || null, onError: function (error) {
@@ -429,5 +430,5 @@ var ReactForm = function (props) {
 var index = './lib/ReactForm';
 
 export default index;
-export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUICheckBox, MUIPlaceSuggest, MUIRadio, MUISelectField, MUISwitch, MUITextField, ReactForm, attachField };
+export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUICheckBox, MUIDatePicker, MUIPlaceSuggest, MUIRadio, MUISelectField, MUISwitch, MUITextField, MUITimePicker, ReactForm, attachField };
 //# sourceMappingURL=index.es.js.map
