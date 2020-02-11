@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Select, FormControl, FormHelperText, MenuItem, InputLabel, SelectProps } from '@material-ui/core';
+import { Select, FormControl, FormControlProps, FormHelperText, FormHelperTextProps, MenuItem, InputLabel, SelectProps } from '@material-ui/core';
 import { IFieldProps, FormConfig } from '../index';
 import { FormikValues } from 'formik';
 import { get, map, isString } from 'lodash';
@@ -10,6 +10,8 @@ export interface IMUISelectProps extends SelectProps {
     options?: MenuOptions
     emptyItem?: string | boolean
     helperText?: string
+    formControlProps?:FormControlProps
+    formHelperTextProps?:FormHelperTextProps
 }
 
 export interface IProps extends IFieldProps {
@@ -18,7 +20,7 @@ export interface IProps extends IFieldProps {
 
 export const MUISelectField: FC<IProps> = (props) => {
     const { fieldConfig = {} as FormConfig, formikProps = {} as FormikValues, fieldProps = {} as IMUISelectProps } = props;
-    const { label, options = [], emptyItem, helperText, ...selectProps } = fieldProps;
+    const { label, options = [], emptyItem, helperText,formControlProps,formHelperTextProps, ...selectProps } = fieldProps;
     const labelId = `${fieldConfig.id}_label`;
     const fieldError = get(formikProps, `errors.${fieldProps.name}`);
     const emptyItemText = (isString(emptyItem) ? emptyItem : 'None');
@@ -26,7 +28,7 @@ export const MUISelectField: FC<IProps> = (props) => {
     const value = get(formikProps, `values.${fieldProps.name}`) || ((selectProps.multiple) ? [] : '');
 
     return (
-        <FormControl error={!!fieldError}>
+        <FormControl error={!!fieldError} {...formControlProps}>
             {
                 label &&
                 (<InputLabel id={labelId}>{label}</InputLabel>)
@@ -40,7 +42,7 @@ export const MUISelectField: FC<IProps> = (props) => {
             >
                 {
                     (emptyItem) &&
-                    (<MenuItem value="">
+                    (<MenuItem value="" >
                         <em>{emptyItemText}</em>
                     </MenuItem>)
                 }
@@ -51,7 +53,7 @@ export const MUISelectField: FC<IProps> = (props) => {
             {
                 (fieldError || fieldProps.helperText) &&
                 (
-                    <FormHelperText>{fieldError || fieldProps.helperText}</FormHelperText>
+                    <FormHelperText {...formHelperTextProps}>{fieldError || fieldProps.helperText}</FormHelperText>
                 )
             }
 

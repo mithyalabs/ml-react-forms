@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { IFieldProps, FormConfig } from '../index';
-import { Checkbox, FormControl, FormHelperText, FormControlLabel, CheckboxProps, FormLabel, FormLabelProps, FormGroup, FormGroupProps } from '@material-ui/core';
+import { Checkbox, FormControl, FormControlProps,FormHelperText,FormHelperTextProps, FormControlLabel, FormControlLabelProps, CheckboxProps, FormLabel, FormLabelProps, FormGroup, FormGroupProps } from '@material-ui/core';
 import { FormikValues } from 'formik';
 import { get, isEmpty, map, indexOf } from 'lodash';
 
@@ -11,6 +11,9 @@ export interface IMUICheckboxProps extends CheckboxProps {
     header?: string
     headerProps?: FormLabelProps
     groupProps?: FormGroupProps
+    formControlLabelProps?:FormControlLabelProps
+    formControlProps?:FormControlProps
+    formHelperTextProps?:FormHelperTextProps
 
 }
 export interface IProps extends IFieldProps {
@@ -18,12 +21,12 @@ export interface IProps extends IFieldProps {
 }
 export const MUICheckBox: FC<IProps> = (props) => {
     const { fieldConfig = {} as FormConfig, formikProps = {} as FormikValues, fieldProps = {} as IMUICheckboxProps } = props;
-    const { label, helperText, selectOptions, header, headerProps, groupProps, ...checkboxProps } = fieldProps;
+    const { label, helperText, selectOptions, header, headerProps, groupProps,formControlProps,formHelperTextProps,formControlLabelProps, ...checkboxProps } = fieldProps;
     const fieldError = get(formikProps, `errors.${fieldProps.name}`);
     const value = get(formikProps, `values.${fieldProps.name}`);
 
     return (
-        <FormControl error={!!fieldError}>
+        <FormControl error={!!fieldError} {...formControlProps}>
             {
                 (header) &&
                 (
@@ -39,12 +42,14 @@ export const MUICheckBox: FC<IProps> = (props) => {
                                     key={`${fieldConfig.id}_check_${index}`}
                                     control={<Checkbox checked={(indexOf(value, item) > -1)} onChange={formikProps.handleChange} value={item}  {...{ ...checkboxProps, id: `${fieldConfig.id}_check_${index}` }} />}
                                     label={item || ''}
+                                    {...formControlLabelProps}
                                 />
                             ))
                         ) : (
                             <FormControlLabel
                                 control={<Checkbox checked={(value || false)} onChange={formikProps.handleChange}  {...checkboxProps} />}
                                 label={label || ''}
+                                {...formControlLabelProps}
                             />
                         )
                 }
@@ -53,7 +58,7 @@ export const MUICheckBox: FC<IProps> = (props) => {
 
             {
                 (fieldError || helperText) &&
-                (<FormHelperText>{fieldError || helperText}</FormHelperText>)
+                (<FormHelperText {...formHelperTextProps}>{fieldError || helperText}</FormHelperText>)
             }
         </FormControl>
     )

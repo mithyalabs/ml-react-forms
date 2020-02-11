@@ -1,7 +1,8 @@
+import React from 'react';
 import { map, isString } from 'lodash';
 
 
-export type MenuOptionObject = { name: string, value: string };
+export type MenuOptionObject = { name: string|React.ReactNode, value: string };
 export type MenuOptions = Array<string> | Array<MenuOptionObject>;
 
 export const getMenuOptions = (options: MenuOptions) => {

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { SelectProps } from '@material-ui/core';
+import { FormControlProps, FormHelperTextProps, SelectProps } from '@material-ui/core';
 import { IFieldProps } from '../index';
 import { MenuOptions } from '../Utils';
 export interface IMUISelectProps extends SelectProps {
@@ -7,6 +7,8 @@ export interface IMUISelectProps extends SelectProps {
     options?: MenuOptions;
     emptyItem?: string | boolean;
     helperText?: string;
+    formControlProps?: FormControlProps;
+    formHelperTextProps?: FormHelperTextProps;
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUISelectProps;

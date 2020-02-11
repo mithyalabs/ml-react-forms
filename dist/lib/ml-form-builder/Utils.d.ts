@@ -1,5 +1,6 @@
+import React from 'react';
 export declare type MenuOptionObject = {
-    name: string;
+    name: string | React.ReactNode;
     value: string;
 };
 export declare type MenuOptions = Array<string> | Array<MenuOptionObject>;

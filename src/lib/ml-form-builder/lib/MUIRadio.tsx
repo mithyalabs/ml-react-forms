@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { IFieldProps } from '../index';
 import { FormikValues } from 'formik';
-import { FormLabel, FormControlLabel, FormHelperText, FormControl, RadioGroup, RadioGroupProps, Radio, RadioProps, FormControlLabelProps, FormLabelProps } from '@material-ui/core';
+import { FormLabel, FormControlLabel, FormHelperText,FormHelperTextProps, FormControl,FormControlProps, RadioGroup, RadioGroupProps, Radio, RadioProps, FormControlLabelProps, FormLabelProps } from '@material-ui/core';
 import { get, map } from 'lodash';
 import { MenuOptionObject, getMenuOptions } from '../Utils';
 
@@ -16,6 +16,8 @@ export interface IMUIRadioProps {
     helperText?: string,
     radioProps?: RadioProps,
     radioGroupProps?: RadioGroupProps
+    formControlProps?:FormControlProps
+    formHelperTextProps?:FormHelperTextProps
 }
 
 interface IProps extends IFieldProps {
@@ -24,24 +26,25 @@ interface IProps extends IFieldProps {
 
 export const MUIRadio: FC<IProps> = props => {
     const { fieldProps = {} as IMUIRadioProps, formikProps = {} as FormikValues } = props;
-    const { header, options = [], headerProps, helperText, radioProps, radioGroupProps } = fieldProps;
-    const value = get(formikProps, `values.${fieldProps.name}`) || '';
+    const { header, options = [], headerProps, helperText, radioProps, radioGroupProps,formControlProps,formHelperTextProps } = fieldProps;
+    const fieldValue = get(formikProps, `values.${fieldProps.name}`) || '';
     const menuOptions = getMenuOptions(options);
     const fieldError = get(formikProps, `errors.${fieldProps.name}`);
+
     return (
-        <FormControl error={!!fieldError}>
+        <FormControl error={!!fieldError} {...formControlProps}>
             {
                 (header) &&
                 (<FormLabel {...headerProps}>{header}</FormLabel>)
             }
-            <RadioGroup name={fieldProps.name} value={value} onChange={formikProps.handleChange} {...radioGroupProps}>
+            <RadioGroup name={fieldProps.name} value={fieldValue} onChange={formikProps.handleChange} {...radioGroupProps}>
                 {
                     map(menuOptions, (option: MenuOptionObj, index: number) => {
                         const { value, name, ...rest } = option;
                         return (
                             <FormControlLabel
                                 key={`${fieldProps.id}_option_item_${index}`}
-                                value={value}
+                                value={value+''}
                                 label={name}
                                 control={<Radio {...radioProps} />}
                                 {...rest}
@@ -53,7 +56,7 @@ export const MUIRadio: FC<IProps> = props => {
             {
                 (fieldError || helperText) &&
                 (
-                    <FormHelperText>{fieldError || helperText}</FormHelperText>
+                    <FormHelperText {...formHelperTextProps}>{fieldError || helperText}</FormHelperText>
                 )
             }
 

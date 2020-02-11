@@ -140,13 +140,13 @@ var getMenuOptions = function (options) {
 
 var MUISelectField = function (props) {
     var _a = props.fieldConfig, fieldConfig = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.fieldProps, fieldProps = _c === void 0 ? {} : _c;
-    var label = fieldProps.label, _d = fieldProps.options, options = _d === void 0 ? [] : _d, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, selectProps = __rest(fieldProps, ["label", "options", "emptyItem", "helperText"]);
+    var label = fieldProps.label, _d = fieldProps.options, options = _d === void 0 ? [] : _d, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, selectProps = __rest(fieldProps, ["label", "options", "emptyItem", "helperText", "formControlProps", "formHelperTextProps"]);
     var labelId = fieldConfig.id + "_label";
     var fieldError = get(formikProps, "errors." + fieldProps.name);
     var emptyItemText = (isString(emptyItem) ? emptyItem : 'None');
     var menuOptions = getMenuOptions(options);
     var value = get(formikProps, "values." + fieldProps.name) || ((selectProps.multiple) ? [] : '');
-    return (React.createElement(FormControl, { error: !!fieldError },
+    return (React.createElement(FormControl, __assign({ error: !!fieldError }, formControlProps),
         label &&
             (React.createElement(InputLabel, { id: labelId }, label)),
         React.createElement(Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange }, selectProps),
@@ -155,21 +155,21 @@ var MUISelectField = function (props) {
                     React.createElement("em", null, emptyItemText))),
             map(menuOptions, function (item, index) { return (React.createElement(MenuItem, { key: fieldConfig.id + "_menu_item_" + index, value: item.value }, item.name)); })),
         (fieldError || fieldProps.helperText) &&
-            (React.createElement(FormHelperText, null, fieldError || fieldProps.helperText))));
+            (React.createElement(FormHelperText, __assign({}, formHelperTextProps), fieldError || fieldProps.helperText))));
 };
 
 var MUICheckBox = function (props) {
     var _a = props.fieldConfig, fieldConfig = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.fieldProps, fieldProps = _c === void 0 ? {} : _c;
-    var label = fieldProps.label, helperText = fieldProps.helperText, selectOptions = fieldProps.selectOptions, header = fieldProps.header, headerProps = fieldProps.headerProps, groupProps = fieldProps.groupProps, checkboxProps = __rest(fieldProps, ["label", "helperText", "selectOptions", "header", "headerProps", "groupProps"]);
+    var label = fieldProps.label, helperText = fieldProps.helperText, selectOptions = fieldProps.selectOptions, header = fieldProps.header, headerProps = fieldProps.headerProps, groupProps = fieldProps.groupProps, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, formControlLabelProps = fieldProps.formControlLabelProps, checkboxProps = __rest(fieldProps, ["label", "helperText", "selectOptions", "header", "headerProps", "groupProps", "formControlProps", "formHelperTextProps", "formControlLabelProps"]);
     var fieldError = get(formikProps, "errors." + fieldProps.name);
     var value = get(formikProps, "values." + fieldProps.name);
-    return (React.createElement(FormControl, { error: !!fieldError },
+    return (React.createElement(FormControl, __assign({ error: !!fieldError }, formControlProps),
         (header) &&
             (React.createElement(FormLabel, __assign({}, headerProps), header)),
         React.createElement(FormGroup, __assign({}, groupProps), (!isEmpty(selectOptions)) ?
-            (map(selectOptions, function (item, index) { return (React.createElement(FormControlLabel, { key: fieldConfig.id + "_check_" + index, control: React.createElement(Checkbox, __assign({ checked: (indexOf(value, item) > -1), onChange: formikProps.handleChange, value: item }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item || '' })); })) : (React.createElement(FormControlLabel, { control: React.createElement(Checkbox, __assign({ checked: (value || false), onChange: formikProps.handleChange }, checkboxProps)), label: label || '' }))),
+            (map(selectOptions, function (item, index) { return (React.createElement(FormControlLabel, __assign({ key: fieldConfig.id + "_check_" + index, control: React.createElement(Checkbox, __assign({ checked: (indexOf(value, item) > -1), onChange: formikProps.handleChange, value: item }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item || '' }, formControlLabelProps))); })) : (React.createElement(FormControlLabel, __assign({ control: React.createElement(Checkbox, __assign({ checked: (value || false), onChange: formikProps.handleChange }, checkboxProps)), label: label || '' }, formControlLabelProps)))),
         (fieldError || helperText) &&
-            (React.createElement(FormHelperText, null, fieldError || helperText))));
+            (React.createElement(FormHelperText, __assign({}, formHelperTextProps), fieldError || helperText))));
 };
 
 var MUISwitch = function (props) {
@@ -184,19 +184,19 @@ var MUISwitch = function (props) {
 
 var MUIRadio = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
-    var header = fieldProps.header, _c = fieldProps.options, options = _c === void 0 ? [] : _c, headerProps = fieldProps.headerProps, helperText = fieldProps.helperText, radioProps = fieldProps.radioProps, radioGroupProps = fieldProps.radioGroupProps;
-    var value = get(formikProps, "values." + fieldProps.name) || '';
+    var header = fieldProps.header, _c = fieldProps.options, options = _c === void 0 ? [] : _c, headerProps = fieldProps.headerProps, helperText = fieldProps.helperText, radioProps = fieldProps.radioProps, radioGroupProps = fieldProps.radioGroupProps, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps;
+    var fieldValue = get(formikProps, "values." + fieldProps.name) || '';
     var menuOptions = getMenuOptions(options);
     var fieldError = get(formikProps, "errors." + fieldProps.name);
-    return (React.createElement(FormControl, { error: !!fieldError },
+    return (React.createElement(FormControl, __assign({ error: !!fieldError }, formControlProps),
         (header) &&
             (React.createElement(FormLabel, __assign({}, headerProps), header)),
-        React.createElement(RadioGroup, __assign({ name: fieldProps.name, value: value, onChange: formikProps.handleChange }, radioGroupProps), map(menuOptions, function (option, index) {
+        React.createElement(RadioGroup, __assign({ name: fieldProps.name, value: fieldValue, onChange: formikProps.handleChange }, radioGroupProps), map(menuOptions, function (option, index) {
             var value = option.value, name = option.name, rest = __rest(option, ["value", "name"]);
-            return (React.createElement(FormControlLabel, __assign({ key: fieldProps.id + "_option_item_" + index, value: value, label: name, control: React.createElement(Radio, __assign({}, radioProps)) }, rest)));
+            return (React.createElement(FormControlLabel, __assign({ key: fieldProps.id + "_option_item_" + index, value: value + '', label: name, control: React.createElement(Radio, __assign({}, radioProps)) }, rest)));
         })),
         (fieldError || helperText) &&
-            (React.createElement(FormHelperText, null, fieldError || helperText))));
+            (React.createElement(FormHelperText, __assign({}, formHelperTextProps), fieldError || helperText))));
 };
 
 var SearchField = function (props) {
