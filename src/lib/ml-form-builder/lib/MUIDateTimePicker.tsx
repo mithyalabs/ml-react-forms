@@ -21,7 +21,6 @@ export const MUIDatePicker: FC<IFieldProps & { fieldProps?: IMUIDatePickerProps 
                 formikProps.setFieldValue(fieldProps.name, '', false);
                 return;
             }
-            console.log('Date changed', date, fieldProps.format);
             const dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
             formikProps.setFieldValue(fieldProps.name, dateValue, false);
         },

@@ -301,7 +301,6 @@ var MUIDatePicker = function (props) {
                 formikProps.setFieldValue(fieldProps.name, '', false);
                 return;
             }
-            console.log('Date changed', date, fieldProps.format);
             var dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
             formikProps.setFieldValue(fieldProps.name, dateValue, false);
         }, inputValue: lodash.get(formikProps, "values." + fieldProps.name) || null, onError: function (error) {
