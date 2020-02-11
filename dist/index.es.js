@@ -289,6 +289,10 @@ var MUIDatePicker = function (props) {
     var fieldError = get(formikProps, "errors." + fieldProps.name);
     var outputFormat = fieldProps.outputFormat, datePickerProps = __rest(fieldProps, ["outputFormat"]);
     var updatedProps = __assign(__assign({}, datePickerProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (date) {
+            if (!date) {
+                formikProps.setFieldValue(fieldProps.name, '', false);
+                return;
+            }
             var dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
             formikProps.setFieldValue(fieldProps.name, dateValue, false);
         }, value: get(formikProps, "values." + fieldProps.name) || null, onError: function (error) {
