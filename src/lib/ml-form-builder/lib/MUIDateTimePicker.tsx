@@ -18,13 +18,13 @@ export const MUIDatePicker: FC<IFieldProps & { fieldProps?: IMUIDatePickerProps 
         helperText: (fieldError || ''),
         onChange: (date: any) => {
             if (!date) {
-                formikProps.setFieldValue(fieldProps.name, '', false);
+                formikProps.setFieldValue(fieldProps.name, date, false);
                 return;
             }
             const dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
             formikProps.setFieldValue(fieldProps.name, dateValue, false);
         },
-        inputValue: get(formikProps, `values.${fieldProps.name}`) || '',
+        inputValue: get(formikProps, `values.${fieldProps.name}`),
         onError: (error: string) => {
             // handle as a side effect
             if (error !== fieldError) {
