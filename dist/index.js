@@ -298,12 +298,12 @@ var MUIDatePicker = function (props) {
     var outputFormat = fieldProps.outputFormat, datePickerProps = __rest(fieldProps, ["outputFormat"]);
     var updatedProps = __assign(__assign({}, datePickerProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (date) {
             if (!date) {
-                formikProps.setFieldValue(fieldProps.name, '', false);
+                formikProps.setFieldValue(fieldProps.name, date, false);
                 return;
             }
             var dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
             formikProps.setFieldValue(fieldProps.name, dateValue, false);
-        }, inputValue: lodash.get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
+        }, inputValue: lodash.get(formikProps, "values." + fieldProps.name), onError: function (error) {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
