@@ -343,8 +343,8 @@ attachField('text', React__default.createElement(MUITextField, null), { type: 't
 attachField('password', React__default.createElement(MUITextField, null), { type: 'password' });
 attachField('select', React__default.createElement(MUISelectField, null));
 attachField('checkbox', React__default.createElement(MUICheckBox, null));
-// attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
-// attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
+attachField('date-picker', React__default.createElement(MUIDatePicker, null), { variant: 'inline', label: 'Select Date' });
+attachField('time-picker', React__default.createElement(MUITimePicker, null), { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', React__default.createElement(MUIPlaceSuggest, null));
 attachField('switch', React__default.createElement(MUISwitch, null));
 attachField('radio', React__default.createElement(MUIRadio, null));
@@ -402,7 +402,6 @@ var MLFormBuilder = function (props) {
         if (isInProgress === false)
             formikProps.setSubmitting(false);
     }, [isInProgress]);
-    console.log('Current formik props', formikProps);
     return (React__default.createElement("form", { onSubmit: formikProps.handleSubmit },
         React__default.createElement(MLFormContent, __assign({}, props)),
         (actionConfig.displayActions !== false) &&
