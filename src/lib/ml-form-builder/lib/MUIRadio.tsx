@@ -3,7 +3,7 @@ import { IFieldProps } from '../index';
 import { FormikValues } from 'formik';
 import { FormLabel, FormControlLabel, FormHelperText,FormHelperTextProps, FormControl,FormControlProps, RadioGroup, RadioGroupProps, Radio, RadioProps, FormControlLabelProps, FormLabelProps } from '@material-ui/core';
 import { get, map } from 'lodash';
-import { MenuOptionObject, getMenuOptions } from '../Utils';
+import { MenuOptionObject, getMenuOptions,getFieldError} from '../Utils';
 
 export type MenuOptionObj = MenuOptionObject & { controlProps?: FormControlLabelProps };
 export type MenuOptions = Array<string> | Array<MenuOptionObj>;
@@ -29,7 +29,7 @@ export const MUIRadio: FC<IProps> = props => {
     const { header, options = [], headerProps, helperText, radioProps, radioGroupProps,formControlProps,formHelperTextProps } = fieldProps;
     const fieldValue = get(formikProps, `values.${fieldProps.name}`) || '';
     const menuOptions = getMenuOptions(options);
-    const fieldError = get(formikProps, `errors.${fieldProps.name}`);
+    const fieldError = getFieldError((fieldProps.name||''),formikProps);
 
     return (
         <FormControl error={!!fieldError} {...formControlProps}>
@@ -37,7 +37,7 @@ export const MUIRadio: FC<IProps> = props => {
                 (header) &&
                 (<FormLabel {...headerProps}>{header}</FormLabel>)
             }
-            <RadioGroup name={fieldProps.name} value={fieldValue} onChange={formikProps.handleChange} {...radioGroupProps}>
+            <RadioGroup name={fieldProps.name} value={fieldValue} onChange={formikProps.handleChange} onBlur={formikProps.handleBlur} {...radioGroupProps}>
                 {
                     map(menuOptions, (option: MenuOptionObj, index: number) => {
                         const { value, name, ...rest } = option;

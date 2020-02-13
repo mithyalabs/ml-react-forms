@@ -3,7 +3,7 @@ import { Select, FormControl, FormControlProps, FormHelperText, FormHelperTextPr
 import { IFieldProps, FormConfig } from '../index';
 import { FormikValues } from 'formik';
 import { get, map, isString } from 'lodash';
-import { MenuOptions, MenuOptionObject, getMenuOptions } from '../Utils';
+import { MenuOptions, MenuOptionObject, getMenuOptions,getFieldError } from '../Utils';
 
 export interface IMUISelectProps extends SelectProps {
     label?: string
@@ -22,7 +22,7 @@ export const MUISelectField: FC<IProps> = (props) => {
     const { fieldConfig = {} as FormConfig, formikProps = {} as FormikValues, fieldProps = {} as IMUISelectProps } = props;
     const { label, options = [], emptyItem, helperText,formControlProps,formHelperTextProps, ...selectProps } = fieldProps;
     const labelId = `${fieldConfig.id}_label`;
-    const fieldError = get(formikProps, `errors.${fieldProps.name}`);
+    const fieldError = getFieldError((fieldProps.name||''),formikProps);
     const emptyItemText = (isString(emptyItem) ? emptyItem : 'None');
     const menuOptions = getMenuOptions(options);
     const value = get(formikProps, `values.${fieldProps.name}`) || ((selectProps.multiple) ? [] : '');
@@ -38,6 +38,7 @@ export const MUISelectField: FC<IProps> = (props) => {
                 id={fieldConfig.id}
                 value={value}
                 onChange={formikProps.handleChange}
+                onBlur={formikProps.handleBlur}
                 {...selectProps}
             >
                 {

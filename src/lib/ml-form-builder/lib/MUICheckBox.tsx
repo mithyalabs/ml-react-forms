@@ -3,6 +3,7 @@ import { IFieldProps, FormConfig } from '../index';
 import { Checkbox, FormControl, FormControlProps,FormHelperText,FormHelperTextProps, FormControlLabel, FormControlLabelProps, CheckboxProps, FormLabel, FormLabelProps, FormGroup, FormGroupProps } from '@material-ui/core';
 import { FormikValues } from 'formik';
 import { get, isEmpty, map, indexOf } from 'lodash';
+import {getFieldError} from '../Utils';
 
 export interface IMUICheckboxProps extends CheckboxProps {
     label?: string,
@@ -22,7 +23,7 @@ export interface IProps extends IFieldProps {
 export const MUICheckBox: FC<IProps> = (props) => {
     const { fieldConfig = {} as FormConfig, formikProps = {} as FormikValues, fieldProps = {} as IMUICheckboxProps } = props;
     const { label, helperText, selectOptions, header, headerProps, groupProps,formControlProps,formHelperTextProps,formControlLabelProps, ...checkboxProps } = fieldProps;
-    const fieldError = get(formikProps, `errors.${fieldProps.name}`);
+    const fieldError = getFieldError((fieldProps.name||''),formikProps);
     const value = get(formikProps, `values.${fieldProps.name}`);
 
     return (
@@ -40,14 +41,14 @@ export const MUICheckBox: FC<IProps> = (props) => {
                             map(selectOptions, (item, index) => (
                                 <FormControlLabel
                                     key={`${fieldConfig.id}_check_${index}`}
-                                    control={<Checkbox checked={(indexOf(value, item) > -1)} onChange={formikProps.handleChange} value={item}  {...{ ...checkboxProps, id: `${fieldConfig.id}_check_${index}` }} />}
+                                    control={<Checkbox checked={(indexOf(value, item) > -1)} onBlur={formikProps.handleBlur} onChange={formikProps.handleChange} value={item}  {...{ ...checkboxProps, id: `${fieldConfig.id}_check_${index}` }} />}
                                     label={item || ''}
                                     {...formControlLabelProps}
                                 />
                             ))
                         ) : (
                             <FormControlLabel
-                                control={<Checkbox checked={(value || false)} onChange={formikProps.handleChange}  {...checkboxProps} />}
+                                control={<Checkbox checked={(value || false)} onBlur={formikProps.handleBlur} onChange={formikProps.handleChange}  {...checkboxProps} />}
                                 label={label || ''}
                                 {...formControlLabelProps}
                             />

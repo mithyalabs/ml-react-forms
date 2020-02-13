@@ -27,6 +27,7 @@ export const MUISwitch: FC<IProps> = (props) => {
                 <Switch
                     checked={!!value}
                     onChange={handleOnChange}
+                    onBlur={formikProps.handleBlur}
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                     value={value}
                     {...switchProps}

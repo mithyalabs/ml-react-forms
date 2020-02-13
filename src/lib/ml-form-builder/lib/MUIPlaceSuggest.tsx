@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import PlacesAutocomplete, { Suggestion, getLatLng, geocodeByAddress, PropTypes } from 'react-places-autocomplete';
 import { FormikValues } from 'formik';
 import { IFieldProps } from '../index';
-import { get } from 'lodash';
+import {getFieldError} from '../Utils';
 
 import { TextField, List, ListItem, ListItemText, InputAdornment, IconButton, TextFieldProps, ListProps, ListItemProps, Paper } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
@@ -81,6 +81,7 @@ interface IPlaceListProps {
 
 const SearchField: FC<ISearchFieldProps> = props => {
     const { address, fieldProps, placeAutocompleteProps = {} as PlacesAutocompleteChildrenProps, value, resetField, formikProps = {} as FormikValues } = props;
+    
     const inputProps = (value && value.lat && value.lng) ? ({
         endAdornment: (
             <InputAdornment position="end">
@@ -96,17 +97,19 @@ const SearchField: FC<ISearchFieldProps> = props => {
     }) : {};
     const { textFieldProps = {} as TextFieldProps } = fieldProps;
     const fieldInputProps = { ...textFieldProps.InputProps, ...inputProps };
-    const fieldError = get(formikProps, `errors.${fieldProps.name}`);
+    const fieldError = getFieldError((fieldProps.name||''),formikProps);
     const updatedProps = {
         ...{ ...textFieldProps, InputProps: fieldInputProps },
         error: !!fieldError,
-        helperText: (fieldError || '')
+        helperText: (fieldError || ''),
+        name:fieldProps.name
     };
     return (
         <div>
-            <TextField value={address || ''}   {...placeAutocompleteProps.getInputProps({
+            <TextField value={address || ''}    {...placeAutocompleteProps.getInputProps({
                 label: textFieldProps.label || 'Search Places',
-                className: 'location-search-input'
+                className: 'location-search-input',
+                onBlur:formikProps.handleBlur
             })} {...updatedProps} />
         </div>
     )

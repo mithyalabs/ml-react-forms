@@ -1,4 +1,5 @@
 import React from 'react';
+import { FormikValues } from 'formik';
 export declare type MenuOptionObject = {
     name: string | React.ReactNode;
     value: string;
@@ -19,3 +20,4 @@ export declare const getMenuOptions: (options: MenuOptions) => (number | MenuOpt
     (callbackfn: (previousValue: MenuOptionObject, currentValue: MenuOptionObject, currentIndex: number, array: MenuOptionObject[]) => MenuOptionObject, initialValue: MenuOptionObject): MenuOptionObject;
     <U_1>(callbackfn: (previousValue: U_1, currentValue: MenuOptionObject, currentIndex: number, array: MenuOptionObject[]) => U_1, initialValue: U_1): U_1;
 } | ((value: string, start?: number | undefined, end?: number | undefined) => string[]) | ((value: MenuOptionObject, start?: number | undefined, end?: number | undefined) => MenuOptionObject[]) | ((searchElement: string, fromIndex?: number | undefined) => boolean) | ((searchElement: MenuOptionObject, fromIndex?: number | undefined) => boolean))[];
+export declare const getFieldError: (fieldName: string, formikProps: FormikValues) => any;

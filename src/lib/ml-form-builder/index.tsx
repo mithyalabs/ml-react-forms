@@ -81,7 +81,7 @@ attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Selec
 attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', <MUIPlaceSuggest />);
 attachField('switch', <MUISwitch />);
-attachField('radio', <MUIRadio />);
+attachField('radio', <MUIRadio />); 
 
 
 
@@ -184,7 +184,8 @@ export const MLFormBuilder: FC<BuilderProps> = props => {
     useEffect(() => {
         if (isInProgress === false)
             formikProps.setSubmitting(false);
-    }, [isInProgress])
+    }, [isInProgress]);
+    console.log('Current formik props', formikProps);
     return (
         <form onSubmit={formikProps.handleSubmit}>
             <MLFormContent {...props} />
