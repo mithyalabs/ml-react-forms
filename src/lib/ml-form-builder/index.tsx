@@ -185,7 +185,7 @@ export const MLFormBuilder: FC<BuilderProps> = props => {
         if (isInProgress === false)
             formikProps.setSubmitting(false);
     }, [isInProgress]);
-    console.log('Current formik props', formikProps);
+    
     return (
         <form onSubmit={formikProps.handleSubmit}>
             <MLFormContent {...props} />

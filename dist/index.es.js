@@ -298,12 +298,12 @@ var MUIDatePicker = function (props) {
     var outputFormat = fieldProps.outputFormat, datePickerProps = __rest(fieldProps, ["outputFormat"]);
     var updatedProps = __assign(__assign({}, datePickerProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (date) {
             if (!date) {
-                formikProps.setFieldValue(fieldProps.name, '', false);
+                formikProps.setFieldValue(fieldProps.name, date, false);
                 return;
             }
             var dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
             formikProps.setFieldValue(fieldProps.name, dateValue, false);
-        }, inputValue: get(formikProps, "values." + fieldProps.name) || null, onError: function (error) {
+        }, inputValue: get(formikProps, "values." + fieldProps.name), onError: function (error) {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
@@ -335,8 +335,8 @@ attachField('text', React.createElement(MUITextField, null), { type: 'text' });
 attachField('password', React.createElement(MUITextField, null), { type: 'password' });
 attachField('select', React.createElement(MUISelectField, null));
 attachField('checkbox', React.createElement(MUICheckBox, null));
-attachField('date-picker', React.createElement(MUIDatePicker, null), { variant: 'inline', label: 'Select Date' });
-attachField('time-picker', React.createElement(MUITimePicker, null), { variant: 'inline', label: 'Select Time' });
+// attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
+// attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', React.createElement(MUIPlaceSuggest, null));
 attachField('switch', React.createElement(MUISwitch, null));
 attachField('radio', React.createElement(MUIRadio, null));
