@@ -28,7 +28,7 @@ export const MUIDatePicker: React.FC<IFieldProps & { fieldProps?: IMUIDatePicker
         error: !!fieldError,
         helperText: (fieldError || ''),
         onChange: handleDateChange,
-        value: value,
+        value: value ? value : null,
         format: fieldProps.format || 'MM/DD/YYYY',
         onError: (error: React.ReactNode) => {
             // handle as a side effect

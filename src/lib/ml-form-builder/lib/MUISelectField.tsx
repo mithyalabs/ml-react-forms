@@ -30,11 +30,6 @@ export const MUISelectField: React.FC<IProps> = (props) => {
     /*Had to explicitly give style to form control as well as select since it would expand beyond its parent width. */
     return (
         <FormControl error={!!fieldError} {...formControlProps}
-            style={{
-                overflow: 'hidden',
-                width: '100%',
-                textOverflow: 'ellipsis',
-            }}
         >
             {
                 label &&

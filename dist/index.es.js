@@ -154,11 +154,7 @@ var MUISelectField = function (props) {
     var menuOptions = getMenuOptions(options);
     var value = get(formikProps, "values." + fieldProps.name) || ((selectProps.multiple) ? [] : '');
     /*Had to explicitly give style to form control as well as select since it would expand beyond its parent width. */
-    return (createElement(FormControl, __assign({ error: !!fieldError }, formControlProps, { style: {
-            overflow: 'hidden',
-            width: '100%',
-            textOverflow: 'ellipsis',
-        } }),
+    return (createElement(FormControl, __assign({ error: !!fieldError }, formControlProps),
         label &&
             (createElement(InputLabel, { id: labelId }, label)),
         createElement(Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange, onBlur: formikProps.handleBlur }, selectProps),
@@ -313,7 +309,7 @@ var MUIDatePicker = function (props) {
         var dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
         formikProps.setFieldValue(fieldProps.name, dateValue, false);
     };
-    var updatedProps = __assign(__assign({}, datePickerProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: handleDateChange, value: value, format: fieldProps.format || 'MM/DD/YYYY', onError: function (error) {
+    var updatedProps = __assign(__assign({}, datePickerProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: handleDateChange, value: value ? value : null, format: fieldProps.format || 'MM/DD/YYYY', onError: function (error) {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
