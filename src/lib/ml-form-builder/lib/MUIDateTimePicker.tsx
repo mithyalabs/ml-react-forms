@@ -20,7 +20,7 @@ export const MUIDatePicker: React.FC<IFieldProps & { fieldProps?: IMUIDatePicker
             formikProps.setFieldValue(fieldProps.name, date, false);
             return;
         }
-        const dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
+        const dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'MM/DD/YYYY');
         formikProps.setFieldValue(fieldProps.name, dateValue, false);
     };
     const updatedProps = {
@@ -28,7 +28,8 @@ export const MUIDatePicker: React.FC<IFieldProps & { fieldProps?: IMUIDatePicker
         error: !!fieldError,
         helperText: (fieldError || ''),
         onChange: handleDateChange,
-        value: value ? value : null,
+        value:(!value)?null:undefined,
+        inputValue:(!value)?'':value,
         format: fieldProps.format || 'MM/DD/YYYY',
         onError: (error: React.ReactNode) => {
             // handle as a side effect
