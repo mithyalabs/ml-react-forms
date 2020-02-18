@@ -1,9 +1,9 @@
-import React from 'react';
-import { map, isString,get } from 'lodash';
-import {FormikValues} from 'formik';
+import * as React from 'react';
+import { map, isString, get } from 'lodash';
+import { FormikValues } from 'formik';
 
 
-export type MenuOptionObject = { name: string|React.ReactNode, value: string };
+export type MenuOptionObject = { name: string | React.ReactNode, value: string };
 export type MenuOptions = Array<string> | Array<MenuOptionObject>;
 
 export const getMenuOptions = (options: MenuOptions) => {
@@ -14,10 +14,10 @@ export const getMenuOptions = (options: MenuOptions) => {
     });
 }
 
-export const getFieldError = (fieldName:string,formikProps:FormikValues) => {
+export const getFieldError = (fieldName: string, formikProps: FormikValues) => {
     const fieldError = get(formikProps, `errors.${fieldName}`);
-    const isTouched = get(formikProps,`touched.${fieldName}`);
-    if(!isTouched)
+    const isTouched = get(formikProps, `touched.${fieldName}`);
+    if (!isTouched)
         return '';
     return fieldError;
 }

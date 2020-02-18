@@ -1,9 +1,9 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { IFieldProps } from '../index';
 import { FormikValues } from 'formik';
-import { FormLabel, FormControlLabel, FormHelperText,FormHelperTextProps, FormControl,FormControlProps, RadioGroup, RadioGroupProps, Radio, RadioProps, FormControlLabelProps, FormLabelProps } from '@material-ui/core';
+import { FormLabel, FormControlLabel, FormHelperText, FormHelperTextProps, FormControl, FormControlProps, RadioGroup, RadioGroupProps, Radio, RadioProps, FormControlLabelProps, FormLabelProps } from '@material-ui/core';
 import { get, map } from 'lodash';
-import { MenuOptionObject, getMenuOptions,getFieldError} from '../Utils';
+import { MenuOptionObject, getMenuOptions, getFieldError } from '../Utils';
 
 export type MenuOptionObj = MenuOptionObject & { controlProps?: FormControlLabelProps };
 export type MenuOptions = Array<string> | Array<MenuOptionObj>;
@@ -16,20 +16,20 @@ export interface IMUIRadioProps {
     helperText?: string,
     radioProps?: RadioProps,
     radioGroupProps?: RadioGroupProps
-    formControlProps?:FormControlProps
-    formHelperTextProps?:FormHelperTextProps
+    formControlProps?: FormControlProps
+    formHelperTextProps?: FormHelperTextProps
 }
 
 interface IProps extends IFieldProps {
     fieldProps?: IMUIRadioProps
 }
 
-export const MUIRadio: FC<IProps> = props => {
+export const MUIRadio: React.FC<IProps> = props => {
     const { fieldProps = {} as IMUIRadioProps, formikProps = {} as FormikValues } = props;
-    const { header, options = [], headerProps, helperText, radioProps, radioGroupProps,formControlProps,formHelperTextProps } = fieldProps;
+    const { header, options = [], headerProps, helperText, radioProps, radioGroupProps, formControlProps, formHelperTextProps } = fieldProps;
     const fieldValue = get(formikProps, `values.${fieldProps.name}`) || '';
     const menuOptions = getMenuOptions(options);
-    const fieldError = getFieldError((fieldProps.name||''),formikProps);
+    const fieldError = getFieldError((fieldProps.name || ''), formikProps);
 
     return (
         <FormControl error={!!fieldError} {...formControlProps}>
@@ -44,7 +44,7 @@ export const MUIRadio: FC<IProps> = props => {
                         return (
                             <FormControlLabel
                                 key={`${fieldProps.id}_option_item_${index}`}
-                                value={value+''}
+                                value={value + ''}
                                 label={name}
                                 control={<Radio {...radioProps} />}
                                 {...rest}

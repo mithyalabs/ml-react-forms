@@ -1,12 +1,12 @@
-import React, { FC, useState } from 'react';
+import * as React from 'react';
 import PlacesAutocomplete, { Suggestion, getLatLng, geocodeByAddress, PropTypes } from 'react-places-autocomplete';
 import { FormikValues } from 'formik';
 import { IFieldProps } from '../index';
-import {getFieldError} from '../Utils';
+import { getFieldError } from '../Utils';
 
 import { TextField, List, ListItem, ListItemText, InputAdornment, IconButton, TextFieldProps, ListProps, ListItemProps, Paper } from '@material-ui/core';
 import { Close } from '@material-ui/icons';
-
+const { useState } = React;
 type IListItemProps = Omit<ListItemProps, 'button'>;
 export interface PlacesAutocompleteChildrenProps {
     loading: boolean;
@@ -79,9 +79,9 @@ interface IPlaceListProps {
 }
 
 
-const SearchField: FC<ISearchFieldProps> = props => {
+const SearchField: React.FC<ISearchFieldProps> = props => {
     const { address, fieldProps, placeAutocompleteProps = {} as PlacesAutocompleteChildrenProps, value, resetField, formikProps = {} as FormikValues } = props;
-    
+
     const inputProps = (value && value.lat && value.lng) ? ({
         endAdornment: (
             <InputAdornment position="end">
@@ -97,19 +97,19 @@ const SearchField: FC<ISearchFieldProps> = props => {
     }) : {};
     const { textFieldProps = {} as TextFieldProps } = fieldProps;
     const fieldInputProps = { ...textFieldProps.InputProps, ...inputProps };
-    const fieldError = getFieldError((fieldProps.name||''),formikProps);
+    const fieldError = getFieldError((fieldProps.name || ''), formikProps);
     const updatedProps = {
         ...{ ...textFieldProps, InputProps: fieldInputProps },
         error: !!fieldError,
         helperText: (fieldError || ''),
-        name:fieldProps.name
+        name: fieldProps.name
     };
     return (
         <div>
             <TextField value={address || ''}    {...placeAutocompleteProps.getInputProps({
                 label: textFieldProps.label || 'Search Places',
                 className: 'location-search-input',
-                onBlur:formikProps.handleBlur
+                onBlur: formikProps.handleBlur
             })} {...updatedProps} />
         </div>
     )
@@ -117,7 +117,7 @@ const SearchField: FC<ISearchFieldProps> = props => {
 
 const LIST_CONTAINER_STYLES: object = { position: 'absolute', left: 0, top: '100%', right: 0, zIndex: 500 };
 
-const PlaceList: FC<IPlaceListProps> = props => {
+const PlaceList: React.FC<IPlaceListProps> = props => {
     const { placeAutocompleteProps = {} as PlacesAutocompleteChildrenProps, listProps, listItemProps, listContainerStyle } = props;
     const { suggestions, getSuggestionItemProps } = placeAutocompleteProps;
     return (
@@ -146,7 +146,7 @@ const PlaceList: FC<IPlaceListProps> = props => {
     )
 }
 
-const FieldLayout: FC<IFieldLayoutProps> = props => {
+const FieldLayout: React.FC<IFieldLayoutProps> = props => {
     const { currentAddress, selectedValue, placeAutocompleteProps, name, id, textFieldProps } = props;
     return (
         <div>
@@ -165,7 +165,7 @@ const FieldLayout: FC<IFieldLayoutProps> = props => {
     )
 }
 
-export const MUIPlaceSuggest: FC<IProps> = (props) => {
+export const MUIPlaceSuggest: React.FC<IProps> = (props) => {
     const { fieldProps = {} as PlaceSuggestProps, formikProps = {} as FormikValues } = props;
     const [address, setAddress] = useState('');
     const { placeAutocompleteProps, locationNameKey, outputResult, ...fieldLayoutProps } = fieldProps;

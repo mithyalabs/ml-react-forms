@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { Suggestion, PropTypes } from 'react-places-autocomplete';
 import { IFieldProps } from '../index';
 import { TextFieldProps, ListProps, ListItemProps } from '@material-ui/core';
@@ -50,5 +50,5 @@ export interface PlaceSuggestProps {
 export interface IProps extends IFieldProps {
     fieldProps?: PlaceSuggestProps;
 }
-export declare const MUIPlaceSuggest: FC<IProps>;
+export declare const MUIPlaceSuggest: React.FC<IProps>;
 export {};

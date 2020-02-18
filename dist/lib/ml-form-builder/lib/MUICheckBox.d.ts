@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import * as React from 'react';
 import { IFieldProps } from '../index';
 import { FormControlProps, FormHelperTextProps, FormControlLabelProps, CheckboxProps, FormLabelProps, FormGroupProps } from '@material-ui/core';
 export interface IMUICheckboxProps extends CheckboxProps {
@@ -15,4 +15,4 @@ export interface IMUICheckboxProps extends CheckboxProps {
 export interface IProps extends IFieldProps {
     fieldProps?: IMUICheckboxProps;
 }
-export declare const MUICheckBox: FC<IProps>;
+export declare const MUICheckBox: React.FC<IProps>;

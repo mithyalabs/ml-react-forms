@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { IFieldProps } from '../index';
 import { FormikValues } from 'formik';
 import { Switch, SwitchProps, FormControlLabel } from '@material-ui/core';
@@ -13,7 +13,7 @@ export interface IProps extends IFieldProps {
     fieldProps?: IMUISwitchProps
 }
 
-export const MUISwitch: FC<IProps> = (props) => {
+export const MUISwitch: React.FC<IProps> = (props) => {
     const { formikProps = {} as FormikValues, fieldProps = {} as IMUISwitchProps } = props;
     const { label, ...switchProps } = fieldProps;
     const value = get(formikProps, `values.${fieldProps.name}`);

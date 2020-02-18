@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import * as React from 'react';
 import { RowSchema, IFormActionProps, BuilderSettingsProps } from './ml-form-builder';
 import { FormikValues } from 'formik';
 export * from './ml-form-builder';
@@ -36,5 +36,5 @@ export interface IReactFormProps extends FormikValues {
     formSettings?: BuilderSettingsProps;
     isInProgress?: boolean;
 }
-export declare const ReactForm: FC<IReactFormProps>;
+export declare const ReactForm: React.FC<IReactFormProps>;
 export default ReactForm;

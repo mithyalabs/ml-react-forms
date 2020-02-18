@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import * as React from 'react';
 import { IFieldProps } from '../index';
 import { FormHelperTextProps, FormControlProps, RadioGroupProps, RadioProps, FormControlLabelProps, FormLabelProps } from '@material-ui/core';
 import { MenuOptionObject } from '../Utils';
@@ -21,5 +21,5 @@ export interface IMUIRadioProps {
 interface IProps extends IFieldProps {
     fieldProps?: IMUIRadioProps;
 }
-export declare const MUIRadio: FC<IProps>;
+export declare const MUIRadio: React.FC<IProps>;
 export {};

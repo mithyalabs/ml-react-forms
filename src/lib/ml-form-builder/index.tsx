@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import * as React from 'react';
 import { map, isArray, uniqueId, get } from 'lodash';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import CircularProgress, { CircularProgressProps } from '@material-ui/core/CircularProgress';
@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { FormikValues } from 'formik';
 import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest } from './lib';
 import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
+const { useEffect, useState } = React;
 
 export interface FormConfig {
     type: string
@@ -81,11 +82,11 @@ attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Selec
 attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', <MUIPlaceSuggest />);
 attachField('switch', <MUISwitch />);
-attachField('radio', <MUIRadio />); 
+attachField('radio', <MUIRadio />);
 
 
 
-export const BuildFormRow: FC<FormRowProps> = props => {
+export const BuildFormRow: React.FC<FormRowProps> = props => {
     const { schema, rowId, formikProps, settings = { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } } = props;
     let columnItems = get(schema, 'columns') as Array<FormConfig>;
     let rowSettings = { ...settings, ...get(schema, 'settings') } as RowSettingsProps;
@@ -104,6 +105,7 @@ export const BuildFormRow: FC<FormRowProps> = props => {
 
                     const fieldProps = { id: item.id, name: (item.name || item.valueKey), ...componentConfig.props, ...item.fieldProps };
                     const Component = componentConfig.component;
+
                     return (
                         <div key={`${rowId}_field_${index}`} className={clsx(item.classNames, classes.column)} style={
                             {
@@ -112,6 +114,7 @@ export const BuildFormRow: FC<FormRowProps> = props => {
                                 paddingLeft: rowSettings.columnHorizontalPadding,
                                 paddingRight: rowSettings.columnHorizontalPadding,
                                 ...item.styles
+
                             }
                         }>
                             {
@@ -136,7 +139,7 @@ const getUpdateSchema = (schema: Array<RowSchema>, formId: string) => {
     });
 }
 
-export const MLFormContent: FC<BuilderProps> = props => {
+export const MLFormContent: React.FC<BuilderProps> = props => {
     const { schema, formId, formikProps, settings } = props;
     const [formSchema, setFormSchema] = useState<Array<RowSchema>>(schema);
     useEffect(() => {
@@ -154,7 +157,7 @@ export const MLFormContent: FC<BuilderProps> = props => {
     )
 }
 
-export const MLFormAction: FC<IFormActionProps & Pick<BuilderProps, 'formId' | 'formikProps'>> = (props) => {
+export const MLFormAction: React.FC<IFormActionProps & Pick<BuilderProps, 'formId' | 'formikProps'>> = (props) => {
     const { formId, formikProps = {} as FormikValues, containerClassNames, submitButtonLayout = 'center', submitButtonText = "Submit", submitButtonProps, loaderProps } = props;
     const classes = useFormStyles();
     if (props.actionContent)
@@ -179,13 +182,13 @@ export const MLFormAction: FC<IFormActionProps & Pick<BuilderProps, 'formId' | '
     )
 }
 
-export const MLFormBuilder: FC<BuilderProps> = props => {
+export const MLFormBuilder: React.FC<BuilderProps> = props => {
     const { formikProps = {} as FormikValues, isInProgress = false, actionConfig = {} as IFormActionProps } = props;
     useEffect(() => {
         if (isInProgress === false)
             formikProps.setSubmitting(false);
     }, [isInProgress]);
-    
+
     return (
         <form onSubmit={formikProps.handleSubmit}>
             <MLFormContent {...props} />

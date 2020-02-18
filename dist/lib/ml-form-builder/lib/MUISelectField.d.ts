@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import * as React from 'react';
 import { FormControlProps, FormHelperTextProps, SelectProps } from '@material-ui/core';
 import { IFieldProps } from '../index';
 import { MenuOptions } from '../Utils';
@@ -13,4 +13,4 @@ export interface IMUISelectProps extends SelectProps {
 export interface IProps extends IFieldProps {
     fieldProps?: IMUISelectProps;
 }
-export declare const MUISelectField: FC<IProps>;
+export declare const MUISelectField: React.FC<IProps>;

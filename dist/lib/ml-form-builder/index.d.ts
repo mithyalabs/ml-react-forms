@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import * as React from 'react';
 import { ButtonProps } from '@material-ui/core/Button';
 import { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import { FormikValues } from 'formik';
@@ -52,8 +52,8 @@ export interface IFieldProps {
     fieldConfig?: FormConfig;
 }
 export declare const attachField: (type: string | string[], component: JSX.Element, props?: object | undefined) => void;
-export declare const BuildFormRow: FC<FormRowProps>;
-export declare const MLFormContent: FC<BuilderProps>;
-export declare const MLFormAction: FC<IFormActionProps & Pick<BuilderProps, 'formId' | 'formikProps'>>;
-export declare const MLFormBuilder: FC<BuilderProps>;
+export declare const BuildFormRow: React.FC<FormRowProps>;
+export declare const MLFormContent: React.FC<BuilderProps>;
+export declare const MLFormAction: React.FC<IFormActionProps & Pick<BuilderProps, 'formId' | 'formikProps'>>;
+export declare const MLFormBuilder: React.FC<BuilderProps>;
 export default MLFormBuilder;

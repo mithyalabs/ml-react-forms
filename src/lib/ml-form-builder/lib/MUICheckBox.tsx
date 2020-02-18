@@ -1,9 +1,9 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 import { IFieldProps, FormConfig } from '../index';
-import { Checkbox, FormControl, FormControlProps,FormHelperText,FormHelperTextProps, FormControlLabel, FormControlLabelProps, CheckboxProps, FormLabel, FormLabelProps, FormGroup, FormGroupProps } from '@material-ui/core';
+import { Checkbox, FormControl, FormControlProps, FormHelperText, FormHelperTextProps, FormControlLabel, FormControlLabelProps, CheckboxProps, FormLabel, FormLabelProps, FormGroup, FormGroupProps } from '@material-ui/core';
 import { FormikValues } from 'formik';
 import { get, isEmpty, map, indexOf } from 'lodash';
-import {getFieldError} from '../Utils';
+import { getFieldError } from '../Utils';
 
 export interface IMUICheckboxProps extends CheckboxProps {
     label?: string,
@@ -12,18 +12,18 @@ export interface IMUICheckboxProps extends CheckboxProps {
     header?: string
     headerProps?: FormLabelProps
     groupProps?: FormGroupProps
-    formControlLabelProps?:FormControlLabelProps
-    formControlProps?:FormControlProps
-    formHelperTextProps?:FormHelperTextProps
+    formControlLabelProps?: FormControlLabelProps
+    formControlProps?: FormControlProps
+    formHelperTextProps?: FormHelperTextProps
 
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUICheckboxProps
 }
-export const MUICheckBox: FC<IProps> = (props) => {
+export const MUICheckBox: React.FC<IProps> = (props) => {
     const { fieldConfig = {} as FormConfig, formikProps = {} as FormikValues, fieldProps = {} as IMUICheckboxProps } = props;
-    const { label, helperText, selectOptions, header, headerProps, groupProps,formControlProps,formHelperTextProps,formControlLabelProps, ...checkboxProps } = fieldProps;
-    const fieldError = getFieldError((fieldProps.name||''),formikProps);
+    const { label, helperText, selectOptions, header, headerProps, groupProps, formControlProps, formHelperTextProps, formControlLabelProps, ...checkboxProps } = fieldProps;
+    const fieldError = getFieldError((fieldProps.name || ''), formikProps);
     const value = get(formikProps, `values.${fieldProps.name}`);
 
     return (

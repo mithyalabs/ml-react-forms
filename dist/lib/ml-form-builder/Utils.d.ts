@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { FormikValues } from 'formik';
 export declare type MenuOptionObject = {
     name: string | React.ReactNode;

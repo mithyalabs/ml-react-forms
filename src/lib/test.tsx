@@ -1,6 +1,6 @@
-import React, { FC } from 'react';
+import * as React from 'react';
 
-export const Test: FC = () => {
+export const Test: React.FC = () => {
     return (
         <div>Npm package boilerplate</div>
     )
