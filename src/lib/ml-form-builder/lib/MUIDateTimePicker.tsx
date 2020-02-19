@@ -20,6 +20,7 @@ export const MUIDatePicker: React.FC<IFieldProps & { fieldProps?: IMUIDatePicker
             formikProps.setFieldValue(fieldProps.name, date, false);
             return;
         }
+
         const dateValue = (outputFormat === 'date') ? date : date.format(outputFormat || fieldProps.format || 'YYYY-MM-DD');
         formikProps.setFieldValue(fieldProps.name, dateValue, false);
     };

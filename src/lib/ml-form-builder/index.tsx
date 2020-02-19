@@ -5,7 +5,7 @@ import CircularProgress, { CircularProgressProps } from '@material-ui/core/Circu
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormikValues } from 'formik';
-import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest } from './lib';
+import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest, MUIAutocomplete } from './lib';
 import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
 const { useEffect, useState } = React;
 
@@ -83,7 +83,7 @@ attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Selec
 attachField('location-suggest', <MUIPlaceSuggest />);
 attachField('switch', <MUISwitch />);
 attachField('radio', <MUIRadio />);
-
+attachField('autocomplete', < MUIAutocomplete />);
 
 
 export const BuildFormRow: React.FC<FormRowProps> = props => {
