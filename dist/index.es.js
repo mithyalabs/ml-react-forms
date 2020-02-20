@@ -1,5 +1,5 @@
 import { createElement, useEffect as useEffect$1, useState as useState$2, cloneElement, Fragment } from 'react';
-import { map, isString, get, isEmpty, indexOf, isArray, uniqueId } from 'lodash';
+import { map, isString, get, isEmpty, indexOf, isArray, uniqueId, forEach } from 'lodash';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
@@ -329,6 +329,7 @@ var MUITimePicker = function (props) {
     return (createElement(TimePicker, __assign({}, updatedProps)));
 };
 
+// import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
 var useEffect = useEffect$1, useState$1 = useState$2;
 var ComponentMapConfig = {};
 var attachField = function (type, component, props) {
@@ -342,13 +343,60 @@ attachField('text', createElement(MUITextField, null), { type: 'text' });
 attachField('password', createElement(MUITextField, null), { type: 'password' });
 attachField('select', createElement(MUISelectField, null));
 attachField('checkbox', createElement(MUICheckBox, null));
-attachField('date-picker', createElement(MUIDatePicker, null), { variant: 'inline', label: 'Select Date' });
-attachField('time-picker', createElement(MUITimePicker, null), { variant: 'inline', label: 'Select Time' });
+// attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
+// attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', createElement(MUIPlaceSuggest, null));
 attachField('switch', createElement(MUISwitch, null));
 attachField('radio', createElement(MUIRadio, null));
+var compare = function (value1, operator, value2) {
+    switch (operator) {
+        case '>': return value1 > value2;
+        case '<': return value1 < value2;
+        case '>=': return value1 >= value2;
+        case '<=': return value1 <= value2;
+        case '==': return value1 == value2;
+        case '!=': return value1 != value2;
+        case '===': return value1 === value2;
+        case '!==': return value1 !== value2;
+        default: return false;
+    }
+};
+var getConditionalOutput = function (itemCondition, formikProps) {
+    var itemValue = get(formikProps, "values." + itemCondition.key);
+    return compare(itemValue, itemCondition.operator, itemCondition.compareValue);
+};
+var hasTruthyValue = function (logicalOperation, values, formikProps) {
+    if (logicalOperation === void 0) { logicalOperation = 'AND'; }
+    var outputResult = false;
+    forEach(values, function (item, index) {
+        var result = getConditionalOutput(item, formikProps);
+        if (logicalOperation === 'AND' && !result) {
+            outputResult = false;
+            return false;
+        }
+        if (logicalOperation === 'OR' && result) {
+            outputResult = true;
+            return false;
+        }
+        if (index === values.length - 1) {
+            outputResult = (logicalOperation === 'AND') ? true : false;
+        }
+        return;
+    });
+    return outputResult;
+};
+var getConditionalProps = function (itemConfig, formikProps) {
+    var conditionInstructions = itemConfig.condition;
+    if (!conditionInstructions || isEmpty(conditionInstructions.values)) {
+        return {};
+    }
+    var isValidCondition = hasTruthyValue(conditionInstructions.logicOpn, conditionInstructions.values, formikProps);
+    console.log('Conditional props valid condition', isValidCondition);
+    // const logicalOperation = conditionInstructions.logicOpn || 'AND';
+    return {};
+};
 var BuildFormRow = function (props) {
-    var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps, _a = props.settings, settings = _a === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _a;
+    var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
     var columnItems = get(schema, 'columns');
     var rowSettings = __assign(__assign({}, settings), get(schema, 'settings'));
     var colItems = (isArray(schema) ? schema : ((isArray(columnItems) ? columnItems : [schema])));
@@ -359,6 +407,7 @@ var BuildFormRow = function (props) {
         var horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horiontalSpacing || 10);
         if (!componentConfig)
             return createElement("div", { key: rowId + "_field_" + index });
+        getConditionalProps(item, formikProps);
         var fieldProps = __assign(__assign({ id: item.id, name: (item.name || item.valueKey) }, componentConfig.props), item.fieldProps);
         var Component = componentConfig.component;
         return (createElement("div", { key: rowId + "_field_" + index, className: clsx(item.classNames, classes.column), style: __assign({ flex: (item.flex || 1), marginRight: horizontalSpacing, paddingLeft: rowSettings.columnHorizontalPadding, paddingRight: rowSettings.columnHorizontalPadding }, item.styles) }, cloneElement(Component, { fieldProps: fieldProps, formikProps: formikProps, fieldConfig: item })));

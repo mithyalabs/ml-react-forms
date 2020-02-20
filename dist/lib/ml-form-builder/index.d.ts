@@ -11,6 +11,7 @@ export interface FormConfig {
     fieldProps?: object;
     styles?: object;
     classNames?: Array<string>;
+    condition?: any;
 }
 interface RowSettingsProps {
     horiontalSpacing?: number;

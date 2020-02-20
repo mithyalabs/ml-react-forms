@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { map, isArray, uniqueId, get } from 'lodash';
+import { map, isArray, uniqueId, get, isEmpty,forEach } from 'lodash';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import CircularProgress, { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormikValues } from 'formik';
 import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest } from './lib';
-import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
+// import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
 const { useEffect, useState } = React;
 
 export interface FormConfig {
@@ -17,7 +17,8 @@ export interface FormConfig {
     flex?: number | string
     fieldProps?: object
     styles?: object
-    classNames?: Array<string>
+    classNames?: Array<string>,
+    condition?:any
 }
 
 interface RowSettingsProps {
@@ -78,16 +79,71 @@ attachField('text', <MUITextField />, { type: 'text' });
 attachField('password', <MUITextField />, { type: 'password' });
 attachField('select', <MUISelectField />);
 attachField('checkbox', <MUICheckBox />);
-attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
-attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
+// attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
+// attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', <MUIPlaceSuggest />);
 attachField('switch', <MUISwitch />);
 attachField('radio', <MUIRadio />);
 
+type compareValueType = string | number | boolean;
+const compare = (value1:compareValueType, operator:string, value2:compareValueType) => { 
+    switch (operator) { 
+        case '>': return value1 > value2; 
+        case '<': return value1 < value2; 
+        case '>=': return value1 >= value2; 
+        case '<=': return value1 <= value2; 
+        case '==': return value1 == value2; 
+        case '!=': return value1 != value2; 
+        case '===': return value1 === value2; 
+        case '!==': return value1 !== value2; 
+        default:return false;
+    }
+}
+interface ConditionCompareItem {
+    key:string
+    compareValue:string
+    operator:string
+}
+const getConditionalOutput = (itemCondition:ConditionCompareItem,formikProps:FormikValues) => {
+    const itemValue = get(formikProps,`values.${itemCondition.key}`);
+    return compare(itemValue,itemCondition.operator,itemCondition.compareValue);
+}
 
+
+const hasTruthyValue = (logicalOperation = 'AND',values:Array<ConditionCompareItem>,formikProps:FormikValues):boolean => {
+        let outputResult = false;
+
+       forEach(values, (item:ConditionCompareItem,index:number) => {
+        const result = getConditionalOutput(item,formikProps);
+        if(logicalOperation === 'AND' && !result){
+            outputResult = false;
+            return false;
+        }
+        if(logicalOperation === 'OR' && result){
+            outputResult = true;
+            return false;
+        }
+        if(index === values.length - 1){
+            outputResult = (logicalOperation === 'AND')?true:false;
+        }
+        return;
+       });
+       return outputResult;
+}
+const getConditionalProps = (itemConfig:FormConfig, formikProps:FormikValues) => {
+    const conditionInstructions = itemConfig.condition;
+    if(!conditionInstructions || isEmpty(conditionInstructions.values)){
+        return {};
+    }
+    const isValidCondition = hasTruthyValue(conditionInstructions.logicOpn,conditionInstructions.values,formikProps);
+    
+    console.log('Conditional props valid condition', isValidCondition);
+    // const logicalOperation = conditionInstructions.logicOpn || 'AND';
+    return {};
+}
 
 export const BuildFormRow: React.FC<FormRowProps> = props => {
-    const { schema, rowId, formikProps, settings = { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } } = props;
+    const { schema, rowId, formikProps ={}, settings = { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } } = props;
     let columnItems = get(schema, 'columns') as Array<FormConfig>;
     let rowSettings = { ...settings, ...get(schema, 'settings') } as RowSettingsProps;
     const colItems = (isArray(schema) ? schema : ((isArray(columnItems) ? columnItems : [schema])));
@@ -102,10 +158,10 @@ export const BuildFormRow: React.FC<FormRowProps> = props => {
                     if (!componentConfig)
                         return <div key={`${rowId}_field_${index}`} />;
 
-
+                    getConditionalProps(item,formikProps);
                     const fieldProps = { id: item.id, name: (item.name || item.valueKey), ...componentConfig.props, ...item.fieldProps };
                     const Component = componentConfig.component;
-
+                    
                     return (
                         <div key={`${rowId}_field_${index}`} className={clsx(item.classNames, classes.column)} style={
                             {
