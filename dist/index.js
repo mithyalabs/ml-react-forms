@@ -3680,7 +3680,14 @@ var attachField = function (type, component, props) {
     else
         ComponentMapConfig[type] = { component: component, props: props };
 };
-attachField('text', React.createElement(MUITextField, null), { type: 'text' });
+var setDefaultProps = function (type, props) {
+    if (lodash.isArray(type)) {
+        lodash.map(type, function (item) { return ComponentMapConfig[item].props = __assign(__assign({}, ComponentMapConfig[item].props), props); });
+    }
+    else
+        ComponentMapConfig[type].props = __assign(__assign({}, ComponentMapConfig[type].props), props);
+};
+attachField('text', React.createElement(MUITextField, null), { type: 'text', label: 'Textbox' });
 attachField('password', React.createElement(MUITextField, null), { type: 'password' });
 attachField('select', React.createElement(MUISelectField, null));
 attachField('checkbox', React.createElement(MUICheckBox, null));
@@ -3802,4 +3809,5 @@ exports.MUITimePicker = MUITimePicker;
 exports.ReactForm = ReactForm;
 exports.attachField = attachField;
 exports.default = index;
+exports.setDefaultProps = setDefaultProps;
 //# sourceMappingURL=index.js.map

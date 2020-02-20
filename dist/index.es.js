@@ -3672,7 +3672,14 @@ var attachField = function (type, component, props) {
     else
         ComponentMapConfig[type] = { component: component, props: props };
 };
-attachField('text', createElement(MUITextField, null), { type: 'text' });
+var setDefaultProps = function (type, props) {
+    if (isArray(type)) {
+        map(type, function (item) { return ComponentMapConfig[item].props = __assign(__assign({}, ComponentMapConfig[item].props), props); });
+    }
+    else
+        ComponentMapConfig[type].props = __assign(__assign({}, ComponentMapConfig[type].props), props);
+};
+attachField('text', createElement(MUITextField, null), { type: 'text', label: 'Textbox' });
 attachField('password', createElement(MUITextField, null), { type: 'password' });
 attachField('select', createElement(MUISelectField, null));
 attachField('checkbox', createElement(MUICheckBox, null));
@@ -3779,5 +3786,5 @@ var ReactForm = function (props) {
 var index = './lib/ReactForm';
 
 export default index;
-export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUIAutocomplete, MUICheckBox, MUIDatePicker, MUIPlaceSuggest, MUIRadio, MUISelectField, MUISwitch, MUITextField, MUITimePicker, ReactForm, attachField };
+export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUIAutocomplete, MUICheckBox, MUIDatePicker, MUIPlaceSuggest, MUIRadio, MUISelectField, MUISwitch, MUITextField, MUITimePicker, ReactForm, attachField, setDefaultProps };
 //# sourceMappingURL=index.es.js.map
