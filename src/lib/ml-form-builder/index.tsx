@@ -5,8 +5,8 @@ import CircularProgress, { CircularProgressProps } from '@material-ui/core/Circu
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormikValues } from 'formik';
-import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest } from './lib';
-// import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
+import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest, MUIAutocomplete } from './lib';
+import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
 const { useEffect, useState } = React;
 
 export interface FormConfig {
@@ -79,11 +79,13 @@ attachField('text', <MUITextField />, { type: 'text' });
 attachField('password', <MUITextField />, { type: 'password' });
 attachField('select', <MUISelectField />);
 attachField('checkbox', <MUICheckBox />);
-// attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
-// attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
+attachField('date-picker', <MUIDatePicker />, { variant: 'inline', label: 'Select Date' });
+attachField('time-picker', <MUITimePicker />, { variant: 'inline', label: 'Select Time' });
 attachField('location-suggest', <MUIPlaceSuggest />);
 attachField('switch', <MUISwitch />);
 attachField('radio', <MUIRadio />);
+attachField('autocomplete', < MUIAutocomplete />);
+
 
 type compareValueType = string | number | boolean;
 const compare = (value1:compareValueType, operator:string, value2:compareValueType) => { 
@@ -108,6 +110,7 @@ const getConditionalOutput = (itemCondition:ConditionCompareItem,formikProps:For
     const itemValue = get(formikProps,`values.${itemCondition.key}`);
     return compare(itemValue,itemCondition.operator,itemCondition.compareValue);
 }
+
 
 
 const hasTruthyValue = (logicalOperation = 'AND',values:Array<ConditionCompareItem>,formikProps:FormikValues):boolean => {
