@@ -24,6 +24,7 @@ var Chip = _interopDefault(require('@material-ui/core/Chip'));
 var SvgIcon = _interopDefault(require('@material-ui/core/SvgIcon'));
 var utils = require('@material-ui/core/utils');
 var axios = _interopDefault(require('axios'));
+var Highlighter = _interopDefault(require('react-highlight-words'));
 var formik = require('formik');
 
 /*! *****************************************************************************
@@ -3602,21 +3603,24 @@ var ajaxCallHandle;
 var MUIAutocomplete = function (props) {
     var _a = React.useState(), query = _a[0], setQuery = _a[1];
     var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
-    var _d = fieldProps.apiUrl, apiUrl = _d === void 0 ? '' : _d, _e = fieldProps.delay, delay = _e === void 0 ? 300 : _e, _f = fieldProps.params, params = _f === void 0 ? {} : _f, _g = fieldProps.renderInputProps, renderInputProps = _g === void 0 ? {} : _g, _h = fieldProps.inputProps, inputProps = _h === void 0 ? {} : _h, _j = fieldProps.getOptionLabel, getOptionLabel = _j === void 0 ? undefined : _j, _k = fieldProps.getRequestParam, getRequestParam = _k === void 0 ? undefined : _k;
-    var _l = React.useState([]), options = _l[0], setOptions = _l[1];
-    var _m = React.useState(false), open = _m[0], setOpen = _m[1];
-    var _o = React.useState(false), loading = _o[0], setLoading = _o[1];
+    var _d = fieldProps.highlighterProps, highlighterProps = _d === void 0 ? {
+        highlightText: false,
+        highlightColor: '#ffff00'
+    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.apiUrl, apiUrl = _f === void 0 ? '' : _f, _g = fieldProps.delay, delay = _g === void 0 ? 300 : _g, _h = fieldProps.params, params = _h === void 0 ? {} : _h, _j = fieldProps.renderInputProps, renderInputProps = _j === void 0 ? {} : _j, _k = fieldProps.inputProps, inputProps = _k === void 0 ? {} : _k, _l = fieldProps.getOptionLabel, getOptionLabel = _l === void 0 ? undefined : _l, _m = fieldProps.getRequestParam, getRequestParam = _m === void 0 ? undefined : _m, _o = fieldProps.renderOption, renderOption = _o === void 0 ? undefined : _o;
+    var _p = React.useState([]), defaultOptions = _p[0], setDefaultOptions = _p[1];
+    var _q = React.useState(false), open = _q[0], setOpen = _q[1];
+    var _r = React.useState(false), loading = _r[0], setLoading = _r[1];
     var defaultGetOptionLabel = function (x) { return x.name || x.title || ''; };
     var handleInputChange = function (event) {
         setQuery(event.target.value);
-        getQueryResponse(event.target.value);
+        (options.length === 0) && getQueryResponse(event.target.value);
     };
     var getQueryResponse = function (query) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             setLoading(true);
             timeoutHandle && clearTimeout(timeoutHandle);
             if (!query)
-                setOptions([]);
+                setDefaultOptions([]);
             else {
                 timeoutHandle = setTimeout(function () { return __awaiter(void 0, void 0, void 0, function () {
                     var additionalParams, response, res_1, err_1;
@@ -3644,7 +3648,7 @@ var MUIAutocomplete = function (props) {
                                 return [4 /*yield*/, response.data];
                             case 3:
                                 res_1 = _a.sent();
-                                setOptions(Object.keys(res_1).map(function (key) { return res_1[key]; }));
+                                setDefaultOptions(Object.keys(res_1).map(function (key) { return res_1[key]; }));
                                 return [3 /*break*/, 5];
                             case 4:
                                 err_1 = _a.sent();
@@ -3664,11 +3668,76 @@ var MUIAutocomplete = function (props) {
         if (value)
             formikProps.setFieldValue(lodash.get(fieldProps, 'name'), value.name || value.title || '', false);
     };
-    return React.createElement(Autocomplete$1, { onChange: onItemSelect, getOptionLabel: getOptionLabel ? getOptionLabel : defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: open ? options : [], renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: handleInputChange, label: 'Autocomplete', 
-            //fullWidth
-            InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
+    var defaultRenderOptions = function (option, _a) {
+        var inputValue = _a.inputValue;
+        /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
+        return (React.createElement("div", null, (highlighterProps.highlightText === false) ?
+            //NO HIGHLIGHT
+            React.createElement("span", null, option.name || option.title || '') :
+            //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
+            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option.name || option.title || '', highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
+    };
+    return React.createElement(Autocomplete$1, { onChange: onItemSelect, getOptionLabel: getOptionLabel ? getOptionLabel : defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: renderOption ? renderOption : defaultRenderOptions, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: handleInputChange, label: 'Autocomplete', fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
                     loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
                     params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } });
+};
+
+var compare = function (value1, operator, value2) {
+    switch (operator) {
+        case '>': return value1 > value2;
+        case '<': return value1 < value2;
+        case '>=': return value1 >= value2;
+        case '<=': return value1 <= value2;
+        case '==': return value1 == value2;
+        case '!=': return value1 != value2;
+        case '===': return value1 === value2;
+        case '!==': return value1 !== value2;
+        default: return false;
+    }
+};
+var getConditionalOutput = function (itemCondition, formikProps) {
+    var itemValue = lodash.get(formikProps, "values." + itemCondition.key);
+    return compare(itemValue, itemCondition.operator, itemCondition.compareValue);
+};
+var hasTruthyValue = function (logicalOperation, values, formikProps) {
+    if (logicalOperation === void 0) { logicalOperation = 'AND'; }
+    var outputResult = false;
+    lodash.forEach(values, function (item, index) {
+        var result = getConditionalOutput(item, formikProps);
+        if (logicalOperation === 'AND' && !result) {
+            outputResult = false;
+            return false;
+        }
+        if (logicalOperation === 'OR' && result) {
+            outputResult = true;
+            return false;
+        }
+        if (index === values.length - 1) {
+            outputResult = (logicalOperation === 'AND') ? true : false;
+        }
+        return;
+    });
+    return outputResult;
+};
+var getConditionalProps = function (itemConfig, formikProps) {
+    var conditionInstructions = itemConfig.condition;
+    if (!conditionInstructions || lodash.isEmpty(conditionInstructions.values)) {
+        return { finalProps: {} };
+    }
+    var isValidCondition = hasTruthyValue(conditionInstructions.logicOpn, conditionInstructions.values || [], formikProps);
+    //console.log('Conditional props valid condition', isValidCondition);
+    if (isValidCondition) {
+        /*
+        IF CONDITION IS TRUE THEN RETURN THE TRUTHY PROPS ELSE RETURN THE DEFAULT PROPS
+        */
+        return { finalProps: conditionInstructions.truthyProps };
+    }
+    else {
+        if (conditionInstructions.hidden === true)
+            return { finalProps: conditionInstructions.defaultProps, hidden: true };
+        else
+            return { finalProps: conditionInstructions.defaultProps, };
+    }
 };
 
 var useEffect = React.useEffect, useState$1 = React.useState;
@@ -3687,7 +3756,7 @@ var setDefaultProps = function (type, props) {
     else
         ComponentMapConfig[type].props = __assign(__assign({}, ComponentMapConfig[type].props), props);
 };
-attachField('text', React.createElement(MUITextField, null), { type: 'text', label: 'Textbox' });
+attachField('text', React.createElement(MUITextField, null), { type: 'text' });
 attachField('password', React.createElement(MUITextField, null), { type: 'password' });
 attachField('select', React.createElement(MUISelectField, null));
 attachField('checkbox', React.createElement(MUICheckBox, null));
@@ -3698,7 +3767,7 @@ attachField('switch', React.createElement(MUISwitch, null));
 attachField('radio', React.createElement(MUIRadio, null));
 attachField('autocomplete', React.createElement(MUIAutocomplete, null));
 var BuildFormRow = function (props) {
-    var schema = props.schema, rowId = props.rowId, formikProps = props.formikProps, _a = props.settings, settings = _a === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _a;
+    var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
     var columnItems = lodash.get(schema, 'columns');
     var rowSettings = __assign(__assign({}, settings), lodash.get(schema, 'settings'));
     var colItems = (lodash.isArray(schema) ? schema : ((lodash.isArray(columnItems) ? columnItems : [schema])));
@@ -3709,8 +3778,11 @@ var BuildFormRow = function (props) {
         var horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horiontalSpacing || 10);
         if (!componentConfig)
             return React.createElement("div", { key: rowId + "_field_" + index });
-        var fieldProps = __assign(__assign({ id: item.id, name: (item.name || item.valueKey) }, componentConfig.props), item.fieldProps);
+        var conditionalProps = getConditionalProps(item, formikProps);
+        var fieldProps = __assign(__assign(__assign({ id: item.id, name: (item.name || item.valueKey) }, componentConfig.props), item.fieldProps), conditionalProps.finalProps);
         var Component = componentConfig.component;
+        if (conditionalProps.hidden === true)
+            return React.createElement("div", { key: rowId + "_field_" + index });
         return (React.createElement("div", { key: rowId + "_field_" + index, className: clsx(item.classNames, classes.column), style: __assign({ flex: (item.flex || 1), marginRight: horizontalSpacing, paddingLeft: rowSettings.columnHorizontalPadding, paddingRight: rowSettings.columnHorizontalPadding }, item.styles) }, React.cloneElement(Component, { fieldProps: fieldProps, formikProps: formikProps, fieldConfig: item })));
     })));
 };

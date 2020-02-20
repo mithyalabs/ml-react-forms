@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import { FormikValues } from 'formik';
 import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest, MUIAutocomplete } from './lib';
 import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
+import { getConditionalProps, TFieldConditions } from './lib/ConditionalOperation';
 const { useEffect, useState } = React;
 
 export interface FormConfig {
@@ -17,7 +18,8 @@ export interface FormConfig {
     flex?: number | string
     fieldProps?: object
     styles?: object
-    classNames?: Array<string>
+    classNames?: Array<string>,
+    condition?: TFieldConditions
 }
 
 interface RowSettingsProps {
@@ -91,8 +93,9 @@ attachField('radio', <MUIRadio />);
 attachField('autocomplete', < MUIAutocomplete />);
 
 
+
 export const BuildFormRow: React.FC<FormRowProps> = props => {
-    const { schema, rowId, formikProps, settings = { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } } = props;
+    const { schema, rowId, formikProps = {}, settings = { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } } = props;
     let columnItems = get(schema, 'columns') as Array<FormConfig>;
     let rowSettings = { ...settings, ...get(schema, 'settings') } as RowSettingsProps;
     const colItems = (isArray(schema) ? schema : ((isArray(columnItems) ? columnItems : [schema])));
@@ -107,10 +110,11 @@ export const BuildFormRow: React.FC<FormRowProps> = props => {
                     if (!componentConfig)
                         return <div key={`${rowId}_field_${index}`} />;
 
-
-                    const fieldProps = { id: item.id, name: (item.name || item.valueKey), ...componentConfig.props, ...item.fieldProps };
+                    const conditionalProps = getConditionalProps(item, formikProps);
+                    const fieldProps = { id: item.id, name: (item.name || item.valueKey), ...componentConfig.props, ...item.fieldProps, ...conditionalProps.finalProps };
                     const Component = componentConfig.component;
-
+                    if (conditionalProps.hidden === true)
+                        return <div key={`${rowId}_field_${index}`} />;
                     return (
                         <div key={`${rowId}_field_${index}`} className={clsx(item.classNames, classes.column)} style={
                             {

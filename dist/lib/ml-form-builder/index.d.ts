@@ -2,6 +2,7 @@ import * as React from 'react';
 import { ButtonProps } from '@material-ui/core/Button';
 import { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import { FormikValues } from 'formik';
+import { TFieldConditions } from './lib/ConditionalOperation';
 export interface FormConfig {
     type: string;
     name?: string;
@@ -11,6 +12,7 @@ export interface FormConfig {
     fieldProps?: object;
     styles?: object;
     classNames?: Array<string>;
+    condition?: TFieldConditions;
 }
 interface RowSettingsProps {
     horiontalSpacing?: number;

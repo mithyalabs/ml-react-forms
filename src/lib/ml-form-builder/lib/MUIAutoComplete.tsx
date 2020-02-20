@@ -1,19 +1,28 @@
 import { TextField, CircularProgress, InputBaseComponentProps } from '@material-ui/core'
-import Autocomplete, { AutocompleteProps, RenderInputParams } from '@material-ui/lab/Autocomplete'
+import Autocomplete, { AutocompleteProps, RenderInputParams, RenderOptionState } from '@material-ui/lab/Autocomplete'
 import * as React from 'react'
 import { IFieldProps } from '..';
 import { FormikValues } from 'formik';
 import { get } from 'lodash';
 import axios, { CancelTokenSource } from 'axios'
+import Highlighter from "react-highlight-words";
 type T = {}
+export interface IHighlighterProps { //Prop for default highlighter 
+    highlightText?: boolean //this props will be used if nad only if this is true
+    highlightColor?: string //Highlight color
+    highlighterStyles?: object //additional highlight styles
+
+}
 export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<T>> {
+    options?: { name?: string, title?: string }[]
     renderInputProps?: RenderInputParams
     inputProps?: InputBaseComponentProps
     delay?: number
     apiUrl?: string
-    params?: object
-    getOptionLabel?: (x: any) => string
-    getRequestParam?: (query: string) => any
+    params?: object //static options
+    getOptionLabel?: (x: any) => string //get label for the option
+    getRequestParam?: (query: string) => any //get param according to the search key
+    highlighterProps?: IHighlighterProps
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUIAutoCompleteProps
@@ -28,6 +37,11 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
     const [query, setQuery] = React.useState<string>();
     const { fieldProps = {} as IMUIAutoCompleteProps, formikProps = {} as FormikValues } = props
     const {
+        highlighterProps = {
+            highlightText: false,
+            highlightColor: '#ffff00'
+        } as IHighlighterProps,
+        options = [],
         apiUrl = '' as string,
         delay = 300 as number,
         params = {},
@@ -35,21 +49,21 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         inputProps = {} as InputBaseComponentProps,
         getOptionLabel = undefined,
         getRequestParam = undefined,
-
+        renderOption = undefined
     } = fieldProps
-    const [options, setOptions] = React.useState<TBaseType[]>([]);
+    const [defaultOptions, setDefaultOptions] = React.useState<TBaseType[]>([]);
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false)
     const defaultGetOptionLabel = (x: TBaseType) => { return x.name || x.title || '' }
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setQuery(event.target.value)
-        getQueryResponse(event.target.value);
+        setQuery(event.target.value);
+        (options.length === 0) && getQueryResponse(event.target.value);
     }
     const getQueryResponse = async (query: string) => {
         setLoading(true);
         timeoutHandle && clearTimeout(timeoutHandle)
         if (!query)
-            setOptions([]);
+            setDefaultOptions([]);
         else {
             timeoutHandle = setTimeout(async () => {
                 /**
@@ -70,7 +84,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                         cancelToken: ajaxCallHandle.token
                     });
                     const res = await response.data;
-                    setOptions(Object.keys(res).map(key => { return res[key] }))
+                    setDefaultOptions(Object.keys(res).map(key => { return res[key] }))
                 } catch (err) {
                     console.log('Request Error : ', err)
                 }
@@ -85,13 +99,38 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         if (value)
             formikProps.setFieldValue(get(fieldProps, 'name'), value.name || value.title || '', false)
     }
+    const defaultRenderOptions = (option: TBaseType, { inputValue }: RenderOptionState) => {
+        /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
+        return (
+            <div>
+
+                {
+                    (highlighterProps.highlightText === false) ?
+                        //NO HIGHLIGHT
+                        <span>
+                            {option.name || option.title || ''}
+                        </span> :
+                        //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
+                        <Highlighter
+                            searchWords={[inputValue]}
+                            textToHighlight={option.name || option.title || ''}
+                            highlightStyle={{
+                                backgroundColor: highlighterProps.highlightColor,
+                                ...highlighterProps.highlighterStyles
+                            }}
+                        />
+                }
+            </div>
+        );
+    }
     return <Autocomplete
         onChange={onItemSelect}
         getOptionLabel={getOptionLabel ? getOptionLabel : defaultGetOptionLabel}
         onOpen={() => { setOpen(true) }}
         open={open}
         onClose={() => { setOpen(false) }}
-        options={open ? options : []}
+        options={open ? (options.length > 0 ? options : defaultOptions) : []}
+        renderOption={renderOption ? renderOption : defaultRenderOptions}
         renderInput={
             params => <TextField
                 {...params}
@@ -99,7 +138,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                 value={query}
                 onChange={handleInputChange}
                 label='Autocomplete'
-                //fullWidth
+                fullWidth
 
                 InputProps={{
                     ...params.InputProps,
