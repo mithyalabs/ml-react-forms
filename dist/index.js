@@ -15,7 +15,8 @@ var core = require('@material-ui/core');
 var PlacesAutocomplete = require('react-places-autocomplete');
 var PlacesAutocomplete__default = _interopDefault(PlacesAutocomplete);
 var icons = require('@material-ui/icons');
-var pickers = require('@material-ui/pickers');
+var DatePicker = require('@material-ui/pickers/DatePicker');
+var TimePicker = require('@material-ui/pickers/TimePicker');
 var Popper = _interopDefault(require('@material-ui/core/Popper'));
 var ListSubheader = _interopDefault(require('@material-ui/core/ListSubheader'));
 var Paper = _interopDefault(require('@material-ui/core/Paper'));
@@ -185,14 +186,15 @@ var MUISelectField = function (props) {
 
 var MUICheckBox = function (props) {
     var _a = props.fieldConfig, fieldConfig = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.fieldProps, fieldProps = _c === void 0 ? {} : _c;
-    var label = fieldProps.label, helperText = fieldProps.helperText, selectOptions = fieldProps.selectOptions, header = fieldProps.header, headerProps = fieldProps.headerProps, groupProps = fieldProps.groupProps, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, formControlLabelProps = fieldProps.formControlLabelProps, checkboxProps = __rest(fieldProps, ["label", "helperText", "selectOptions", "header", "headerProps", "groupProps", "formControlProps", "formHelperTextProps", "formControlLabelProps"]);
+    var label = fieldProps.label, helperText = fieldProps.helperText, _d = fieldProps.options, options = _d === void 0 ? [] : _d, header = fieldProps.header, headerProps = fieldProps.headerProps, checkGroupProps = fieldProps.checkGroupProps, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, formControlLabelProps = fieldProps.formControlLabelProps, checkboxProps = __rest(fieldProps, ["label", "helperText", "options", "header", "headerProps", "checkGroupProps", "formControlProps", "formHelperTextProps", "formControlLabelProps"]);
     var fieldError = getFieldError((fieldProps.name || ''), formikProps);
     var value = lodash.get(formikProps, "values." + fieldProps.name);
+    var menuOptions = getMenuOptions(options);
     return (React.createElement(core.FormControl, __assign({ error: !!fieldError }, formControlProps),
         (header) &&
             (React.createElement(core.FormLabel, __assign({}, headerProps), header)),
-        React.createElement(core.FormGroup, __assign({}, groupProps), (!lodash.isEmpty(selectOptions)) ?
-            (lodash.map(selectOptions, function (item, index) { return (React.createElement(core.FormControlLabel, __assign({ key: fieldConfig.id + "_check_" + index, control: React.createElement(core.Checkbox, __assign({ checked: (lodash.indexOf(value, item) > -1), onBlur: formikProps.handleBlur, onChange: formikProps.handleChange, value: item }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item || '' }, formControlLabelProps))); })) : (React.createElement(core.FormControlLabel, __assign({ control: React.createElement(core.Checkbox, __assign({ checked: (value || false), onBlur: formikProps.handleBlur, onChange: formikProps.handleChange }, checkboxProps)), label: label || '' }, formControlLabelProps)))),
+        React.createElement(core.FormGroup, __assign({}, checkGroupProps), (!lodash.isEmpty(menuOptions)) ?
+            (lodash.map(menuOptions, function (item, index) { return (React.createElement(core.FormControlLabel, __assign({ key: fieldConfig.id + "_check_" + index, control: React.createElement(core.Checkbox, __assign({ checked: (lodash.indexOf(value, item.value) > -1), onBlur: formikProps.handleBlur, onChange: formikProps.handleChange, value: item.value }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item.name || '' }, formControlLabelProps))); })) : (React.createElement(core.FormControlLabel, __assign({ control: React.createElement(core.Checkbox, __assign({ checked: (value || false), onBlur: formikProps.handleBlur, onChange: formikProps.handleChange }, checkboxProps)), label: label || '' }, formControlLabelProps)))),
         (fieldError || helperText) &&
             (React.createElement(core.FormHelperText, __assign({}, formHelperTextProps), fieldError || helperText))));
 };
@@ -332,7 +334,7 @@ var MUIDatePicker = function (props) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    return (React.createElement(pickers.KeyboardDatePicker, __assign({}, updatedProps)));
+    return (React.createElement(DatePicker.KeyboardDatePicker, __assign({}, updatedProps)));
 };
 var MUITimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
@@ -343,7 +345,7 @@ var MUITimePicker = function (props) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    return (React.createElement(pickers.TimePicker, __assign({}, updatedProps)));
+    return (React.createElement(TimePicker.TimePicker, __assign({}, updatedProps)));
 };
 
 function _objectWithoutPropertiesLoose(source, excluded) {
