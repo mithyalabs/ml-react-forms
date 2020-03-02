@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { IFieldProps } from '../index';
 import { FormControlProps, FormHelperTextProps, FormControlLabelProps, CheckboxProps, FormLabelProps, FormGroupProps } from '@material-ui/core';
+import { MenuOptions } from '../Utils';
 export interface IMUICheckboxProps extends CheckboxProps {
     label?: string;
     helperText?: string;
-    selectOptions?: Array<string>;
+    options?: MenuOptions;
     header?: string;
     headerProps?: FormLabelProps;
-    groupProps?: FormGroupProps;
+    checkGroupProps?: FormGroupProps;
     formControlLabelProps?: FormControlLabelProps;
     formControlProps?: FormControlProps;
     formHelperTextProps?: FormHelperTextProps;

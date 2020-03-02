@@ -15,7 +15,8 @@ var core = require('@material-ui/core');
 var PlacesAutocomplete = require('react-places-autocomplete');
 var PlacesAutocomplete__default = _interopDefault(PlacesAutocomplete);
 var icons = require('@material-ui/icons');
-var pickers = require('@material-ui/pickers');
+var DatePicker = require('@material-ui/pickers/DatePicker');
+var TimePicker = require('@material-ui/pickers/TimePicker');
 var Popper = _interopDefault(require('@material-ui/core/Popper'));
 var ListSubheader = _interopDefault(require('@material-ui/core/ListSubheader'));
 var Paper = _interopDefault(require('@material-ui/core/Paper'));
@@ -24,6 +25,7 @@ var Chip = _interopDefault(require('@material-ui/core/Chip'));
 var SvgIcon = _interopDefault(require('@material-ui/core/SvgIcon'));
 var utils = require('@material-ui/core/utils');
 var axios = _interopDefault(require('axios'));
+var Highlighter = _interopDefault(require('react-highlight-words'));
 var formik = require('formik');
 
 /*! *****************************************************************************
@@ -184,14 +186,15 @@ var MUISelectField = function (props) {
 
 var MUICheckBox = function (props) {
     var _a = props.fieldConfig, fieldConfig = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.fieldProps, fieldProps = _c === void 0 ? {} : _c;
-    var label = fieldProps.label, helperText = fieldProps.helperText, selectOptions = fieldProps.selectOptions, header = fieldProps.header, headerProps = fieldProps.headerProps, groupProps = fieldProps.groupProps, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, formControlLabelProps = fieldProps.formControlLabelProps, checkboxProps = __rest(fieldProps, ["label", "helperText", "selectOptions", "header", "headerProps", "groupProps", "formControlProps", "formHelperTextProps", "formControlLabelProps"]);
+    var label = fieldProps.label, helperText = fieldProps.helperText, _d = fieldProps.options, options = _d === void 0 ? [] : _d, header = fieldProps.header, headerProps = fieldProps.headerProps, checkGroupProps = fieldProps.checkGroupProps, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, formControlLabelProps = fieldProps.formControlLabelProps, checkboxProps = __rest(fieldProps, ["label", "helperText", "options", "header", "headerProps", "checkGroupProps", "formControlProps", "formHelperTextProps", "formControlLabelProps"]);
     var fieldError = getFieldError((fieldProps.name || ''), formikProps);
     var value = lodash.get(formikProps, "values." + fieldProps.name);
+    var menuOptions = getMenuOptions(options);
     return (React.createElement(core.FormControl, __assign({ error: !!fieldError }, formControlProps),
         (header) &&
             (React.createElement(core.FormLabel, __assign({}, headerProps), header)),
-        React.createElement(core.FormGroup, __assign({}, groupProps), (!lodash.isEmpty(selectOptions)) ?
-            (lodash.map(selectOptions, function (item, index) { return (React.createElement(core.FormControlLabel, __assign({ key: fieldConfig.id + "_check_" + index, control: React.createElement(core.Checkbox, __assign({ checked: (lodash.indexOf(value, item) > -1), onBlur: formikProps.handleBlur, onChange: formikProps.handleChange, value: item }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item || '' }, formControlLabelProps))); })) : (React.createElement(core.FormControlLabel, __assign({ control: React.createElement(core.Checkbox, __assign({ checked: (value || false), onBlur: formikProps.handleBlur, onChange: formikProps.handleChange }, checkboxProps)), label: label || '' }, formControlLabelProps)))),
+        React.createElement(core.FormGroup, __assign({}, checkGroupProps), (!lodash.isEmpty(menuOptions)) ?
+            (lodash.map(menuOptions, function (item, index) { return (React.createElement(core.FormControlLabel, __assign({ key: fieldConfig.id + "_check_" + index, control: React.createElement(core.Checkbox, __assign({ checked: (lodash.indexOf(value, item.value) > -1), onBlur: formikProps.handleBlur, onChange: formikProps.handleChange, value: item.value }, __assign(__assign({}, checkboxProps), { id: fieldConfig.id + "_check_" + index }))), label: item.name || '' }, formControlLabelProps))); })) : (React.createElement(core.FormControlLabel, __assign({ control: React.createElement(core.Checkbox, __assign({ checked: (value || false), onBlur: formikProps.handleBlur, onChange: formikProps.handleChange }, checkboxProps)), label: label || '' }, formControlLabelProps)))),
         (fieldError || helperText) &&
             (React.createElement(core.FormHelperText, __assign({}, formHelperTextProps), fieldError || helperText))));
 };
@@ -331,7 +334,7 @@ var MUIDatePicker = function (props) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    return (React.createElement(pickers.KeyboardDatePicker, __assign({}, updatedProps)));
+    return (React.createElement(DatePicker.KeyboardDatePicker, __assign({}, updatedProps)));
 };
 var MUITimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
@@ -342,7 +345,7 @@ var MUITimePicker = function (props) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    return (React.createElement(pickers.TimePicker, __assign({}, updatedProps)));
+    return (React.createElement(TimePicker.TimePicker, __assign({}, updatedProps)));
 };
 
 function _objectWithoutPropertiesLoose(source, excluded) {
@@ -3602,21 +3605,24 @@ var ajaxCallHandle;
 var MUIAutocomplete = function (props) {
     var _a = React.useState(), query = _a[0], setQuery = _a[1];
     var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
-    var _d = fieldProps.apiUrl, apiUrl = _d === void 0 ? '' : _d, _e = fieldProps.delay, delay = _e === void 0 ? 300 : _e, _f = fieldProps.params, params = _f === void 0 ? {} : _f, _g = fieldProps.renderInputProps, renderInputProps = _g === void 0 ? {} : _g, _h = fieldProps.inputProps, inputProps = _h === void 0 ? {} : _h, _j = fieldProps.getOptionLabel, getOptionLabel = _j === void 0 ? undefined : _j, _k = fieldProps.getRequestParam, getRequestParam = _k === void 0 ? undefined : _k;
-    var _l = React.useState([]), options = _l[0], setOptions = _l[1];
-    var _m = React.useState(false), open = _m[0], setOpen = _m[1];
-    var _o = React.useState(false), loading = _o[0], setLoading = _o[1];
+    var _d = fieldProps.highlighterProps, highlighterProps = _d === void 0 ? {
+        highlightText: false,
+        highlightColor: '#ffff00'
+    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.apiUrl, apiUrl = _f === void 0 ? '' : _f, _g = fieldProps.delay, delay = _g === void 0 ? 300 : _g, _h = fieldProps.params, params = _h === void 0 ? {} : _h, _j = fieldProps.renderInputProps, renderInputProps = _j === void 0 ? {} : _j, _k = fieldProps.inputProps, inputProps = _k === void 0 ? {} : _k, _l = fieldProps.getOptionLabel, getOptionLabel = _l === void 0 ? undefined : _l, _m = fieldProps.getRequestParam, getRequestParam = _m === void 0 ? undefined : _m, _o = fieldProps.renderOption, renderOption = _o === void 0 ? undefined : _o;
+    var _p = React.useState([]), defaultOptions = _p[0], setDefaultOptions = _p[1];
+    var _q = React.useState(false), open = _q[0], setOpen = _q[1];
+    var _r = React.useState(false), loading = _r[0], setLoading = _r[1];
     var defaultGetOptionLabel = function (x) { return x.name || x.title || ''; };
     var handleInputChange = function (event) {
         setQuery(event.target.value);
-        getQueryResponse(event.target.value);
+        (options.length === 0) && getQueryResponse(event.target.value);
     };
     var getQueryResponse = function (query) { return __awaiter(void 0, void 0, void 0, function () {
         return __generator(this, function (_a) {
             setLoading(true);
             timeoutHandle && clearTimeout(timeoutHandle);
             if (!query)
-                setOptions([]);
+                setDefaultOptions([]);
             else {
                 timeoutHandle = setTimeout(function () { return __awaiter(void 0, void 0, void 0, function () {
                     var additionalParams, response, res_1, err_1;
@@ -3644,7 +3650,7 @@ var MUIAutocomplete = function (props) {
                                 return [4 /*yield*/, response.data];
                             case 3:
                                 res_1 = _a.sent();
-                                setOptions(Object.keys(res_1).map(function (key) { return res_1[key]; }));
+                                setDefaultOptions(Object.keys(res_1).map(function (key) { return res_1[key]; }));
                                 return [3 /*break*/, 5];
                             case 4:
                                 err_1 = _a.sent();
@@ -3664,32 +3670,20 @@ var MUIAutocomplete = function (props) {
         if (value)
             formikProps.setFieldValue(lodash.get(fieldProps, 'name'), value.name || value.title || '', false);
     };
-    return React.createElement(Autocomplete$1, { onChange: onItemSelect, getOptionLabel: getOptionLabel ? getOptionLabel : defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: open ? options : [], renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: handleInputChange, label: 'Autocomplete', 
-            //fullWidth
-            InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
+    var defaultRenderOptions = function (option, _a) {
+        var inputValue = _a.inputValue;
+        /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
+        return (React.createElement("div", null, (highlighterProps.highlightText === false) ?
+            //NO HIGHLIGHT
+            React.createElement("span", null, option.name || option.title || '') :
+            //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
+            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option.name || option.title || '', highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
+    };
+    return React.createElement(Autocomplete$1, { onChange: onItemSelect, getOptionLabel: getOptionLabel ? getOptionLabel : defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: renderOption ? renderOption : defaultRenderOptions, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: handleInputChange, label: 'Autocomplete', fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
                     loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
                     params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } });
 };
 
-var useEffect = React.useEffect, useState$1 = React.useState;
-var ComponentMapConfig = {};
-var attachField = function (type, component, props) {
-    if (lodash.isArray(type)) {
-        lodash.map(type, function (item) { return ComponentMapConfig[item] = { component: component, props: props }; });
-    }
-    else
-        ComponentMapConfig[type] = { component: component, props: props };
-};
-attachField('text', React.createElement(MUITextField, null), { type: 'text' });
-attachField('password', React.createElement(MUITextField, null), { type: 'password' });
-attachField('select', React.createElement(MUISelectField, null));
-attachField('checkbox', React.createElement(MUICheckBox, null));
-attachField('date-picker', React.createElement(MUIDatePicker, null), { variant: 'inline', label: 'Select Date' });
-attachField('time-picker', React.createElement(MUITimePicker, null), { variant: 'inline', label: 'Select Time' });
-attachField('location-suggest', React.createElement(MUIPlaceSuggest, null));
-attachField('switch', React.createElement(MUISwitch, null));
-attachField('radio', React.createElement(MUIRadio, null));
-attachField('autocomplete', React.createElement(MUIAutocomplete, null));
 var compare = function (value1, operator, value2) {
     switch (operator) {
         case '>': return value1 > value2;
@@ -3730,13 +3724,50 @@ var hasTruthyValue = function (logicalOperation, values, formikProps) {
 var getConditionalProps = function (itemConfig, formikProps) {
     var conditionInstructions = itemConfig.condition;
     if (!conditionInstructions || lodash.isEmpty(conditionInstructions.values)) {
-        return {};
+        return { finalProps: {} };
     }
-    var isValidCondition = hasTruthyValue(conditionInstructions.logicOpn, conditionInstructions.values, formikProps);
-    console.log('Conditional props valid condition', isValidCondition);
-    // const logicalOperation = conditionInstructions.logicOpn || 'AND';
-    return {};
+    var isValidCondition = hasTruthyValue(conditionInstructions.logicOpn, conditionInstructions.values || [], formikProps);
+    //console.log('Conditional props valid condition', isValidCondition);
+    if (isValidCondition) {
+        /*
+        IF CONDITION IS TRUE THEN RETURN THE TRUTHY PROPS ELSE RETURN THE DEFAULT PROPS
+        */
+        return { finalProps: conditionInstructions.truthyProps };
+    }
+    else {
+        if (conditionInstructions.hidden === true)
+            return { finalProps: conditionInstructions.defaultProps, hidden: true };
+        else
+            return { finalProps: conditionInstructions.defaultProps, };
+    }
 };
+
+var useEffect = React.useEffect, useState$1 = React.useState;
+var ComponentMapConfig = {};
+var attachField = function (type, component, props) {
+    if (lodash.isArray(type)) {
+        lodash.map(type, function (item) { return ComponentMapConfig[item] = { component: component, props: props }; });
+    }
+    else
+        ComponentMapConfig[type] = { component: component, props: props };
+};
+var setDefaultProps = function (type, props) {
+    if (lodash.isArray(type)) {
+        lodash.map(type, function (item) { return ComponentMapConfig[item].props = __assign(__assign({}, ComponentMapConfig[item].props), props); });
+    }
+    else
+        ComponentMapConfig[type].props = __assign(__assign({}, ComponentMapConfig[type].props), props);
+};
+attachField('text', React.createElement(MUITextField, null), { type: 'text' });
+attachField('password', React.createElement(MUITextField, null), { type: 'password' });
+attachField('select', React.createElement(MUISelectField, null));
+attachField('checkbox', React.createElement(MUICheckBox, null));
+attachField('date-picker', React.createElement(MUIDatePicker, null), { variant: 'inline', label: 'Select Date' });
+attachField('time-picker', React.createElement(MUITimePicker, null), { variant: 'inline', label: 'Select Time' });
+attachField('location-suggest', React.createElement(MUIPlaceSuggest, null));
+attachField('switch', React.createElement(MUISwitch, null));
+attachField('radio', React.createElement(MUIRadio, null));
+attachField('autocomplete', React.createElement(MUIAutocomplete, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
     var columnItems = lodash.get(schema, 'columns');
@@ -3749,9 +3780,11 @@ var BuildFormRow = function (props) {
         var horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horiontalSpacing || 10);
         if (!componentConfig)
             return React.createElement("div", { key: rowId + "_field_" + index });
-        getConditionalProps(item, formikProps);
-        var fieldProps = __assign(__assign({ id: item.id, name: (item.name || item.valueKey) }, componentConfig.props), item.fieldProps);
+        var conditionalProps = getConditionalProps(item, formikProps);
+        var fieldProps = __assign(__assign(__assign({ id: item.id, name: (item.name || item.valueKey) }, componentConfig.props), item.fieldProps), conditionalProps.finalProps);
         var Component = componentConfig.component;
+        if (conditionalProps.hidden === true)
+            return React.createElement("div", { key: rowId + "_field_" + index });
         return (React.createElement("div", { key: rowId + "_field_" + index, className: clsx(item.classNames, classes.column), style: __assign({ flex: (item.flex || 1), marginRight: horizontalSpacing, paddingLeft: rowSettings.columnHorizontalPadding, paddingRight: rowSettings.columnHorizontalPadding }, item.styles) }, React.cloneElement(Component, { fieldProps: fieldProps, formikProps: formikProps, fieldConfig: item })));
     })));
 };
@@ -3850,4 +3883,5 @@ exports.MUITimePicker = MUITimePicker;
 exports.ReactForm = ReactForm;
 exports.attachField = attachField;
 exports.default = index;
+exports.setDefaultProps = setDefaultProps;
 //# sourceMappingURL=index.js.map

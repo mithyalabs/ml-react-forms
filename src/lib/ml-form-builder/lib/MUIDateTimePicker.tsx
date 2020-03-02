@@ -1,5 +1,7 @@
 import * as React from 'react';
-import { KeyboardDatePicker, KeyboardDatePickerProps, TimePicker, TimePickerProps } from '@material-ui/pickers';
+import { KeyboardDatePicker } from '@material-ui/pickers/DatePicker'
+import { TimePicker } from '@material-ui/pickers/TimePicker'
+import { KeyboardDatePickerProps, TimePickerProps } from '@material-ui/pickers';
 import { FormikValues } from 'formik';
 import { IFieldProps } from '../index';
 import { get } from 'lodash';
