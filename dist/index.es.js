@@ -143,7 +143,7 @@ var getMenuOptions = function (options) {
 var getFieldError = function (fieldName, formikProps) {
     var fieldError = get(formikProps, "errors." + fieldName);
     var isTouched = get(formikProps, "touched." + fieldName);
-    if (!isTouched)
+    if (!isTouched && !formikProps.isSubmitted)
         return '';
     return fieldError;
 };
