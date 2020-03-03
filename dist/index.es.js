@@ -7,8 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText, CircularProgress } from '@material-ui/core';
 import PlacesAutocomplete, { getLatLng, geocodeByAddress } from 'react-places-autocomplete';
 import { Close } from '@material-ui/icons';
-import { KeyboardDatePicker } from '@material-ui/pickers/DatePicker';
-import { TimePicker } from '@material-ui/pickers/TimePicker';
+import { KeyboardDatePicker, TimePicker } from '@material-ui/pickers';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
 import Highlighter from 'react-highlight-words';
@@ -176,7 +175,6 @@ var MUICheckBox = function (props) {
     var fieldError = getFieldError((fieldProps.name || ''), formikProps);
     var value = get(formikProps, "values." + fieldProps.name);
     var menuOptions = getMenuOptions(options);
-    console.log('Menu options', menuOptions);
     return (createElement(FormControl, __assign({ error: !!fieldError }, formControlProps),
         (header) &&
             (createElement(FormLabel, __assign({}, headerProps), header)),

@@ -14,8 +14,7 @@ var core = require('@material-ui/core');
 var PlacesAutocomplete = require('react-places-autocomplete');
 var PlacesAutocomplete__default = _interopDefault(PlacesAutocomplete);
 var icons = require('@material-ui/icons');
-var DatePicker = require('@material-ui/pickers/DatePicker');
-var TimePicker = require('@material-ui/pickers/TimePicker');
+var pickers = require('@material-ui/pickers');
 var Autocomplete = _interopDefault(require('@material-ui/lab/Autocomplete'));
 var axios = _interopDefault(require('axios'));
 var Highlighter = _interopDefault(require('react-highlight-words'));
@@ -183,7 +182,6 @@ var MUICheckBox = function (props) {
     var fieldError = getFieldError((fieldProps.name || ''), formikProps);
     var value = lodash.get(formikProps, "values." + fieldProps.name);
     var menuOptions = getMenuOptions(options);
-    console.log('Menu options', menuOptions);
     return (React.createElement(core.FormControl, __assign({ error: !!fieldError }, formControlProps),
         (header) &&
             (React.createElement(core.FormLabel, __assign({}, headerProps), header)),
@@ -328,7 +326,7 @@ var MUIDatePicker = function (props) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    return (React.createElement(DatePicker.KeyboardDatePicker, __assign({}, updatedProps)));
+    return (React.createElement(pickers.KeyboardDatePicker, __assign({}, updatedProps)));
 };
 var MUITimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
@@ -339,7 +337,7 @@ var MUITimePicker = function (props) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    return (React.createElement(TimePicker.TimePicker, __assign({}, updatedProps)));
+    return (React.createElement(pickers.TimePicker, __assign({}, updatedProps)));
 };
 
 var timeoutHandle;
