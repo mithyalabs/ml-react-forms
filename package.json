@@ -27,8 +27,8 @@
     "lodash": "^4.17.15",
     "react-places-autocomplete": "^7.2.1",
     "@material-ui/icons": "^4.5.1",
-    "@types/autosuggest-highlight": "^3.1.0",
-    "@types/react-highlight-words": "^0.16.0",
+    "react-highlight-words": "^0.16.0",
+    "@material-ui/lab": "^4.0.0-alpha.40",
     "axios": "^0.19.2"
   },
   "devDependencies": {
@@ -43,6 +43,8 @@
     "@types/react-test-renderer": "^16.9.1",
     "@types/autosuggest-highlight": "^3.1.0",
     "@types/react-highlight-words": "^0.16.0",
+    "@material-ui/lab": "^4.0.0-alpha.40",
+    "react-highlight-words": "^0.16.0",
     "axios": "^0.19.2",
     "formik": "^2.1.1",
     "jest": "^24.9.0",
@@ -60,7 +62,5 @@
     "ts-jest": "^24.2.0",
     "typescript": "^3.7.4"
   },
-  "dependencies": {
-    "@material-ui/lab": "^4.0.0-alpha.40"
-  }
+  "dependencies": {}
 }

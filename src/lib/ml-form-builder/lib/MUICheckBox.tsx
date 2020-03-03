@@ -25,7 +25,7 @@ export const MUICheckBox: React.FC<IProps> = (props) => {
     const { label, helperText, options = [], header, headerProps, checkGroupProps, formControlProps, formHelperTextProps, formControlLabelProps, ...checkboxProps } = fieldProps;
     const fieldError = getFieldError((fieldProps.name || ''), formikProps);
     const value = get(formikProps, `values.${fieldProps.name}`);
-    const menuOptions = getMenuOptions(options)
+    const menuOptions = getMenuOptions(options);
     return (
         <FormControl error={!!fieldError} {...formControlProps}>
             {
