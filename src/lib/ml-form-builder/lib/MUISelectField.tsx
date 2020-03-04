@@ -45,8 +45,8 @@ export const MUISelectField: React.FC<IProps> = (props) => {
             >
                 {
                     (emptyItem) &&
-                    (<MenuItem value="" >
-                        <em>{emptyItemText}</em>
+                    (<MenuItem >
+                        {emptyItemText}
                     </MenuItem>)
                 }
                 {

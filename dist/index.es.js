@@ -52,10 +52,11 @@ function __rest(s, e) {
 }
 
 function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 }
@@ -92,7 +93,7 @@ function toVal(mix) {
 	var k, y, str='';
 	if (mix) {
 		if (typeof mix === 'object') {
-			if (!!mix.push) {
+			if (Array.isArray(mix)) {
 				for (k=0; k < mix.length; k++) {
 					if (mix[k] && (y = toVal(mix[k]))) {
 						str && (str += ' ');
@@ -162,8 +163,7 @@ var MUISelectField = function (props) {
             (createElement(InputLabel, { id: labelId }, label)),
         createElement(Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange, onBlur: formikProps.handleBlur }, selectProps),
             (emptyItem) &&
-                (createElement(MenuItem, { value: "" },
-                    createElement("em", null, emptyItemText))),
+                (createElement(MenuItem, null, emptyItemText)),
             map(menuOptions, function (item, index) { return (createElement(MenuItem, { key: fieldConfig.id + "_menu_item_" + index, value: item.value }, item.name)); })),
         (fieldError || fieldProps.helperText) &&
             (createElement(FormHelperText, __assign({}, formHelperTextProps), fieldError || fieldProps.helperText))));

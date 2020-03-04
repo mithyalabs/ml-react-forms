@@ -59,10 +59,11 @@ function __rest(s, e) {
 }
 
 function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 }
@@ -99,7 +100,7 @@ function toVal(mix) {
 	var k, y, str='';
 	if (mix) {
 		if (typeof mix === 'object') {
-			if (!!mix.push) {
+			if (Array.isArray(mix)) {
 				for (k=0; k < mix.length; k++) {
 					if (mix[k] && (y = toVal(mix[k]))) {
 						str && (str += ' ');
@@ -169,8 +170,7 @@ var MUISelectField = function (props) {
             (React.createElement(core.InputLabel, { id: labelId }, label)),
         React.createElement(core.Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange, onBlur: formikProps.handleBlur }, selectProps),
             (emptyItem) &&
-                (React.createElement(core.MenuItem, { value: "" },
-                    React.createElement("em", null, emptyItemText))),
+                (React.createElement(core.MenuItem, null, emptyItemText)),
             lodash.map(menuOptions, function (item, index) { return (React.createElement(core.MenuItem, { key: fieldConfig.id + "_menu_item_" + index, value: item.value }, item.name)); })),
         (fieldError || fieldProps.helperText) &&
             (React.createElement(core.FormHelperText, __assign({}, formHelperTextProps), fieldError || fieldProps.helperText))));
