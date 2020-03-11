@@ -158,7 +158,7 @@ var MUITextField = function (props) {
 
 var MUISelectField = function (props) {
     var _a = props.fieldConfig, fieldConfig = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.fieldProps, fieldProps = _c === void 0 ? {} : _c;
-    var label = fieldProps.label, _d = fieldProps.options, options = _d === void 0 ? [] : _d, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, _e = fieldProps.emptyMenuItemProps, emptyMenuItemProps = _e === void 0 ? {} : _e, _f = fieldProps.menuItemProps, menuItemProps = _f === void 0 ? {} : _f, selectProps = __rest(fieldProps, ["label", "options", "emptyItem", "helperText", "formControlProps", "formHelperTextProps", "emptyMenuItemProps", "menuItemProps"]);
+    var label = fieldProps.label, _d = fieldProps.options, options = _d === void 0 ? [] : _d, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, _e = fieldProps.emptyMenuItemProps, emptyMenuItemProps = _e === void 0 ? {} : _e, _f = fieldProps.menuItemProps, menuItemProps = _f === void 0 ? {} : _f, _g = fieldProps.inputLabelProps, inputLabelProps = _g === void 0 ? {} : _g, selectProps = __rest(fieldProps, ["label", "options", "emptyItem", "helperText", "formControlProps", "formHelperTextProps", "emptyMenuItemProps", "menuItemProps", "inputLabelProps"]);
     var labelId = fieldConfig.id + "_label";
     var fieldError = getFieldError((fieldProps.name || ''), formikProps);
     var emptyItemText = (lodash.isString(emptyItem) ? emptyItem : 'None');
@@ -167,7 +167,7 @@ var MUISelectField = function (props) {
     /*Had to explicitly give style to form control as well as select since it would expand beyond its parent width. */
     return (React.createElement(core.FormControl, __assign({ error: !!fieldError }, formControlProps),
         label &&
-            (React.createElement(core.InputLabel, { id: labelId }, label)),
+            (React.createElement(core.InputLabel, __assign({ id: labelId }, inputLabelProps), label)),
         React.createElement(core.Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange, onBlur: formikProps.handleBlur }, selectProps),
             (emptyItem) &&
                 (React.createElement(core.MenuItem, __assign({}, emptyMenuItemProps), emptyItemText)),
@@ -340,86 +340,165 @@ var MUITimePicker = function (props) {
     return (React.createElement(pickers.TimePicker, __assign({}, updatedProps)));
 };
 
-var timeoutHandle;
-var ajaxCallHandle;
+var TIME_BETWEEN_REQS = 300;
+var queries = [];
+var globalTerm = "";
 var MUIAutocomplete = function (props) {
     var _a = React.useState(), query = _a[0], setQuery = _a[1];
     var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
     var _d = fieldProps.highlighterProps, highlighterProps = _d === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
-    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.apiUrl, apiUrl = _f === void 0 ? '' : _f, _g = fieldProps.delay, delay = _g === void 0 ? 300 : _g, _h = fieldProps.params, params = _h === void 0 ? {} : _h, _j = fieldProps.renderInputProps, renderInputProps = _j === void 0 ? {} : _j, _k = fieldProps.inputProps, inputProps = _k === void 0 ? {} : _k, _l = fieldProps.getOptionLabel, getOptionLabel = _l === void 0 ? undefined : _l, _m = fieldProps.getRequestParam, getRequestParam = _m === void 0 ? undefined : _m, _o = fieldProps.renderOption, renderOption = _o === void 0 ? undefined : _o;
+    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.apiUrl, apiUrl = _f === void 0 ? '' : _f, _g = fieldProps.params, params = _g === void 0 ? {} : _g, _h = fieldProps.renderInputProps, renderInputProps = _h === void 0 ? {} : _h, _j = fieldProps.inputProps, inputProps = _j === void 0 ? {} : _j, _k = fieldProps.getOptionLabel, getOptionLabel = _k === void 0 ? undefined : _k, _l = fieldProps.getRequestParam, getRequestParam = _l === void 0 ? undefined : _l, _m = fieldProps.getQueryResponse, getQueryResponse = _m === void 0 ? undefined : _m, _o = fieldProps.renderOption, renderOption = _o === void 0 ? undefined : _o;
     var _p = React.useState([]), defaultOptions = _p[0], setDefaultOptions = _p[1];
     var _q = React.useState(false), open = _q[0], setOpen = _q[1];
     var _r = React.useState(false), loading = _r[0], setLoading = _r[1];
-    var defaultGetOptionLabel = function (x) { return x.name || x.title || ''; };
-    var handleInputChange = function (event) {
-        setQuery(event.target.value);
-        (options.length === 0) && getQueryResponse(event.target.value);
-    };
-    var getQueryResponse = function (query) { return __awaiter(void 0, void 0, void 0, function () {
+    var defaultGetOptionLabel = function (x) { return x.label; };
+    var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
+        var result, newOptions_1, additionalParams, response, result, newOptions;
         return __generator(this, function (_a) {
-            setLoading(true);
-            timeoutHandle && clearTimeout(timeoutHandle);
-            if (!query)
-                setDefaultOptions([]);
-            else {
-                timeoutHandle = setTimeout(function () { return __awaiter(void 0, void 0, void 0, function () {
-                    var additionalParams, response, res_1, err_1;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                /**
-                                 * @const this.ajaxCallHandle`
-                                 * contains the token for previos request. If the subsequent request is made
-                                 * so the previous request with that token will be cancelled
-                                 */
-                                if (ajaxCallHandle)
-                                    ajaxCallHandle.cancel('Next Request is made for ' + query);
-                                ajaxCallHandle = axios.CancelToken.source();
-                                additionalParams = (getRequestParam) && getRequestParam(query);
-                                _a.label = 1;
-                            case 1:
-                                _a.trys.push([1, 4, , 5]);
-                                return [4 /*yield*/, axios.get(apiUrl, {
-                                        params: __assign(__assign({}, params), additionalParams),
-                                        cancelToken: ajaxCallHandle.token
-                                    })];
-                            case 2:
-                                response = _a.sent();
-                                return [4 /*yield*/, response.data];
-                            case 3:
-                                res_1 = _a.sent();
-                                setDefaultOptions(Object.keys(res_1).map(function (key) { return res_1[key]; }));
-                                return [3 /*break*/, 5];
-                            case 4:
-                                err_1 = _a.sent();
-                                console.log('Request Error : ', err_1);
-                                return [3 /*break*/, 5];
-                            case 5: return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    setLoading(true);
+                    if (!getQueryResponse) return [3 /*break*/, 2];
+                    return [4 /*yield*/, getQueryResponse(newTerm)];
+                case 1:
+                    result = _a.sent();
+                    newOptions_1 = [];
+                    result.forEach(function (element) {
+                        if (typeof element === 'string') {
+                            newOptions_1.push({
+                                key: element,
+                                label: element
+                            });
+                        }
+                        else {
+                            newOptions_1.push(element);
                         }
                     });
-                }); }, delay);
+                    setLoading(false);
+                    return [2 /*return*/, newOptions_1];
+                case 2:
+                    additionalParams = getRequestParam ? getRequestParam(newTerm) : {};
+                    return [4 /*yield*/, axios.request({
+                            url: apiUrl,
+                            method: 'GET',
+                            params: __assign(__assign({}, params), additionalParams)
+                        })];
+                case 3:
+                    response = _a.sent();
+                    result = response.data;
+                    newOptions = [];
+                    result.forEach(function (element) {
+                        if (typeof element === 'string') {
+                            newOptions.push({
+                                key: element,
+                                label: element
+                            });
+                        }
+                        else {
+                            var value = element.name || element.title || element.label || '';
+                            newOptions.push({
+                                key: value,
+                                label: value
+                            });
+                        }
+                    });
+                    setLoading(false);
+                    return [2 /*return*/, newOptions];
             }
-            setLoading(false);
-            return [2 /*return*/];
         });
     }); };
+    var handleChange = function (newTerm, isWaitingReq) {
+        if (isWaitingReq === void 0) { isWaitingReq = false; }
+        return __awaiter(void 0, void 0, void 0, function () {
+            var prevQueryIndex, lastQueryOrder, lastQueryIndex, lastQuery, now, newOptions, index, latestRespOrder, error_1;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        setQuery(newTerm);
+                        globalTerm = newTerm;
+                        if (!newTerm) {
+                            setDefaultOptions([]);
+                            return [2 /*return*/];
+                        }
+                        if (options.length > 0)
+                            return [2 /*return*/];
+                        if (isWaitingReq && (globalTerm !== newTerm) || !newTerm)
+                            return [2 /*return*/];
+                        prevQueryIndex = lodash.findIndex(queries, function (q) { return q.term === newTerm; });
+                        lastQueryOrder = lodash.reduce(queries, function (currentMaxId, query) {
+                            return Math.max(currentMaxId, query.order);
+                        }, -1);
+                        if (prevQueryIndex !== -1) {
+                            if (queries[prevQueryIndex].options) {
+                                setDefaultOptions(queries[prevQueryIndex].options || []);
+                            }
+                            else {
+                                queries[prevQueryIndex].order = Math.max(queries[prevQueryIndex].order, lastQueryOrder + 1);
+                            }
+                            return [2 /*return*/];
+                        }
+                        lastQueryIndex = lodash.findIndex(queries, function (q) { return q.order === lastQueryOrder; });
+                        lastQuery = queries[lastQueryIndex];
+                        now = new Date().getTime();
+                        if (!(lastQuery && (now - lastQuery.sendAt < TIME_BETWEEN_REQS))) return [3 /*break*/, 1];
+                        setTimeout(function () {
+                            handleChange(newTerm, true);
+                        }, TIME_BETWEEN_REQS - (now - lastQuery.sendAt));
+                        return [3 /*break*/, 5];
+                    case 1:
+                        queries.push({
+                            term: newTerm,
+                            sendAt: now,
+                            order: (lastQueryOrder || 0) + 1
+                        });
+                        _a.label = 2;
+                    case 2:
+                        _a.trys.push([2, 4, , 5]);
+                        return [4 /*yield*/, handleQueryResponse(newTerm)];
+                    case 3:
+                        newOptions = _a.sent();
+                        index = lodash.findIndex(queries, function (q) { return q.term === newTerm; });
+                        latestRespOrder = lodash.reduce(queries, function (currentMaxId, query) {
+                            if (!query.options)
+                                return currentMaxId;
+                            return Math.max(currentMaxId, query.order);
+                        }, -1);
+                        queries[index].options = newOptions;
+                        if (latestRespOrder < queries[index].order) {
+                            setDefaultOptions(newOptions);
+                        }
+                        else {
+                            console.log('Ignoring results of:', newTerm);
+                        }
+                        return [3 /*break*/, 5];
+                    case 4:
+                        error_1 = _a.sent();
+                        console.log('error', error_1);
+                        queries = lodash.filter(queries, function (q) { return q.term !== newTerm; });
+                        setDefaultOptions([]);
+                        return [3 /*break*/, 5];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
     var onItemSelect = function (event, value) {
         event.preventDefault();
         if (value)
-            formikProps.setFieldValue(lodash.get(fieldProps, 'name'), value.name || value.title || '', false);
+            formikProps.setFieldValue(lodash.get(fieldProps, 'name'), value.label, false);
     };
     var defaultRenderOptions = function (option, _a) {
         var inputValue = _a.inputValue;
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (React.createElement("div", null, (highlighterProps.highlightText === false) ?
             //NO HIGHLIGHT
-            React.createElement("span", null, option.name || option.title || '') :
+            React.createElement("span", null, option.label) :
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
-            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option.name || option.title || '', highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
+            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option.label, highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
-    return React.createElement(Autocomplete, { onChange: onItemSelect, getOptionLabel: getOptionLabel ? getOptionLabel : defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: renderOption ? renderOption : defaultRenderOptions, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: handleInputChange, label: 'Autocomplete', fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
+    return React.createElement(Autocomplete, { onChange: onItemSelect, getOptionLabel: getOptionLabel ? getOptionLabel : defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], getOptionSelected: function (option, value) { return option.key === value.key; }, renderOption: renderOption ? renderOption : defaultRenderOptions, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
                     loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
                     params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } });
 };

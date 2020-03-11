@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select, FormControl, FormControlProps, FormHelperText, FormHelperTextProps, MenuItem, InputLabel, SelectProps, MenuItemProps } from '@material-ui/core';
+import { Select, FormControl, FormControlProps, FormHelperText, FormHelperTextProps, MenuItem, InputLabel, SelectProps, MenuItemProps, InputLabelProps } from '@material-ui/core';
 import { IFieldProps, FormConfig } from '../index';
 import { FormikValues } from 'formik';
 import { get, map, isString } from 'lodash';
@@ -14,6 +14,7 @@ export interface IMUISelectProps extends SelectProps {
     formHelperTextProps?: FormHelperTextProps
     emptyMenuItemProps?: object
     menuItemProps?: object
+    inputLabelProps?: object
 }
 
 export interface IProps extends IFieldProps {
@@ -30,6 +31,7 @@ export const MUISelectField: React.FC<IProps> = (props) => {
         formHelperTextProps,
         emptyMenuItemProps = {} as MenuItemProps,
         menuItemProps = {} as MenuItemProps,
+        inputLabelProps = {} as InputLabelProps,
         ...selectProps } = fieldProps;
     const labelId = `${fieldConfig.id}_label`;
     const fieldError = getFieldError((fieldProps.name || ''), formikProps);
@@ -43,7 +45,7 @@ export const MUISelectField: React.FC<IProps> = (props) => {
         >
             {
                 label &&
-                (<InputLabel id={labelId}>{label}</InputLabel>)
+                (<InputLabel id={labelId} {...inputLabelProps}>{label}</InputLabel>)
             }
             <Select
                 labelId={labelId}

@@ -8,19 +8,20 @@ export interface IHighlighterProps {
     highlightColor?: string;
     highlighterStyles?: object;
 }
+declare type TOptions = {
+    key: string;
+    label: string;
+};
 export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<T>> {
-    options?: {
-        name?: string;
-        title?: string;
-    }[];
+    options?: TOptions[];
     renderInputProps?: RenderInputParams;
     inputProps?: InputBaseComponentProps;
-    delay?: number;
     apiUrl?: string;
     params?: object;
     getOptionLabel?: (x: any) => string;
     getRequestParam?: (query: string) => any;
     highlighterProps?: IHighlighterProps;
+    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions | string>>;
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUIAutoCompleteProps;
