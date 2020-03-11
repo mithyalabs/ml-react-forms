@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select, FormControl, FormControlProps, FormHelperText, FormHelperTextProps, MenuItem, InputLabel, SelectProps } from '@material-ui/core';
+import { Select, FormControl, FormControlProps, FormHelperText, FormHelperTextProps, MenuItem, InputLabel, SelectProps, MenuItemProps } from '@material-ui/core';
 import { IFieldProps, FormConfig } from '../index';
 import { FormikValues } from 'formik';
 import { get, map, isString } from 'lodash';
@@ -12,6 +12,8 @@ export interface IMUISelectProps extends SelectProps {
     helperText?: string
     formControlProps?: FormControlProps
     formHelperTextProps?: FormHelperTextProps
+    emptyMenuItemProps?: object
+    menuItemProps?: object
 }
 
 export interface IProps extends IFieldProps {
@@ -20,7 +22,15 @@ export interface IProps extends IFieldProps {
 
 export const MUISelectField: React.FC<IProps> = (props) => {
     const { fieldConfig = {} as FormConfig, formikProps = {} as FormikValues, fieldProps = {} as IMUISelectProps } = props;
-    const { label, options = [], emptyItem, helperText, formControlProps, formHelperTextProps, ...selectProps } = fieldProps;
+    const { label,
+        options = [],
+        emptyItem,
+        helperText,
+        formControlProps,
+        formHelperTextProps,
+        emptyMenuItemProps = {} as MenuItemProps,
+        menuItemProps = {} as MenuItemProps,
+        ...selectProps } = fieldProps;
     const labelId = `${fieldConfig.id}_label`;
     const fieldError = getFieldError((fieldProps.name || ''), formikProps);
     const emptyItemText = (isString(emptyItem) ? emptyItem : 'None');
@@ -45,12 +55,12 @@ export const MUISelectField: React.FC<IProps> = (props) => {
             >
                 {
                     (emptyItem) &&
-                    (<MenuItem >
+                    (<MenuItem {...emptyMenuItemProps}>
                         {emptyItemText}
                     </MenuItem>)
                 }
                 {
-                    map(menuOptions, (item: MenuOptionObject, index: number) => (<MenuItem key={`${fieldConfig.id}_menu_item_${index}`} value={item.value}>{item.name}</MenuItem>))
+                    map(menuOptions, (item: MenuOptionObject, index: number) => (<MenuItem key={`${fieldConfig.id}_menu_item_${index}`} value={item.value} {...menuItemProps}>{item.name}</MenuItem>))
                 }
             </Select>
             {

@@ -9,6 +9,8 @@ export interface IMUISelectProps extends SelectProps {
     helperText?: string;
     formControlProps?: FormControlProps;
     formHelperTextProps?: FormHelperTextProps;
+    emptyMenuItemProps?: object;
+    menuItemProps?: object;
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUISelectProps;

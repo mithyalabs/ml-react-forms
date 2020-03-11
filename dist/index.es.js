@@ -151,7 +151,7 @@ var MUITextField = function (props) {
 
 var MUISelectField = function (props) {
     var _a = props.fieldConfig, fieldConfig = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.fieldProps, fieldProps = _c === void 0 ? {} : _c;
-    var label = fieldProps.label, _d = fieldProps.options, options = _d === void 0 ? [] : _d, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, selectProps = __rest(fieldProps, ["label", "options", "emptyItem", "helperText", "formControlProps", "formHelperTextProps"]);
+    var label = fieldProps.label, _d = fieldProps.options, options = _d === void 0 ? [] : _d, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, formControlProps = fieldProps.formControlProps, formHelperTextProps = fieldProps.formHelperTextProps, _e = fieldProps.emptyMenuItemProps, emptyMenuItemProps = _e === void 0 ? {} : _e, _f = fieldProps.menuItemProps, menuItemProps = _f === void 0 ? {} : _f, selectProps = __rest(fieldProps, ["label", "options", "emptyItem", "helperText", "formControlProps", "formHelperTextProps", "emptyMenuItemProps", "menuItemProps"]);
     var labelId = fieldConfig.id + "_label";
     var fieldError = getFieldError((fieldProps.name || ''), formikProps);
     var emptyItemText = (isString(emptyItem) ? emptyItem : 'None');
@@ -163,8 +163,8 @@ var MUISelectField = function (props) {
             (createElement(InputLabel, { id: labelId }, label)),
         createElement(Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange, onBlur: formikProps.handleBlur }, selectProps),
             (emptyItem) &&
-                (createElement(MenuItem, null, emptyItemText)),
-            map(menuOptions, function (item, index) { return (createElement(MenuItem, { key: fieldConfig.id + "_menu_item_" + index, value: item.value }, item.name)); })),
+                (createElement(MenuItem, __assign({}, emptyMenuItemProps), emptyItemText)),
+            map(menuOptions, function (item, index) { return (createElement(MenuItem, __assign({ key: fieldConfig.id + "_menu_item_" + index, value: item.value }, menuItemProps), item.name)); })),
         (fieldError || fieldProps.helperText) &&
             (createElement(FormHelperText, __assign({}, formHelperTextProps), fieldError || fieldProps.helperText))));
 };
