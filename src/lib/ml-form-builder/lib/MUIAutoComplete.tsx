@@ -120,7 +120,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         globalTerm = newTerm;
         if (!newTerm) { setDefaultOptions([]); return }
         if (options.length > 0) return
-        if (isWaitingReq && (globalTerm !== newTerm) || !newTerm) return;
+        if ((isWaitingReq && globalTerm !== newTerm) || !newTerm) return;
         let prevQueryIndex = findIndex(queries, q => q.term === newTerm);
         let lastQueryOrder = reduce(queries, function (currentMaxId, query) {
             return Math.max(currentMaxId, query.order);

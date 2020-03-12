@@ -157,13 +157,12 @@ var MUISelectField = function (props) {
     var emptyItemText = (isString(emptyItem) ? emptyItem : 'None');
     var menuOptions = getMenuOptions(options);
     var value = get(formikProps, "values." + fieldProps.name) || ((selectProps.multiple) ? [] : '');
-    /*Had to explicitly give style to form control as well as select since it would expand beyond its parent width. */
     return (createElement(FormControl, __assign({ error: !!fieldError }, formControlProps),
         label &&
             (createElement(InputLabel, __assign({ id: labelId }, inputLabelProps), label)),
         createElement(Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange, onBlur: formikProps.handleBlur }, selectProps),
             (emptyItem) &&
-                (createElement(MenuItem, __assign({}, emptyMenuItemProps), emptyItemText)),
+                (createElement(MenuItem, __assign({ value: '' }, emptyMenuItemProps), emptyItemText)),
             map(menuOptions, function (item, index) { return (createElement(MenuItem, __assign({ key: fieldConfig.id + "_menu_item_" + index, value: item.value }, menuItemProps), item.name)); })),
         (fieldError || fieldProps.helperText) &&
             (createElement(FormHelperText, __assign({}, formHelperTextProps), fieldError || fieldProps.helperText))));
@@ -417,7 +416,7 @@ var MUIAutocomplete = function (props) {
                         }
                         if (options.length > 0)
                             return [2 /*return*/];
-                        if (isWaitingReq && (globalTerm !== newTerm) || !newTerm)
+                        if ((isWaitingReq && globalTerm !== newTerm) || !newTerm)
                             return [2 /*return*/];
                         prevQueryIndex = findIndex(queries, function (q) { return q.term === newTerm; });
                         lastQueryOrder = reduce(queries, function (currentMaxId, query) {

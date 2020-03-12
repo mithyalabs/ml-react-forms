@@ -164,13 +164,12 @@ var MUISelectField = function (props) {
     var emptyItemText = (lodash.isString(emptyItem) ? emptyItem : 'None');
     var menuOptions = getMenuOptions(options);
     var value = lodash.get(formikProps, "values." + fieldProps.name) || ((selectProps.multiple) ? [] : '');
-    /*Had to explicitly give style to form control as well as select since it would expand beyond its parent width. */
     return (React.createElement(core.FormControl, __assign({ error: !!fieldError }, formControlProps),
         label &&
             (React.createElement(core.InputLabel, __assign({ id: labelId }, inputLabelProps), label)),
         React.createElement(core.Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange, onBlur: formikProps.handleBlur }, selectProps),
             (emptyItem) &&
-                (React.createElement(core.MenuItem, __assign({}, emptyMenuItemProps), emptyItemText)),
+                (React.createElement(core.MenuItem, __assign({ value: '' }, emptyMenuItemProps), emptyItemText)),
             lodash.map(menuOptions, function (item, index) { return (React.createElement(core.MenuItem, __assign({ key: fieldConfig.id + "_menu_item_" + index, value: item.value }, menuItemProps), item.name)); })),
         (fieldError || fieldProps.helperText) &&
             (React.createElement(core.FormHelperText, __assign({}, formHelperTextProps), fieldError || fieldProps.helperText))));
@@ -424,7 +423,7 @@ var MUIAutocomplete = function (props) {
                         }
                         if (options.length > 0)
                             return [2 /*return*/];
-                        if (isWaitingReq && (globalTerm !== newTerm) || !newTerm)
+                        if ((isWaitingReq && globalTerm !== newTerm) || !newTerm)
                             return [2 /*return*/];
                         prevQueryIndex = lodash.findIndex(queries, function (q) { return q.term === newTerm; });
                         lastQueryOrder = lodash.reduce(queries, function (currentMaxId, query) {

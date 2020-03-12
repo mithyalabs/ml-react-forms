@@ -39,7 +39,6 @@ export const MUISelectField: React.FC<IProps> = (props) => {
     const menuOptions = getMenuOptions(options);
     const value = get(formikProps, `values.${fieldProps.name}`) || ((selectProps.multiple) ? [] : '');
 
-    /*Had to explicitly give style to form control as well as select since it would expand beyond its parent width. */
     return (
         <FormControl error={!!fieldError} {...formControlProps}
         >
@@ -57,7 +56,7 @@ export const MUISelectField: React.FC<IProps> = (props) => {
             >
                 {
                     (emptyItem) &&
-                    (<MenuItem {...emptyMenuItemProps}>
+                    (<MenuItem value='' {...emptyMenuItemProps}>
                         {emptyItemText}
                     </MenuItem>)
                 }
