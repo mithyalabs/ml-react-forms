@@ -543,7 +543,7 @@ var getConditionalProps = function (itemConfig, formikProps) {
         /*
         IF CONDITION IS TRUE THEN RETURN THE TRUTHY PROPS ELSE RETURN THE DEFAULT PROPS
         */
-        return { finalProps: conditionInstructions.truthyProps };
+        return { finalProps: conditionInstructions.postEffectProps };
     }
     else {
         if (conditionInstructions.hidden === true)

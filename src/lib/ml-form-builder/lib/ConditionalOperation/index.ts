@@ -8,7 +8,7 @@ export type TFieldConditions = {
     hidden?: boolean
     logicOpn?: string
     defaultProps?: object //Props to be returned if neccessary conditions are not satisfied
-    truthyProps?: object //Props to be returned if and only if neccessary conditions are true
+    postEffectProps?: object //Props to be returned if and only if neccessary conditions are true
     values?: ConditionCompareItem[]
 }
 type compareValueType = string | number | boolean;
@@ -75,7 +75,7 @@ export const getConditionalProps = (itemConfig: FormConfig, formikProps: FormikV
         /*
         IF CONDITION IS TRUE THEN RETURN THE TRUTHY PROPS ELSE RETURN THE DEFAULT PROPS
         */
-        return { finalProps: conditionInstructions.truthyProps }
+        return { finalProps: conditionInstructions.postEffectProps }
     }
     else {
         if (conditionInstructions.hidden === true)

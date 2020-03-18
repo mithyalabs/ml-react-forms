@@ -4,7 +4,7 @@ export declare type TFieldConditions = {
     hidden?: boolean;
     logicOpn?: string;
     defaultProps?: object;
-    truthyProps?: object;
+    postEffectProps?: object;
     values?: ConditionCompareItem[];
 };
 interface ConditionCompareItem {
