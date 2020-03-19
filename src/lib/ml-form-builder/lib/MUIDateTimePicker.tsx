@@ -51,15 +51,20 @@ export const MUITimePicker: React.FC<IFieldProps & { fieldProps?: TimePickerProp
     const { fieldProps = {} as TimePickerProps, formikProps = {} as FormikValues } = props;
     const fieldError = get(formikProps, `errors.${fieldProps.name}`);
     const value = get(formikProps, `values.${fieldProps.name}`);
+    const handleTimeChange = (time: any | null) => {
+        if (time === null)
+            formikProps.setFieldValue(fieldProps.name, time, false);
+        else
+            formikProps.setFieldValue(fieldProps.name, new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }), false)
+    }
     const updatedProps = {
         ...fieldProps,
         error: !!fieldError,
         helperText: (fieldError || ''),
-        onChange: (time: any) => { formikProps.setFieldValue(fieldProps.name, new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }), false) },
+        onChange: handleTimeChange,
         value: (!value) ? null : undefined,
         inputValue: (!value) ? '' : value,
         onError: (error: React.ReactNode) => {
-            // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
