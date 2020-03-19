@@ -53,6 +53,10 @@ export interface IFieldProps {
     formikProps?: FormikValues;
     fieldConfig?: FormConfig;
 }
+export declare const getComponentConfig: (type: string) => {
+    component: JSX.Element;
+    props?: object | undefined;
+};
 export declare const attachField: (type: string | string[], component: JSX.Element, props?: object | undefined) => void;
 export declare const setDefaultProps: (type: string | string[], props: object) => void;
 export declare const BuildFormRow: React.FC<FormRowProps>;

@@ -5,9 +5,10 @@ import CircularProgress, { CircularProgressProps } from '@material-ui/core/Circu
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import { FormikValues } from 'formik';
-import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest, MUIAutocomplete } from './lib';
+import { MUITextField, MUISelectField, MUICheckBox, MUISwitch, MUIRadio, MUIPlaceSuggest, MUIAutocomplete, MUIFieldArray } from './lib';
 import { MUIDatePicker, MUITimePicker } from './lib/MUIDateTimePicker';
 import { getConditionalProps, TFieldConditions } from './lib/ConditionalOperation';
+
 const { useEffect, useState } = React;
 
 export interface FormConfig {
@@ -67,6 +68,10 @@ export interface IFieldProps {
 
 let ComponentMapConfig: { [key: string]: { component: JSX.Element, props?: object } } = {};
 
+export const getComponentConfig = (type: string) => {
+    return ComponentMapConfig[type];
+}
+
 export const attachField = (type: Array<string> | string, component: JSX.Element, props?: object) => {
     if (isArray(type)) {
         map(type, item => ComponentMapConfig[item] = { component, props })
@@ -81,6 +86,7 @@ export const setDefaultProps = (type: Array<string> | string, props: object) => 
         ComponentMapConfig[type].props = { ...ComponentMapConfig[type].props, ...props }
 }
 
+
 attachField('text', <MUITextField />, { type: 'text' });
 attachField('password', <MUITextField />, { type: 'password' });
 attachField('select', <MUISelectField />);
@@ -91,6 +97,7 @@ attachField('location-suggest', <MUIPlaceSuggest />);
 attachField('switch', <MUISwitch />);
 attachField('radio', <MUIRadio />);
 attachField('autocomplete', < MUIAutocomplete />);
+attachField('array', <MUIFieldArray />);
 
 
 

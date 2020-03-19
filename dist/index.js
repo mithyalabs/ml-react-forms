@@ -5,6 +5,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var React = require('react');
+var React__default = _interopDefault(React);
 var lodash = require('lodash');
 var Button = _interopDefault(require('@material-ui/core/Button'));
 var CircularProgress = _interopDefault(require('@material-ui/core/CircularProgress'));
@@ -19,6 +20,7 @@ var Autocomplete = _interopDefault(require('@material-ui/lab/Autocomplete'));
 var axios = _interopDefault(require('axios'));
 var Highlighter = _interopDefault(require('react-highlight-words'));
 var formik = require('formik');
+var CloseIcon = _interopDefault(require('@material-ui/icons/Close'));
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -502,6 +504,48 @@ var MUIAutocomplete = function (props) {
                     params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } });
 };
 
+/* interface IArrayItemProps extends TextFieldProps {
+    fieldValue?: string
+    formikProps?: FormikValues
+    name?: string
+    itemIndex?: number
+
+} */
+/* export const ArrayItem:React.FC<IArrayItemProps> = (props) => {
+    const {fieldValue='',} = props;
+    return (
+        <div>
+            <TextField/>
+        </div>
+    )
+} */
+var MUIFieldArray = function (props) {
+    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b;
+    var itemType = fieldProps.itemType, _c = fieldProps.addButtonText, addButtonText = _c === void 0 ? 'Add' : _c, addButtonProps = fieldProps.addButtonProps, addButton = fieldProps.addButton, removeButton = fieldProps.removeButton, removeButtonProps = fieldProps.removeButtonProps;
+    var values = lodash.get(formikProps, "values." + fieldProps.name);
+    var itemComponentConfig = getComponentConfig(itemType);
+    var classes = useStyles();
+    return (React__default.createElement(formik.FieldArray, { name: fieldProps.name, render: function (arrayHelpers) { return (React__default.createElement("div", null,
+            (values || []).map(function (value, index) { return (React__default.createElement("div", { key: fieldProps.name + "-" + index, className: classes.arrayItem },
+                React__default.cloneElement(itemComponentConfig.component, __assign({ name: fieldProps.name, itemIndex: index, arrayHelpers: arrayHelpers, fieldValue: value, formikProps: formikProps }, itemComponentConfig.props)),
+                (removeButton) ? removeButton : (React__default.createElement(core.IconButton, __assign({ className: classes.arrayRemoveIcon, size: "small", onClick: function () { return arrayHelpers.remove(index); } }, removeButtonProps),
+                    React__default.createElement(CloseIcon, null))))); }),
+            (addButton) ? addButton : (React__default.createElement(core.Button, __assign({ type: "button", onClick: function () { return arrayHelpers.push({}); } }, addButtonProps), addButtonText)))); } }));
+};
+var useStyles = styles.makeStyles(function () {
+    return (styles.createStyles({
+        arrayItem: {
+            position: 'relative'
+        },
+        arrayRemoveIcon: {
+            position: 'absolute',
+            right: 0,
+            top: '50%',
+            transform: 'translate(0,-50%)'
+        }
+    }));
+});
+
 var compare = function (value1, operator, value2) {
     switch (operator) {
         case '>': return value1 > value2;
@@ -562,6 +606,9 @@ var getConditionalProps = function (itemConfig, formikProps) {
 
 var useEffect = React.useEffect, useState$1 = React.useState;
 var ComponentMapConfig = {};
+var getComponentConfig = function (type) {
+    return ComponentMapConfig[type];
+};
 var attachField = function (type, component, props) {
     if (lodash.isArray(type)) {
         lodash.map(type, function (item) { return ComponentMapConfig[item] = { component: component, props: props }; });
@@ -586,6 +633,7 @@ attachField('location-suggest', React.createElement(MUIPlaceSuggest, null));
 attachField('switch', React.createElement(MUISwitch, null));
 attachField('radio', React.createElement(MUIRadio, null));
 attachField('autocomplete', React.createElement(MUIAutocomplete, null));
+attachField('array', React.createElement(MUIFieldArray, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
     var columnItems = lodash.get(schema, 'columns');
@@ -692,6 +740,7 @@ exports.MLFormContent = MLFormContent;
 exports.MUIAutocomplete = MUIAutocomplete;
 exports.MUICheckBox = MUICheckBox;
 exports.MUIDatePicker = MUIDatePicker;
+exports.MUIFieldArray = MUIFieldArray;
 exports.MUIPlaceSuggest = MUIPlaceSuggest;
 exports.MUIRadio = MUIRadio;
 exports.MUISelectField = MUISelectField;
@@ -701,5 +750,6 @@ exports.MUITimePicker = MUITimePicker;
 exports.ReactForm = ReactForm;
 exports.attachField = attachField;
 exports.default = index;
+exports.getComponentConfig = getComponentConfig;
 exports.setDefaultProps = setDefaultProps;
 //# sourceMappingURL=index.js.map

@@ -1,17 +1,18 @@
-import { createElement, useEffect as useEffect$1, useState as useState$2, Fragment, cloneElement } from 'react';
+import React__default, { createElement, useEffect as useEffect$1, useState as useState$2, Fragment, cloneElement } from 'react';
 import { map, isString, get, isEmpty, indexOf, filter, findIndex, reduce, forEach, isArray, uniqueId } from 'lodash';
-import Button from '@material-ui/core/Button';
+import Button$1 from '@material-ui/core/Button';
 import CircularProgress$1 from '@material-ui/core/CircularProgress';
 import { makeStyles, createStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText, CircularProgress } from '@material-ui/core';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText, CircularProgress, Button } from '@material-ui/core';
 import PlacesAutocomplete, { getLatLng, geocodeByAddress } from 'react-places-autocomplete';
 import { Close } from '@material-ui/icons';
 import { KeyboardDatePicker, TimePicker } from '@material-ui/pickers';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
 import Highlighter from 'react-highlight-words';
-import { Formik } from 'formik';
+import { FieldArray, Formik } from 'formik';
+import CloseIcon from '@material-ui/icons/Close';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -495,6 +496,48 @@ var MUIAutocomplete = function (props) {
                     params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } });
 };
 
+/* interface IArrayItemProps extends TextFieldProps {
+    fieldValue?: string
+    formikProps?: FormikValues
+    name?: string
+    itemIndex?: number
+
+} */
+/* export const ArrayItem:React.FC<IArrayItemProps> = (props) => {
+    const {fieldValue='',} = props;
+    return (
+        <div>
+            <TextField/>
+        </div>
+    )
+} */
+var MUIFieldArray = function (props) {
+    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b;
+    var itemType = fieldProps.itemType, _c = fieldProps.addButtonText, addButtonText = _c === void 0 ? 'Add' : _c, addButtonProps = fieldProps.addButtonProps, addButton = fieldProps.addButton, removeButton = fieldProps.removeButton, removeButtonProps = fieldProps.removeButtonProps;
+    var values = get(formikProps, "values." + fieldProps.name);
+    var itemComponentConfig = getComponentConfig(itemType);
+    var classes = useStyles();
+    return (React__default.createElement(FieldArray, { name: fieldProps.name, render: function (arrayHelpers) { return (React__default.createElement("div", null,
+            (values || []).map(function (value, index) { return (React__default.createElement("div", { key: fieldProps.name + "-" + index, className: classes.arrayItem },
+                React__default.cloneElement(itemComponentConfig.component, __assign({ name: fieldProps.name, itemIndex: index, arrayHelpers: arrayHelpers, fieldValue: value, formikProps: formikProps }, itemComponentConfig.props)),
+                (removeButton) ? removeButton : (React__default.createElement(IconButton, __assign({ className: classes.arrayRemoveIcon, size: "small", onClick: function () { return arrayHelpers.remove(index); } }, removeButtonProps),
+                    React__default.createElement(CloseIcon, null))))); }),
+            (addButton) ? addButton : (React__default.createElement(Button, __assign({ type: "button", onClick: function () { return arrayHelpers.push({}); } }, addButtonProps), addButtonText)))); } }));
+};
+var useStyles = makeStyles(function () {
+    return (createStyles({
+        arrayItem: {
+            position: 'relative'
+        },
+        arrayRemoveIcon: {
+            position: 'absolute',
+            right: 0,
+            top: '50%',
+            transform: 'translate(0,-50%)'
+        }
+    }));
+});
+
 var compare = function (value1, operator, value2) {
     switch (operator) {
         case '>': return value1 > value2;
@@ -555,6 +598,9 @@ var getConditionalProps = function (itemConfig, formikProps) {
 
 var useEffect = useEffect$1, useState$1 = useState$2;
 var ComponentMapConfig = {};
+var getComponentConfig = function (type) {
+    return ComponentMapConfig[type];
+};
 var attachField = function (type, component, props) {
     if (isArray(type)) {
         map(type, function (item) { return ComponentMapConfig[item] = { component: component, props: props }; });
@@ -579,6 +625,7 @@ attachField('location-suggest', createElement(MUIPlaceSuggest, null));
 attachField('switch', createElement(MUISwitch, null));
 attachField('radio', createElement(MUIRadio, null));
 attachField('autocomplete', createElement(MUIAutocomplete, null));
+attachField('array', createElement(MUIFieldArray, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
     var columnItems = get(schema, 'columns');
@@ -627,7 +674,7 @@ var MLFormAction = function (props) {
     return (createElement("div", { className: clsx(classes.actionContainer, layoutClassName, containerClassNames) }, (props.actionContent) ?
         (cloneElement(props.actionContent || createElement("div", null), { formikProps: formikProps, formId: formId }))
         : (createElement(Fragment, null,
-            createElement(Button, __assign({ type: "submit", disabled: formikProps.isSubmitting, variant: "contained", color: "primary" }, submitButtonProps), submitButtonText),
+            createElement(Button$1, __assign({ type: "submit", disabled: formikProps.isSubmitting, variant: "contained", color: "primary" }, submitButtonProps), submitButtonText),
             (formikProps.isSubmitting) && (createElement(CircularProgress$1, __assign({ size: 24, color: "secondary", className: classes.submitLoader }, loaderProps)))))));
 };
 var MLFormBuilder = function (props) {
@@ -679,5 +726,5 @@ var ReactForm = function (props) {
 var index = './lib/ReactForm';
 
 export default index;
-export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUIAutocomplete, MUICheckBox, MUIDatePicker, MUIPlaceSuggest, MUIRadio, MUISelectField, MUISwitch, MUITextField, MUITimePicker, ReactForm, attachField, setDefaultProps };
+export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUIAutocomplete, MUICheckBox, MUIDatePicker, MUIFieldArray, MUIPlaceSuggest, MUIRadio, MUISelectField, MUISwitch, MUITextField, MUITimePicker, ReactForm, attachField, getComponentConfig, setDefaultProps };
 //# sourceMappingURL=index.es.js.map
