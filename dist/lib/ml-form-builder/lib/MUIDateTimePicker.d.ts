@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { KeyboardDatePickerProps, TimePickerProps } from '@material-ui/pickers';
-import { IFieldProps } from '../index';
+import { IFieldProps } from '..';
 export interface IMUIDatePickerProps extends KeyboardDatePickerProps {
     outputFormat?: string;
 }
