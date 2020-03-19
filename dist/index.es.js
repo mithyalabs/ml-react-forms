@@ -7,7 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText, CircularProgress } from '@material-ui/core';
 import PlacesAutocomplete, { getLatLng, geocodeByAddress } from 'react-places-autocomplete';
 import { Close } from '@material-ui/icons';
-import { KeyboardDatePicker, TimePicker } from '@material-ui/pickers';
+import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import axios from 'axios';
 import Highlighter from 'react-highlight-words';
@@ -323,13 +323,14 @@ var MUIDatePicker = function (props) {
 var MUITimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var fieldError = get(formikProps, "errors." + fieldProps.name);
-    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (time) { return formikProps.setFieldValue(fieldProps.name, time, false); }, value: get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
+    var value = get(formikProps, "values." + fieldProps.name);
+    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (time) { formikProps.setFieldValue(fieldProps.name, new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }), false); }, value: (!value) ? null : undefined, inputValue: (!value) ? '' : value, onError: function (error) {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    return (createElement(TimePicker, __assign({}, updatedProps)));
+    return (createElement(KeyboardTimePicker, __assign({}, updatedProps)));
 };
 
 var TIME_BETWEEN_REQS = 300;

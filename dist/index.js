@@ -330,13 +330,14 @@ var MUIDatePicker = function (props) {
 var MUITimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var fieldError = lodash.get(formikProps, "errors." + fieldProps.name);
-    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (time) { return formikProps.setFieldValue(fieldProps.name, time, false); }, value: lodash.get(formikProps, "values." + fieldProps.name) || '', onError: function (error) {
+    var value = lodash.get(formikProps, "values." + fieldProps.name);
+    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (time) { formikProps.setFieldValue(fieldProps.name, new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }), false); }, value: (!value) ? null : undefined, inputValue: (!value) ? '' : value, onError: function (error) {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
         } });
-    return (React.createElement(pickers.TimePicker, __assign({}, updatedProps)));
+    return (React.createElement(pickers.KeyboardTimePicker, __assign({}, updatedProps)));
 };
 
 var TIME_BETWEEN_REQS = 300;

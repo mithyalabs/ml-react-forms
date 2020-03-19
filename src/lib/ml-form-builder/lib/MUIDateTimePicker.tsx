@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {KeyboardDatePicker, KeyboardDatePickerProps, TimePickerProps,TimePicker } from '@material-ui/pickers';
+import { KeyboardDatePicker, KeyboardDatePickerProps, TimePickerProps, KeyboardTimePicker } from '@material-ui/pickers';
 import { FormikValues } from 'formik';
-import { IFieldProps } from '../index';
 import { get } from 'lodash';
+import { IFieldProps } from '..';
 
 export interface IMUIDatePickerProps extends KeyboardDatePickerProps {
     outputFormat?: string
@@ -31,6 +31,7 @@ export const MUIDatePicker: React.FC<IFieldProps & { fieldProps?: IMUIDatePicker
         value: (!value) ? null : undefined,
         inputValue: (!value) ? '' : value,
         format: fieldProps.format || 'MM/DD/YYYY',
+
         onError: (error: React.ReactNode) => {
             // handle as a side effect
             if (error !== fieldError) {
@@ -49,21 +50,23 @@ export const MUIDatePicker: React.FC<IFieldProps & { fieldProps?: IMUIDatePicker
 export const MUITimePicker: React.FC<IFieldProps & { fieldProps?: TimePickerProps }> = props => {
     const { fieldProps = {} as TimePickerProps, formikProps = {} as FormikValues } = props;
     const fieldError = get(formikProps, `errors.${fieldProps.name}`);
+    const value = get(formikProps, `values.${fieldProps.name}`);
     const updatedProps = {
         ...fieldProps,
         error: !!fieldError,
         helperText: (fieldError || ''),
-        onChange: (time: any) => formikProps.setFieldValue(fieldProps.name, time, false),
-        value: get(formikProps, `values.${fieldProps.name}`) || '',
-        onError: (error: string) => {
+        onChange: (time: any) => { formikProps.setFieldValue(fieldProps.name, new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }), false) },
+        value: (!value) ? null : undefined,
+        inputValue: (!value) ? '' : value,
+        onError: (error: React.ReactNode) => {
             // handle as a side effect
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
-        }
+        },
     };
     return (
-        <TimePicker {...updatedProps} />
+        <KeyboardTimePicker  {...updatedProps} />
     )
 }
 
