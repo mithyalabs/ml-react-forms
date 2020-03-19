@@ -324,8 +324,13 @@ var MUITimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var fieldError = get(formikProps, "errors." + fieldProps.name);
     var value = get(formikProps, "values." + fieldProps.name);
-    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: function (time) { formikProps.setFieldValue(fieldProps.name, new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }), false); }, value: (!value) ? null : undefined, inputValue: (!value) ? '' : value, onError: function (error) {
-            // handle as a side effect
+    var handleTimeChange = function (time) {
+        if (time === null)
+            formikProps.setFieldValue(fieldProps.name, time, false);
+        else
+            formikProps.setFieldValue(fieldProps.name, new Date(time).toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true }), false);
+    };
+    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: handleTimeChange, value: (!value) ? null : undefined, inputValue: (!value) ? '' : value, onError: function (error) {
             if (error !== fieldError) {
                 formikProps.setFieldError(fieldProps.name, error);
             }
