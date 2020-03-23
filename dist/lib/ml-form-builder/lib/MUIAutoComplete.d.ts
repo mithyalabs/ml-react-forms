@@ -22,6 +22,7 @@ export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOption
     highlighterProps?: IHighlighterProps;
     getQueryResponse?: (newTerm: string) => Promise<Array<TOptions | string>>;
     outputKey?: string;
+    onItemSelected?: (value: TOptions) => void;
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUIAutoCompleteProps;

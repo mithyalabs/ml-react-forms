@@ -348,10 +348,10 @@ var MUIAutocomplete = function (props) {
     var _d = fieldProps.highlighterProps, highlighterProps = _d === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
-    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.apiUrl, apiUrl = _f === void 0 ? '' : _f, _g = fieldProps.params, params = _g === void 0 ? {} : _g, _h = fieldProps.renderInputProps, renderInputProps = _h === void 0 ? {} : _h, _j = fieldProps.inputProps, inputProps = _j === void 0 ? {} : _j, _k = fieldProps.getOptionLabel, getOptionLabel = _k === void 0 ? undefined : _k, _l = fieldProps.getRequestParam, getRequestParam = _l === void 0 ? undefined : _l, _m = fieldProps.getQueryResponse, getQueryResponse = _m === void 0 ? undefined : _m, _o = fieldProps.renderOption, renderOption = _o === void 0 ? undefined : _o, _p = fieldProps.outputKey, outputKey = _p === void 0 ? '' : _p, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "apiUrl", "params", "renderInputProps", "inputProps", "getOptionLabel", "getRequestParam", "getQueryResponse", "renderOption", "outputKey"]);
-    var _q = useState$2([]), defaultOptions = _q[0], setDefaultOptions = _q[1];
-    var _r = useState$2(false), open = _r[0], setOpen = _r[1];
-    var _s = useState$2(false), loading = _s[0], setLoading = _s[1];
+    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.apiUrl, apiUrl = _f === void 0 ? '' : _f, _g = fieldProps.params, params = _g === void 0 ? {} : _g, _h = fieldProps.renderInputProps, renderInputProps = _h === void 0 ? {} : _h, _j = fieldProps.inputProps, inputProps = _j === void 0 ? {} : _j, _k = fieldProps.getOptionLabel, getOptionLabel = _k === void 0 ? undefined : _k, _l = fieldProps.getRequestParam, getRequestParam = _l === void 0 ? undefined : _l, _m = fieldProps.getQueryResponse, getQueryResponse = _m === void 0 ? undefined : _m, _o = fieldProps.renderOption, renderOption = _o === void 0 ? undefined : _o, _p = fieldProps.outputKey, outputKey = _p === void 0 ? '' : _p, _q = fieldProps.onItemSelected, onItemSelected = _q === void 0 ? undefined : _q, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "apiUrl", "params", "renderInputProps", "inputProps", "getOptionLabel", "getRequestParam", "getQueryResponse", "renderOption", "outputKey", "onItemSelected"]);
+    var _r = useState$2([]), defaultOptions = _r[0], setDefaultOptions = _r[1];
+    var _s = useState$2(false), open = _s[0], setOpen = _s[1];
+    var _t = useState$2(false), loading = _t[0], setLoading = _t[1];
     var defaultGetOptionLabel = function (x) { return x.label; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
         var result, newOptions_1, additionalParams, response, result, newOptions;
@@ -489,6 +489,8 @@ var MUIAutocomplete = function (props) {
             formikProps.setFieldValue(get(fieldProps, 'name'), value.label, false);
             if (outputKey)
                 formikProps.setFieldValue(outputKey, value.key, false);
+            if (onItemSelected)
+                onItemSelected(value);
         }
     };
     var defaultRenderOptions = function (option, _a) {

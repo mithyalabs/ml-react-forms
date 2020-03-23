@@ -35,6 +35,7 @@ export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOption
     highlighterProps?: IHighlighterProps
     getQueryResponse?: (newTerm: string) => Promise<Array<TOptions | string>>
     outputKey?: string
+    onItemSelected?: (value: TOptions) => void
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUIAutoCompleteProps
@@ -58,6 +59,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         getQueryResponse = undefined,
         renderOption = undefined,
         outputKey = '',
+        onItemSelected = undefined,
         ...autoCompleteProps
     } = fieldProps
     const [defaultOptions, setDefaultOptions] = React.useState<TOptions[]>([]);
@@ -180,7 +182,10 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             formikProps.setFieldValue(get(fieldProps, 'name'), value.label, false)
             if (outputKey)
                 formikProps.setFieldValue(outputKey, value.key, false)
+            if (onItemSelected)
+                onItemSelected(value);
         }
+
     }
     const defaultRenderOptions = (option: TOptions, { inputValue }: RenderOptionState) => {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
