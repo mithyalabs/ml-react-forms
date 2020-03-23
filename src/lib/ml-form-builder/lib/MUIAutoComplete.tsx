@@ -211,7 +211,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         options={open ? (options.length > 0 ? options : defaultOptions) : []}
         getOptionSelected={(option, value) => option.key === value.key}
         renderOption={renderOption ? renderOption : defaultRenderOptions}
-
+        filterOptions={(options: TOptions[]) => { return options }}
         renderInput={
             params => <TextField
                 {...params}
@@ -220,7 +220,6 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                 fullWidth
                 InputProps={{
                     ...params.InputProps,
-
                     endAdornment: (
                         <React.Fragment>
                             {loading ? <CircularProgress color="primary" size={20} /> : null}
