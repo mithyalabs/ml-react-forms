@@ -6,7 +6,6 @@ import { filter, findIndex, get, reduce } from 'lodash';
 import * as React from 'react';
 import { IFieldProps } from '..';
 import Highlighter from "react-highlight-words";
-type T = {}
 
 export interface IHighlighterProps { //Prop for default highlighter 
     highlightText?: boolean //this props will be used if nad only if this is true
@@ -25,8 +24,7 @@ let queries: {
 }[] = [];
 
 let globalTerm = "";
-
-export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<T>> {
+export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOptions>> {
     options?: TOptions[]
     renderInputProps?: RenderInputParams
     inputProps?: InputBaseComponentProps
@@ -57,7 +55,8 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         getOptionLabel = undefined,
         getRequestParam = undefined,
         getQueryResponse = undefined,
-        renderOption = undefined
+        renderOption = undefined,
+        ...autoCompleteProps
     } = fieldProps
     const [defaultOptions, setDefaultOptions] = React.useState<TOptions[]>([]);
     const [open, setOpen] = React.useState(false);
@@ -206,7 +205,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         onChange={onItemSelect}
         getOptionLabel={getOptionLabel ? getOptionLabel : defaultGetOptionLabel}
         onOpen={() => { setOpen(true) }}
-        open={open}
+        open={(open && (query !== undefined && query !== ''))}
         onClose={() => { setOpen(false) }}
         options={open ? (options.length > 0 ? options : defaultOptions) : []}
         getOptionSelected={(option, value) => option.key === value.key}
@@ -231,6 +230,6 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                 {...renderInputProps}
             />
         }
-
+        {...autoCompleteProps}
     />
 }

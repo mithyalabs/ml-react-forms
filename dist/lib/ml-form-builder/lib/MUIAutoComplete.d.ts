@@ -2,7 +2,6 @@ import { InputBaseComponentProps } from '@material-ui/core';
 import { AutocompleteProps, RenderInputParams } from '@material-ui/lab/Autocomplete';
 import * as React from 'react';
 import { IFieldProps } from '..';
-declare type T = {};
 export interface IHighlighterProps {
     highlightText?: boolean;
     highlightColor?: string;
@@ -12,7 +11,7 @@ declare type TOptions = {
     key: string;
     label: string;
 };
-export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<T>> {
+export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOptions>> {
     options?: TOptions[];
     renderInputProps?: RenderInputParams;
     inputProps?: InputBaseComponentProps;
