@@ -15,7 +15,7 @@ export const MUITextField: React.FC<IProps> = (props) => {
     const updatedProps = {
         ...fieldProps,
         error: !!fieldError,
-        helperText: (fieldError || ''),
+        helperText: fieldError || fieldProps.helperText || '',
         onChange: formikProps.handleChange,
         onBlur: formikProps.handleBlur,
         value: get(formikProps, `values.${fieldProps.name}`) || ''

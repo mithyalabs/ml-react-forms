@@ -154,7 +154,7 @@ var getFieldError = function (fieldName, formikProps) {
 var MUITextField = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
     var fieldError = getFieldError((fieldProps.name || ''), formikProps);
-    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: (fieldError || ''), onChange: formikProps.handleChange, onBlur: formikProps.handleBlur, value: lodash.get(formikProps, "values." + fieldProps.name) || '' });
+    var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: fieldError || fieldProps.helperText || '', onChange: formikProps.handleChange, onBlur: formikProps.handleBlur, value: lodash.get(formikProps, "values." + fieldProps.name) || '' });
     return (React.createElement(TextField, __assign({}, updatedProps)));
 };
 
