@@ -486,11 +486,12 @@ var MUIAutocomplete = function (props) {
     var onItemSelect = function (event, value) {
         event.preventDefault();
         if (value) {
-            formikProps.setFieldValue(get(fieldProps, 'name'), value.label, false);
-            if (outputKey)
-                formikProps.setFieldValue(outputKey, value.key, false);
             if (onItemSelected)
                 onItemSelected(value);
+            else
+                formikProps.setFieldValue(get(fieldProps, 'name'), value.label, false);
+            if (outputKey)
+                formikProps.setFieldValue(outputKey, value.key, false);
         }
     };
     var defaultRenderOptions = function (option, _a) {

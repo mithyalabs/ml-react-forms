@@ -179,11 +179,13 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         event.preventDefault();
 
         if (value) {
-            formikProps.setFieldValue(get(fieldProps, 'name'), value.label, false)
-            if (outputKey)
-                formikProps.setFieldValue(outputKey, value.key, false)
             if (onItemSelected)
                 onItemSelected(value);
+            else
+                formikProps.setFieldValue(get(fieldProps, 'name'), value.label, false)
+            if (outputKey)
+                formikProps.setFieldValue(outputKey, value.key, false)
+
         }
 
     }
