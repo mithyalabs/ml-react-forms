@@ -505,7 +505,7 @@ var MUIAutocomplete = function (props) {
     };
     return createElement(Autocomplete, __assign({ onChange: onItemSelect, getOptionLabel: getOptionLabel ? getOptionLabel : defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], getOptionSelected: function (option, value) { return option.key === value.key; }, renderOption: renderOption ? renderOption : defaultRenderOptions, filterOptions: function (options) { return options; }, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (createElement(Fragment, null,
                     loading ? createElement(CircularProgress, { color: "primary", size: 20 }) : null,
-                    params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps));
+                    autoCompleteProps.freeSolo && params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps));
 };
 
 /* interface IArrayItemProps extends TextFieldProps {

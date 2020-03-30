@@ -234,7 +234,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                     endAdornment: (
                         <React.Fragment>
                             {loading ? <CircularProgress color="primary" size={20} /> : null}
-                            {params.InputProps.endAdornment}
+                            {autoCompleteProps.freeSolo && params.InputProps.endAdornment}
                         </React.Fragment>
                     ),
                     ...inputProps,
