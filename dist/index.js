@@ -21,6 +21,7 @@ var axios = _interopDefault(require('axios'));
 var Highlighter = _interopDefault(require('react-highlight-words'));
 var formik = require('formik');
 var CloseIcon = _interopDefault(require('@material-ui/icons/Close'));
+var moment = _interopDefault(require('moment'));
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -558,6 +559,39 @@ var useStyles = styles.makeStyles(function () {
     }));
 });
 
+var getOptions = function (startTime, endTime, interval, amPm) {
+    var start = amPm ? moment(startTime, 'hh:mm a').toDate() : moment(startTime, 'HH:mm').toDate();
+    var end = amPm ? moment(endTime, 'hh:mm a').toDate() : moment(endTime, 'HH:mm').toDate();
+    var list = [];
+    while (start.getTime() <= end.getTime()) {
+        var item = amPm ? moment(start).format('hh:mm a') : moment(start).format('HH:mm');
+        list.push({ name: item, value: item });
+        start = new Date(start.getTime() + interval * 60000);
+    }
+    return list;
+};
+var MUIDropDownTimePicker = function (props) {
+    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.fieldConfig, fieldConfig = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
+    var _d = fieldProps.formControlProps, formControlProps = _d === void 0 ? {} : _d, _e = fieldProps.startTime, startTime = _e === void 0 ? '00:00' : _e, _f = fieldProps.endTime, endTime = _f === void 0 ? '23:45' : _f, _g = fieldProps.interval, interval = _g === void 0 ? 15 : _g, _h = fieldProps.amPm, amPm = _h === void 0 ? false : _h, label = fieldProps.label, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, _j = fieldProps.inputLabelProps, inputLabelProps = _j === void 0 ? {} : _j, formHelperTextProps = fieldProps.formHelperTextProps, _k = fieldProps.menuItemProps, menuItemProps = _k === void 0 ? {} : _k, _l = fieldProps.emptyMenuItemProps, emptyMenuItemProps = _l === void 0 ? {} : _l, selectProps = __rest(fieldProps, ["formControlProps", "startTime", "endTime", "interval", "amPm", "label", "emptyItem", "helperText", "inputLabelProps", "formHelperTextProps", "menuItemProps", "emptyMenuItemProps"]);
+    var labelId = fieldConfig.id + "_label";
+    var value = lodash.get(formikProps, "values." + fieldProps.name) || '';
+    var list = getOptions(startTime, endTime, interval, amPm);
+    var emptyItemText = (lodash.isString(emptyItem) ? emptyItem : 'None');
+    var onChange = function (event) {
+        event.preventDefault();
+        if (event.target.value)
+            formikProps.setFieldValue(lodash.get(fieldProps, 'name'), event.target.value, false);
+    };
+    console.log(value);
+    return (React__default.createElement(core.FormControl, __assign({}, formControlProps),
+        label &&
+            (React__default.createElement(core.InputLabel, __assign({ id: labelId }, inputLabelProps), label)),
+        React__default.createElement(core.Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: onChange }, selectProps),
+            (emptyItem) &&
+                (React__default.createElement(core.MenuItem, __assign({ value: '' }, menuItemProps, emptyMenuItemProps), emptyItemText)),
+            lodash.map(list, function (item, index) { return (React__default.createElement(core.MenuItem, __assign({}, menuItemProps, { key: fieldConfig.id + "_menu_item_" + index, value: item.value }), item.name)); }))));
+};
+
 var compare = function (value1, operator, value2) {
     switch (operator) {
         case '>': return value1 > value2;
@@ -646,6 +680,7 @@ attachField('switch', React.createElement(MUISwitch, null));
 attachField('radio', React.createElement(MUIRadio, null));
 attachField('autocomplete', React.createElement(MUIAutocomplete, null));
 attachField('array', React.createElement(MUIFieldArray, null));
+attachField('time-picker-select', React.createElement(MUIDropDownTimePicker, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
     var columnItems = lodash.get(schema, 'columns');
@@ -752,6 +787,7 @@ exports.MLFormContent = MLFormContent;
 exports.MUIAutocomplete = MUIAutocomplete;
 exports.MUICheckBox = MUICheckBox;
 exports.MUIDatePicker = MUIDatePicker;
+exports.MUIDropDownTimePicker = MUIDropDownTimePicker;
 exports.MUIFieldArray = MUIFieldArray;
 exports.MUIPlaceSuggest = MUIPlaceSuggest;
 exports.MUIRadio = MUIRadio;

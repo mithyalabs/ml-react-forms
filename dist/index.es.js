@@ -13,6 +13,7 @@ import axios from 'axios';
 import Highlighter from 'react-highlight-words';
 import { FieldArray, Formik } from 'formik';
 import CloseIcon from '@material-ui/icons/Close';
+import moment from 'moment';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation. All rights reserved.
@@ -550,6 +551,39 @@ var useStyles = makeStyles(function () {
     }));
 });
 
+var getOptions = function (startTime, endTime, interval, amPm) {
+    var start = amPm ? moment(startTime, 'hh:mm a').toDate() : moment(startTime, 'HH:mm').toDate();
+    var end = amPm ? moment(endTime, 'hh:mm a').toDate() : moment(endTime, 'HH:mm').toDate();
+    var list = [];
+    while (start.getTime() <= end.getTime()) {
+        var item = amPm ? moment(start).format('hh:mm a') : moment(start).format('HH:mm');
+        list.push({ name: item, value: item });
+        start = new Date(start.getTime() + interval * 60000);
+    }
+    return list;
+};
+var MUIDropDownTimePicker = function (props) {
+    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.fieldConfig, fieldConfig = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
+    var _d = fieldProps.formControlProps, formControlProps = _d === void 0 ? {} : _d, _e = fieldProps.startTime, startTime = _e === void 0 ? '00:00' : _e, _f = fieldProps.endTime, endTime = _f === void 0 ? '23:45' : _f, _g = fieldProps.interval, interval = _g === void 0 ? 15 : _g, _h = fieldProps.amPm, amPm = _h === void 0 ? false : _h, label = fieldProps.label, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, _j = fieldProps.inputLabelProps, inputLabelProps = _j === void 0 ? {} : _j, formHelperTextProps = fieldProps.formHelperTextProps, _k = fieldProps.menuItemProps, menuItemProps = _k === void 0 ? {} : _k, _l = fieldProps.emptyMenuItemProps, emptyMenuItemProps = _l === void 0 ? {} : _l, selectProps = __rest(fieldProps, ["formControlProps", "startTime", "endTime", "interval", "amPm", "label", "emptyItem", "helperText", "inputLabelProps", "formHelperTextProps", "menuItemProps", "emptyMenuItemProps"]);
+    var labelId = fieldConfig.id + "_label";
+    var value = get(formikProps, "values." + fieldProps.name) || '';
+    var list = getOptions(startTime, endTime, interval, amPm);
+    var emptyItemText = (isString(emptyItem) ? emptyItem : 'None');
+    var onChange = function (event) {
+        event.preventDefault();
+        if (event.target.value)
+            formikProps.setFieldValue(get(fieldProps, 'name'), event.target.value, false);
+    };
+    console.log(value);
+    return (React__default.createElement(FormControl, __assign({}, formControlProps),
+        label &&
+            (React__default.createElement(InputLabel, __assign({ id: labelId }, inputLabelProps), label)),
+        React__default.createElement(Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: onChange }, selectProps),
+            (emptyItem) &&
+                (React__default.createElement(MenuItem, __assign({ value: '' }, menuItemProps, emptyMenuItemProps), emptyItemText)),
+            map(list, function (item, index) { return (React__default.createElement(MenuItem, __assign({}, menuItemProps, { key: fieldConfig.id + "_menu_item_" + index, value: item.value }), item.name)); }))));
+};
+
 var compare = function (value1, operator, value2) {
     switch (operator) {
         case '>': return value1 > value2;
@@ -638,6 +672,7 @@ attachField('switch', createElement(MUISwitch, null));
 attachField('radio', createElement(MUIRadio, null));
 attachField('autocomplete', createElement(MUIAutocomplete, null));
 attachField('array', createElement(MUIFieldArray, null));
+attachField('time-picker-select', createElement(MUIDropDownTimePicker, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
     var columnItems = get(schema, 'columns');
@@ -738,5 +773,5 @@ var ReactForm = function (props) {
 var index = './lib/ReactForm';
 
 export default index;
-export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUIAutocomplete, MUICheckBox, MUIDatePicker, MUIFieldArray, MUIPlaceSuggest, MUIRadio, MUISelectField, MUISwitch, MUITextField, MUITimePicker, ReactForm, attachField, getComponentConfig, setDefaultProps };
+export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUIAutocomplete, MUICheckBox, MUIDatePicker, MUIDropDownTimePicker, MUIFieldArray, MUIPlaceSuggest, MUIRadio, MUISelectField, MUISwitch, MUITextField, MUITimePicker, ReactForm, attachField, getComponentConfig, setDefaultProps };
 //# sourceMappingURL=index.es.js.map

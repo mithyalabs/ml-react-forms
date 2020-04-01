@@ -7,3 +7,4 @@ export { MUIPlaceSuggest } from './MUIPlaceSuggest';
 export { MUIDatePicker, MUITimePicker } from './MUIDateTimePicker';
 export { MUIAutocomplete } from './MUIAutoComplete';
 export { MUIFieldArray } from './MUIFieldArray';
+export { MUIDropDownTimePicker } from './MUIDropDownTimePicker';
