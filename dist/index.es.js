@@ -425,7 +425,6 @@ var MUIAutocomplete = function (props) {
                 switch (_a.label) {
                     case 0:
                         setQuery(newTerm);
-                        console.log(globalQueries);
                         if (!newTerm) {
                             setDefaultOptions([]);
                             return [2 /*return*/];

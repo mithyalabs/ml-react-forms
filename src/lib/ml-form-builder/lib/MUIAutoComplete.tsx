@@ -121,7 +121,6 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
     }
     const handleChange = async (newTerm: string, isWaitingReq: boolean = false): Promise<void> => {
         setQuery(newTerm)
-        console.log(globalQueries)
         if (!newTerm) { setDefaultOptions([]); return }
         if (options.length > 0) return
         if ((isWaitingReq && globalTerm !== newTerm) || !newTerm) return;
