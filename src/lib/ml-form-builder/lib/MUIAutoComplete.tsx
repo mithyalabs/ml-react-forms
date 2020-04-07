@@ -35,7 +35,8 @@ export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOption
     highlighterProps?: IHighlighterProps
     getQueryResponse?: (newTerm: string) => Promise<Array<TOptions | string>>
     outputKey?: string
-    onItemSelected?: (value: TOptions) => void
+    onItemSelected?: (value: TOptions) => void;
+    clearOnSelect?: boolean; // default: false
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUIAutoCompleteProps
@@ -59,6 +60,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         getQueryResponse = undefined,
         renderOption = undefined,
         outputKey = '',
+        clearOnSelect = false,
         onItemSelected = undefined,
         ...autoCompleteProps
     } = fieldProps
@@ -177,7 +179,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
 
     const onItemSelect = (event: React.ChangeEvent<{}>, value: TOptions | null) => {
         event.preventDefault();
-
+        if (clearOnSelect) setQuery('');
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
