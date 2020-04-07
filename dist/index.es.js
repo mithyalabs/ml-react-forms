@@ -91,6 +91,14 @@ function __generator(thisArg, body) {
     }
 }
 
+function __spreadArrays() {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+}
+
 function toVal(mix) {
 	var k, y, str='';
 	if (mix) {
@@ -341,8 +349,6 @@ var MUITimePicker = function (props) {
 };
 
 var TIME_BETWEEN_REQS = 300;
-var queries = [];
-var globalTerm = "";
 var MUIAutocomplete = function (props) {
     var _a = useState$2(), query = _a[0], setQuery = _a[1];
     var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
@@ -354,6 +360,8 @@ var MUIAutocomplete = function (props) {
     var _s = useState$2(false), open = _s[0], setOpen = _s[1];
     var _t = useState$2(false), loading = _t[0], setLoading = _t[1];
     var defaultGetOptionLabel = function (x) { return x.label; };
+    var _u = useState$2(''), globalTerm = _u[0], setGlobalTerm = _u[1];
+    var _v = useState$2([]), globalQueries = _v[0], setGlobalQueries = _v[1];
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
         var result, newOptions_1, additionalParams, response, result, newOptions;
         return __generator(this, function (_a) {
@@ -412,12 +420,11 @@ var MUIAutocomplete = function (props) {
     var handleChange = function (newTerm, isWaitingReq) {
         if (isWaitingReq === void 0) { isWaitingReq = false; }
         return __awaiter(void 0, void 0, void 0, function () {
-            var prevQueryIndex, lastQueryOrder, lastQueryIndex, lastQuery, now, newOptions, index, latestRespOrder, error_1;
+            var queries, prevQueryIndex, lastQueryOrder, lastQueryIndex, lastQuery, now, newOptions, index, latestRespOrder, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         setQuery(newTerm);
-                        globalTerm = newTerm;
                         if (!newTerm) {
                             setDefaultOptions([]);
                             return [2 /*return*/];
@@ -426,6 +433,8 @@ var MUIAutocomplete = function (props) {
                             return [2 /*return*/];
                         if ((isWaitingReq && globalTerm !== newTerm) || !newTerm)
                             return [2 /*return*/];
+                        setGlobalTerm(newTerm);
+                        queries = __spreadArrays(globalQueries);
                         prevQueryIndex = findIndex(queries, function (q) { return q.term === newTerm; });
                         lastQueryOrder = reduce(queries, function (currentMaxId, query) {
                             return Math.max(currentMaxId, query.order);
@@ -443,6 +452,7 @@ var MUIAutocomplete = function (props) {
                         lastQuery = queries[lastQueryIndex];
                         now = new Date().getTime();
                         if (!(lastQuery && (now - lastQuery.sendAt < TIME_BETWEEN_REQS))) return [3 /*break*/, 1];
+                        setGlobalQueries(__spreadArrays(queries));
                         setTimeout(function () {
                             handleChange(newTerm, true);
                         }, TIME_BETWEEN_REQS - (now - lastQuery.sendAt));
@@ -472,12 +482,14 @@ var MUIAutocomplete = function (props) {
                         else {
                             console.log('Ignoring results of:', newTerm);
                         }
+                        setGlobalQueries(__spreadArrays(queries));
                         return [3 /*break*/, 5];
                     case 4:
                         error_1 = _a.sent();
                         console.log('error', error_1);
                         queries = filter(queries, function (q) { return q.term !== newTerm; });
                         setDefaultOptions([]);
+                        setGlobalQueries(__spreadArrays(queries));
                         return [3 /*break*/, 5];
                     case 5: return [2 /*return*/];
                 }

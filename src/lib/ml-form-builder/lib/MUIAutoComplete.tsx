@@ -16,14 +16,14 @@ export interface IHighlighterProps { //Prop for default highlighter
 type TOptions = { key: string, label: string }
 const TIME_BETWEEN_REQS = 300;
 
-let queries: {
+export interface TQueries {
     term: string,
     sendAt: number,
     order: number,
     options?: TOptions[]
-}[] = [];
+}
 
-let globalTerm = "";
+//let globalTerm = "";
 export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOptions>> {
     options?: TOptions[]
     renderInputProps?: RenderInputParams
@@ -68,7 +68,8 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false)
     const defaultGetOptionLabel = (x: TOptions) => { return x.label }
-
+    const [globalTerm, setGlobalTerm] = React.useState<string>('')
+    const [globalQueries, setGlobalQueries] = React.useState<TQueries[]>([])
     const handleQueryResponse = async (newTerm: string) => {
         setLoading(true);
         if (getQueryResponse) {
@@ -122,10 +123,11 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
     }
     const handleChange = async (newTerm: string, isWaitingReq: boolean = false): Promise<void> => {
         setQuery(newTerm)
-        globalTerm = newTerm;
         if (!newTerm) { setDefaultOptions([]); return }
         if (options.length > 0) return
         if ((isWaitingReq && globalTerm !== newTerm) || !newTerm) return;
+        setGlobalTerm(newTerm)
+        let queries = [...globalQueries]
         let prevQueryIndex = findIndex(queries, q => q.term === newTerm);
         let lastQueryOrder = reduce(queries, function (currentMaxId, query) {
             return Math.max(currentMaxId, query.order);
@@ -136,6 +138,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             }
             else {
                 queries[prevQueryIndex].order = Math.max(queries[prevQueryIndex].order, lastQueryOrder + 1);
+
             }
             return;
         }
@@ -143,6 +146,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         let lastQuery = queries[lastQueryIndex];
         let now = new Date().getTime();
         if (lastQuery && (now - lastQuery.sendAt < TIME_BETWEEN_REQS)) {
+            setGlobalQueries([...queries])
             setTimeout(() => {
                 handleChange(newTerm, true)
             }, TIME_BETWEEN_REQS - (now - lastQuery.sendAt))
@@ -168,11 +172,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                 else {
                     console.log('Ignoring results of:', newTerm)
                 }
-
+                setGlobalQueries([...queries])
             } catch (error) {
                 console.log('error', error)
                 queries = filter(queries, q => q.term !== newTerm);
                 setDefaultOptions([]);
+                setGlobalQueries([...queries])
             }
         }
     }

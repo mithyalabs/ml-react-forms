@@ -11,6 +11,12 @@ declare type TOptions = {
     key: string;
     label: string;
 };
+export interface TQueries {
+    term: string;
+    sendAt: number;
+    order: number;
+    options?: TOptions[];
+}
 export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOptions>> {
     options?: TOptions[];
     renderInputProps?: RenderInputParams;
