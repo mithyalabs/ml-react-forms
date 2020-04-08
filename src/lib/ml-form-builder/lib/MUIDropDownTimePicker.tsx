@@ -4,7 +4,7 @@ import { get, isString, map } from 'lodash';
 import React, { FC } from 'react';
 import moment from 'moment'
 import { IFieldProps, FormConfig } from '..';
-import { MenuOptionObject } from '../Utils';
+import { MenuOptionObject, getFieldError } from '../Utils';
 export interface IMUIDropDownTimePickerProps extends SelectProps {
     label?: string
     emptyItem?: string | boolean
@@ -37,6 +37,7 @@ export const MUIDropDownTimePicker: FC<MUIDropDownTimePickerProps> = (props) => 
     const { fieldProps = {} as IMUIDropDownTimePickerProps,
         fieldConfig = {} as FormConfig,
         formikProps = {} as FormikValues, } = props;
+    const fieldError = getFieldError((fieldProps.name || ''), formikProps);
     const {
         formControlProps = {} as FormControlProps,
         startTime = '00:00',
@@ -50,6 +51,7 @@ export const MUIDropDownTimePicker: FC<MUIDropDownTimePickerProps> = (props) => 
         formHelperTextProps,
         menuItemProps = {} as MenuItemProps,
         emptyMenuItemProps = {} as MenuItemProps,
+        error = !!fieldError,
         ...selectProps
     } = fieldProps
     const labelId = `${fieldConfig.id}_label`;
