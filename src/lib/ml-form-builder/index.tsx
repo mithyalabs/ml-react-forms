@@ -25,7 +25,7 @@ export interface FormConfig {
 }
 
 interface RowSettingsProps {
-    horiontalSpacing?: number
+    horizontalSpacing?: number
     verticalSpacing?: number
     columnHorizontalPadding?: number
 }
@@ -43,7 +43,7 @@ export interface FormRowProps {
 
 
 
-type submitButtonLayout = "right" | "center" | "fullwidth";
+type submitButtonLayout = "right" | "center" | "fullWidth";
 export interface IFormActionProps {
     submitButtonText?: string,
     submitButtonProps?: ButtonProps
@@ -103,7 +103,7 @@ attachField('time-picker-select', <MUIDropDownTimePicker />)
 
 
 export const BuildFormRow: React.FC<FormRowProps> = props => {
-    const { schema, rowId, formikProps = {}, settings = { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } } = props;
+    const { schema, rowId, formikProps = {}, settings = { horizontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } } = props;
     let columnItems = get(schema, 'columns') as Array<FormConfig>;
     let rowSettings = { ...settings, ...get(schema, 'settings') } as RowSettingsProps;
     const colItems = (isArray(schema) ? schema : ((isArray(columnItems) ? columnItems : [schema])));
@@ -114,7 +114,7 @@ export const BuildFormRow: React.FC<FormRowProps> = props => {
             {
                 map(colItems, (item: FormConfig, index) => {
                     const componentConfig = ComponentMapConfig[item.type];
-                    const horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horiontalSpacing || 10);
+                    const horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horizontalSpacing || 10);
                     if (!componentConfig)
                         return <div key={`${rowId}_field_${index}`} />;
 
@@ -235,7 +235,7 @@ const useFormStyles = makeStyles<Theme>(() => {
             '&.action-right': {
                 justifyContent: 'flex-end'
             },
-            '&.action-fullwidth > button': {
+            '&.action-fullWidth > button': {
                 flex: 1
             }
         },
