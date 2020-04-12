@@ -17,7 +17,6 @@ var PlacesAutocomplete__default = _interopDefault(PlacesAutocomplete);
 var icons = require('@material-ui/icons');
 var pickers = require('@material-ui/pickers');
 var Autocomplete = _interopDefault(require('@material-ui/lab/Autocomplete'));
-var axios = _interopDefault(require('axios'));
 var Highlighter = _interopDefault(require('react-highlight-words'));
 var formik = require('formik');
 var CloseIcon = _interopDefault(require('@material-ui/icons/Close'));
@@ -363,15 +362,15 @@ var MUIAutocomplete = function (props) {
     var _d = fieldProps.highlighterProps, highlighterProps = _d === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
-    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.apiUrl, apiUrl = _f === void 0 ? '' : _f, _g = fieldProps.params, params = _g === void 0 ? {} : _g, _h = fieldProps.renderInputProps, renderInputProps = _h === void 0 ? {} : _h, _j = fieldProps.inputProps, inputProps = _j === void 0 ? {} : _j, _k = fieldProps.getOptionLabel, getOptionLabel = _k === void 0 ? undefined : _k, _l = fieldProps.getRequestParam, getRequestParam = _l === void 0 ? undefined : _l, _m = fieldProps.getQueryResponse, getQueryResponse = _m === void 0 ? undefined : _m, _o = fieldProps.renderOption, renderOption = _o === void 0 ? undefined : _o, _p = fieldProps.outputKey, outputKey = _p === void 0 ? '' : _p, _q = fieldProps.onItemSelected, onItemSelected = _q === void 0 ? undefined : _q, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "apiUrl", "params", "renderInputProps", "inputProps", "getOptionLabel", "getRequestParam", "getQueryResponse", "renderOption", "outputKey", "onItemSelected"]);
-    var _r = React.useState([]), defaultOptions = _r[0], setDefaultOptions = _r[1];
-    var _s = React.useState(false), open = _s[0], setOpen = _s[1];
-    var _t = React.useState(false), loading = _t[0], setLoading = _t[1];
-    var defaultGetOptionLabel = function (x) { return x.label; };
-    var _u = React.useState(''), globalTerm = _u[0], setGlobalTerm = _u[1];
-    var _v = React.useState([]), globalQueries = _v[0], setGlobalQueries = _v[1];
+    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.renderInputProps, renderInputProps = _f === void 0 ? {} : _f, _g = fieldProps.inputProps, inputProps = _g === void 0 ? {} : _g, _h = fieldProps.getQueryResponse, getQueryResponse = _h === void 0 ? undefined : _h, _j = fieldProps.outputKey, outputKey = _j === void 0 ? '' : _j, _k = fieldProps.onItemSelected, onItemSelected = _k === void 0 ? undefined : _k, _l = fieldProps.displayKey, displayKey = _l === void 0 ? 'label' : _l, _m = fieldProps.uniqueKey, uniqueKey = _m === void 0 ? 'key' : _m, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "onItemSelected", "displayKey", "uniqueKey"]);
+    var _o = React.useState([]), defaultOptions = _o[0], setDefaultOptions = _o[1];
+    var _p = React.useState(false), open = _p[0], setOpen = _p[1];
+    var _q = React.useState(false), loading = _q[0], setLoading = _q[1];
+    var _r = React.useState(''), globalTerm = _r[0], setGlobalTerm = _r[1];
+    var _s = React.useState([]), globalQueries = _s[0], setGlobalQueries = _s[1];
+    var defaultGetOptionLabel = function (x) { return x[displayKey]; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
-        var result, newOptions_1, additionalParams, response, result, newOptions;
+        var result, newOptions_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -382,46 +381,11 @@ var MUIAutocomplete = function (props) {
                     result = _a.sent();
                     newOptions_1 = [];
                     result.forEach(function (element) {
-                        if (typeof element === 'string') {
-                            newOptions_1.push({
-                                key: element,
-                                label: element
-                            });
-                        }
-                        else {
-                            newOptions_1.push(element);
-                        }
+                        newOptions_1.push(element);
                     });
                     setLoading(false);
                     return [2 /*return*/, newOptions_1];
-                case 2:
-                    additionalParams = getRequestParam ? getRequestParam(newTerm) : {};
-                    return [4 /*yield*/, axios.request({
-                            url: apiUrl,
-                            method: 'GET',
-                            params: __assign(__assign({}, params), additionalParams)
-                        })];
-                case 3:
-                    response = _a.sent();
-                    result = response.data;
-                    newOptions = [];
-                    result.forEach(function (element) {
-                        if (typeof element === 'string') {
-                            newOptions.push({
-                                key: element,
-                                label: element
-                            });
-                        }
-                        else {
-                            var value = element.name || element.title || element.label || '';
-                            newOptions.push({
-                                key: value,
-                                label: value
-                            });
-                        }
-                    });
-                    setLoading(false);
-                    return [2 /*return*/, newOptions];
+                case 2: return [2 /*return*/, []];
             }
         });
     }); };
@@ -487,9 +451,6 @@ var MUIAutocomplete = function (props) {
                         if (latestRespOrder < queries[index].order) {
                             setDefaultOptions(newOptions);
                         }
-                        else {
-                            console.log('Ignoring results of:', newTerm);
-                        }
                         setGlobalQueries(__spreadArrays(queries));
                         return [3 /*break*/, 5];
                     case 4:
@@ -510,9 +471,9 @@ var MUIAutocomplete = function (props) {
             if (onItemSelected)
                 onItemSelected(value);
             else
-                formikProps.setFieldValue(lodash.get(fieldProps, 'name'), value.label, false);
+                formikProps.setFieldValue(lodash.get(fieldProps, 'name'), value, false);
             if (outputKey)
-                formikProps.setFieldValue(outputKey, value.key, false);
+                formikProps.setFieldValue(outputKey, value[uniqueKey], false);
         }
     };
     var defaultRenderOptions = function (option, _a) {
@@ -520,11 +481,11 @@ var MUIAutocomplete = function (props) {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (React.createElement("div", null, (highlighterProps.highlightText === false) ?
             //NO HIGHLIGHT
-            React.createElement("span", null, option.label) :
+            React.createElement("span", null, option[displayKey]) :
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
-            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option.label, highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
+            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
-    return React.createElement(Autocomplete, __assign({ onChange: onItemSelect, getOptionLabel: getOptionLabel ? getOptionLabel : defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], getOptionSelected: function (option, value) { return option.key === value.key; }, renderOption: renderOption ? renderOption : defaultRenderOptions, filterOptions: function (options) { return options; }, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
+    return React.createElement(Autocomplete, __assign({ onChange: onItemSelect, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
                     loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
                     autoCompleteProps.freeSolo && params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps));
 };

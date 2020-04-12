@@ -1,11 +1,11 @@
 import { CircularProgress, InputBaseComponentProps, TextField } from '@material-ui/core';
 import Autocomplete, { AutocompleteProps, RenderInputParams, RenderOptionState } from '@material-ui/lab/Autocomplete';
-import axios from 'axios';
 import { FormikValues } from 'formik';
 import { filter, findIndex, get, reduce } from 'lodash';
 import * as React from 'react';
-import { IFieldProps } from '..';
+
 import Highlighter from "react-highlight-words";
+import { IFieldProps } from '..';
 
 export interface IHighlighterProps { //Prop for default highlighter 
     highlightText?: boolean //this props will be used if nad only if this is true
@@ -13,7 +13,7 @@ export interface IHighlighterProps { //Prop for default highlighter
     highlighterStyles?: object //additional highlight styles
 
 }
-type TOptions = { key: string, label: string }
+type TOptions = Record<string, any>
 const TIME_BETWEEN_REQS = 300;
 
 export interface TQueries {
@@ -23,19 +23,16 @@ export interface TQueries {
     options?: TOptions[]
 }
 
-//let globalTerm = "";
 export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOptions>> {
     options?: TOptions[]
     renderInputProps?: RenderInputParams
     inputProps?: InputBaseComponentProps
-    apiUrl?: string
-    params?: object //static options
-    getOptionLabel?: (x: any) => string //get label for the option
-    getRequestParam?: (query: string) => any //get param according to the search key
     highlighterProps?: IHighlighterProps
-    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions | string>>
+    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions>>
     outputKey?: string
     onItemSelected?: (value: TOptions) => void
+    displayKey?: string
+    uniqueKey?: string
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUIAutoCompleteProps
@@ -50,74 +47,35 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             highlightColor: '#ffff00'
         } as IHighlighterProps,
         options = [],
-        apiUrl = '' as string,
-        params = {},
         renderInputProps = {} as RenderInputParams,
         inputProps = {} as InputBaseComponentProps,
-        getOptionLabel = undefined,
-        getRequestParam = undefined,
         getQueryResponse = undefined,
-        renderOption = undefined,
         outputKey = '',
         onItemSelected = undefined,
+        displayKey = 'label',
+        uniqueKey = 'key',
         ...autoCompleteProps
     } = fieldProps
+
     const [defaultOptions, setDefaultOptions] = React.useState<TOptions[]>([]);
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false)
-    const defaultGetOptionLabel = (x: TOptions) => { return x.label }
     const [globalTerm, setGlobalTerm] = React.useState<string>('')
     const [globalQueries, setGlobalQueries] = React.useState<TQueries[]>([])
+
+    const defaultGetOptionLabel = (x: TOptions) => { return x[displayKey] }
     const handleQueryResponse = async (newTerm: string) => {
         setLoading(true);
         if (getQueryResponse) {
             const result = await getQueryResponse(newTerm);
             let newOptions: Array<TOptions> = []
             result.forEach((element) => {
-                if (typeof element === 'string') {
-                    newOptions.push({
-                        key: element,
-                        label: element
-                    })
-                } else {
-                    newOptions.push(element)
-                }
+                newOptions.push(element)
             })
             setLoading(false)
             return newOptions
-
-        } else {
-            const additionalParams = getRequestParam ? getRequestParam(newTerm) : {}
-            const response = await axios.request<Array<{ name?: string, title?: string, label: string } | string>>({
-                url: apiUrl,
-                method: 'GET',
-                params: {
-                    ...params,
-                    ...additionalParams
-                }
-            })
-            const result = response.data;
-            var newOptions: Array<TOptions> = []
-            result.forEach((element) => {
-                if (typeof element === 'string') {
-                    newOptions.push({
-                        key: element,
-                        label: element
-                    })
-                } else {
-                    var value = element.name || element.title || element.label || ''
-                    newOptions.push({
-                        key: value,
-                        label: value
-                    })
-                }
-            })
-
-            setLoading(false)
-            return newOptions;
         }
-
-
+        return [];
     }
     const handleChange = async (newTerm: string, isWaitingReq: boolean = false): Promise<void> => {
         setQuery(newTerm)
@@ -168,7 +126,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                     setDefaultOptions(newOptions);
                 }
                 else {
-                    console.log('Ignoring results of:', newTerm)
+                    // console.log('Ignoring results of:', newTerm)
                 }
                 setGlobalQueries([...queries])
             } catch (error) {
@@ -187,10 +145,9 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             if (onItemSelected)
                 onItemSelected(value);
             else
-                formikProps.setFieldValue(get(fieldProps, 'name'), value.label, false)
+                formikProps.setFieldValue(get(fieldProps, 'name'), value, false)
             if (outputKey)
-                formikProps.setFieldValue(outputKey, value.key, false)
-
+                formikProps.setFieldValue(outputKey, value[uniqueKey], false)
         }
 
     }
@@ -203,12 +160,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                     (highlighterProps.highlightText === false) ?
                         //NO HIGHLIGHT
                         <span>
-                            {option.label}
+                            {option[displayKey]}
                         </span> :
                         //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
                         <Highlighter
                             searchWords={[inputValue]}
-                            textToHighlight={option.label}
+                            textToHighlight={option[displayKey]}
                             highlightStyle={{
                                 backgroundColor: highlighterProps.highlightColor,
                                 ...highlighterProps.highlighterStyles
@@ -220,13 +177,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
     }
     return <Autocomplete
         onChange={onItemSelect}
-        getOptionLabel={getOptionLabel ? getOptionLabel : defaultGetOptionLabel}
+        getOptionLabel={defaultGetOptionLabel}
         onOpen={() => { setOpen(true) }}
         open={(open && (query !== undefined && query !== ''))}
         onClose={() => { setOpen(false) }}
         options={open ? (options.length > 0 ? options : defaultOptions) : []}
-        getOptionSelected={(option, value) => option.key === value.key}
-        renderOption={renderOption ? renderOption : defaultRenderOptions}
+        renderOption={defaultRenderOptions}
         filterOptions={(options: TOptions[]) => { return options }}
         renderInput={
             params => <TextField

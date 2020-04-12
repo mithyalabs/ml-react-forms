@@ -7,10 +7,7 @@ export interface IHighlighterProps {
     highlightColor?: string;
     highlighterStyles?: object;
 }
-declare type TOptions = {
-    key: string;
-    label: string;
-};
+declare type TOptions = Record<string, any>;
 export interface TQueries {
     term: string;
     sendAt: number;
@@ -21,14 +18,12 @@ export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOption
     options?: TOptions[];
     renderInputProps?: RenderInputParams;
     inputProps?: InputBaseComponentProps;
-    apiUrl?: string;
-    params?: object;
-    getOptionLabel?: (x: any) => string;
-    getRequestParam?: (query: string) => any;
     highlighterProps?: IHighlighterProps;
-    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions | string>>;
+    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions>>;
     outputKey?: string;
     onItemSelected?: (value: TOptions) => void;
+    displayKey?: string;
+    uniqueKey?: string;
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUIAutoCompleteProps;
