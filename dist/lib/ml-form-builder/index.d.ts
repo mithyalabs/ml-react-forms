@@ -15,7 +15,7 @@ export interface FormConfig {
     condition?: TFieldConditions;
 }
 interface RowSettingsProps {
-    horiontalSpacing?: number;
+    horizontalSpacing?: number;
     verticalSpacing?: number;
     columnHorizontalPadding?: number;
 }
@@ -31,7 +31,7 @@ export interface FormRowProps {
     formikProps?: FormikValues;
     settings?: BuilderSettingsProps;
 }
-declare type submitButtonLayout = "right" | "center" | "fullwidth";
+declare type submitButtonLayout = "right" | "center" | "fullWidth";
 export interface IFormActionProps {
     submitButtonText?: string;
     submitButtonProps?: ButtonProps;

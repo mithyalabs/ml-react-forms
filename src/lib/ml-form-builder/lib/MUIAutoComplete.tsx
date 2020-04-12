@@ -33,6 +33,7 @@ export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOption
     onItemSelected?: (value: TOptions) => void
     displayKey?: string
     uniqueKey?: string
+    clearOnSelect?: boolean; // default: false
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUIAutoCompleteProps
@@ -51,6 +52,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         inputProps = {} as InputBaseComponentProps,
         getQueryResponse = undefined,
         outputKey = '',
+        clearOnSelect = false,
         onItemSelected = undefined,
         displayKey = 'label',
         uniqueKey = 'key',
@@ -140,7 +142,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
 
     const onItemSelect = (event: React.ChangeEvent<{}>, value: TOptions | null) => {
         event.preventDefault();
-
+        if (clearOnSelect) setQuery('');
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);

@@ -24,6 +24,7 @@ export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOption
     onItemSelected?: (value: TOptions) => void;
     displayKey?: string;
     uniqueKey?: string;
+    clearOnSelect?: boolean;
 }
 export interface IProps extends IFieldProps {
     fieldProps?: IMUIAutoCompleteProps;

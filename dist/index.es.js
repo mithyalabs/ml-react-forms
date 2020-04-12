@@ -354,12 +354,12 @@ var MUIAutocomplete = function (props) {
     var _d = fieldProps.highlighterProps, highlighterProps = _d === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
-    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.renderInputProps, renderInputProps = _f === void 0 ? {} : _f, _g = fieldProps.inputProps, inputProps = _g === void 0 ? {} : _g, _h = fieldProps.getQueryResponse, getQueryResponse = _h === void 0 ? undefined : _h, _j = fieldProps.outputKey, outputKey = _j === void 0 ? '' : _j, _k = fieldProps.onItemSelected, onItemSelected = _k === void 0 ? undefined : _k, _l = fieldProps.displayKey, displayKey = _l === void 0 ? 'label' : _l, _m = fieldProps.uniqueKey, uniqueKey = _m === void 0 ? 'key' : _m, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "onItemSelected", "displayKey", "uniqueKey"]);
-    var _o = useState$2([]), defaultOptions = _o[0], setDefaultOptions = _o[1];
-    var _p = useState$2(false), open = _p[0], setOpen = _p[1];
-    var _q = useState$2(false), loading = _q[0], setLoading = _q[1];
-    var _r = useState$2(''), globalTerm = _r[0], setGlobalTerm = _r[1];
-    var _s = useState$2([]), globalQueries = _s[0], setGlobalQueries = _s[1];
+    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.renderInputProps, renderInputProps = _f === void 0 ? {} : _f, _g = fieldProps.inputProps, inputProps = _g === void 0 ? {} : _g, _h = fieldProps.getQueryResponse, getQueryResponse = _h === void 0 ? undefined : _h, _j = fieldProps.outputKey, outputKey = _j === void 0 ? '' : _j, _k = fieldProps.clearOnSelect, clearOnSelect = _k === void 0 ? false : _k, _l = fieldProps.onItemSelected, onItemSelected = _l === void 0 ? undefined : _l, _m = fieldProps.displayKey, displayKey = _m === void 0 ? 'label' : _m, _o = fieldProps.uniqueKey, uniqueKey = _o === void 0 ? 'key' : _o, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "clearOnSelect", "onItemSelected", "displayKey", "uniqueKey"]);
+    var _p = useState$2([]), defaultOptions = _p[0], setDefaultOptions = _p[1];
+    var _q = useState$2(false), open = _q[0], setOpen = _q[1];
+    var _r = useState$2(false), loading = _r[0], setLoading = _r[1];
+    var _s = useState$2(''), globalTerm = _s[0], setGlobalTerm = _s[1];
+    var _t = useState$2([]), globalQueries = _t[0], setGlobalQueries = _t[1];
     var defaultGetOptionLabel = function (x) { return x[displayKey]; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
         var result, newOptions_1;
@@ -459,6 +459,8 @@ var MUIAutocomplete = function (props) {
     };
     var onItemSelect = function (event, value) {
         event.preventDefault();
+        if (clearOnSelect)
+            setQuery('');
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
@@ -537,7 +539,8 @@ var getOptions = function (startTime, endTime, interval, amPm) {
 };
 var MUIDropDownTimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.fieldConfig, fieldConfig = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
-    var _d = fieldProps.formControlProps, formControlProps = _d === void 0 ? {} : _d, _e = fieldProps.startTime, startTime = _e === void 0 ? '00:00' : _e, _f = fieldProps.endTime, endTime = _f === void 0 ? '23:45' : _f, _g = fieldProps.interval, interval = _g === void 0 ? 15 : _g, _h = fieldProps.amPm, amPm = _h === void 0 ? false : _h, label = fieldProps.label, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, _j = fieldProps.inputLabelProps, inputLabelProps = _j === void 0 ? {} : _j, formHelperTextProps = fieldProps.formHelperTextProps, _k = fieldProps.menuItemProps, menuItemProps = _k === void 0 ? {} : _k, _l = fieldProps.emptyMenuItemProps, emptyMenuItemProps = _l === void 0 ? {} : _l, selectProps = __rest(fieldProps, ["formControlProps", "startTime", "endTime", "interval", "amPm", "label", "emptyItem", "helperText", "inputLabelProps", "formHelperTextProps", "menuItemProps", "emptyMenuItemProps"]);
+    var fieldError = getFieldError((fieldProps.name || ''), formikProps);
+    var _d = fieldProps.formControlProps, formControlProps = _d === void 0 ? {} : _d, _e = fieldProps.startTime, startTime = _e === void 0 ? '00:00' : _e, _f = fieldProps.endTime, endTime = _f === void 0 ? '23:45' : _f, _g = fieldProps.interval, interval = _g === void 0 ? 15 : _g, _h = fieldProps.amPm, amPm = _h === void 0 ? false : _h, label = fieldProps.label, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, _j = fieldProps.inputLabelProps, inputLabelProps = _j === void 0 ? {} : _j, formHelperTextProps = fieldProps.formHelperTextProps, _k = fieldProps.menuItemProps, menuItemProps = _k === void 0 ? {} : _k, _l = fieldProps.emptyMenuItemProps, emptyMenuItemProps = _l === void 0 ? {} : _l, _m = fieldProps.error, selectProps = __rest(fieldProps, ["formControlProps", "startTime", "endTime", "interval", "amPm", "label", "emptyItem", "helperText", "inputLabelProps", "formHelperTextProps", "menuItemProps", "emptyMenuItemProps", "error"]);
     var labelId = fieldConfig.id + "_label";
     var value = get(formikProps, "values." + fieldProps.name) || '';
     var list = getOptions(startTime, endTime, interval, amPm);
@@ -647,7 +650,7 @@ attachField('autocomplete', createElement(MUIAutocomplete, null));
 attachField('array', createElement(MUIFieldArray, null));
 attachField('time-picker-select', createElement(MUIDropDownTimePicker, null));
 var BuildFormRow = function (props) {
-    var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
+    var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horizontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
     var columnItems = get(schema, 'columns');
     var rowSettings = __assign(__assign({}, settings), get(schema, 'settings'));
     var colItems = (isArray(schema) ? schema : ((isArray(columnItems) ? columnItems : [schema])));
@@ -655,7 +658,7 @@ var BuildFormRow = function (props) {
     var rowStyle = { marginBottom: (rowSettings.verticalSpacing || 10) };
     return (createElement("div", { className: classes.row, style: rowStyle }, map(colItems, function (item, index) {
         var componentConfig = ComponentMapConfig[item.type];
-        var horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horiontalSpacing || 10);
+        var horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horizontalSpacing || 10);
         if (!componentConfig)
             return createElement("div", { key: rowId + "_field_" + index });
         var conditionalProps = getConditionalProps(item, formikProps);
@@ -724,7 +727,7 @@ var useFormStyles = makeStyles(function () {
             '&.action-right': {
                 justifyContent: 'flex-end'
             },
-            '&.action-fullwidth > button': {
+            '&.action-fullWidth > button': {
                 flex: 1
             }
         },
