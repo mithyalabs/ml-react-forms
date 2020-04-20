@@ -30,7 +30,7 @@ export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOption
     highlighterProps?: IHighlighterProps
     getQueryResponse?: (newTerm: string) => Promise<Array<TOptions>>
     outputKey?: string
-    onItemSelected?: (value: TOptions) => void
+    onItemSelected?: (value: TOptions | TOptions[]) => void
     displayKey?: string
     uniqueKey?: string
     clearOnSelect?: boolean; // default: false
@@ -64,7 +64,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
     const [loading, setLoading] = React.useState(false)
     const [globalTerm, setGlobalTerm] = React.useState<string>('')
     const [globalQueries, setGlobalQueries] = React.useState<TQueries[]>([])
-
+    const value = get(formikProps, `values.${get(fieldProps, 'name') || ''}`) || (get(fieldProps, 'multiple') ? [] : null);
     const defaultGetOptionLabel = (x: TOptions) => { return x[displayKey] }
     const handleQueryResponse = async (newTerm: string) => {
         setLoading(true);
@@ -140,16 +140,17 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         }
     }
 
-    const onItemSelect = (event: React.ChangeEvent<{}>, value: TOptions | null) => {
+    const onItemSelect = (event: React.ChangeEvent<{}>, value: TOptions | TOptions[] | null) => {
         event.preventDefault();
         if (clearOnSelect) setQuery('');
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
-            else
+            else {
                 formikProps.setFieldValue(get(fieldProps, 'name'), value, false)
-            if (outputKey)
-                formikProps.setFieldValue(outputKey, value[uniqueKey], false)
+            }
+            // if (outputKey)
+            //     formikProps.setFieldValue(outputKey, value[uniqueKey], false)
         }
 
     }
@@ -186,6 +187,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         options={open ? (options.length > 0 ? options : defaultOptions) : []}
         renderOption={defaultRenderOptions}
         filterOptions={(options: TOptions[]) => { return options }}
+        value={value}
         renderInput={
             params => <TextField
                 {...params}

@@ -354,12 +354,13 @@ var MUIAutocomplete = function (props) {
     var _d = fieldProps.highlighterProps, highlighterProps = _d === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
-    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.renderInputProps, renderInputProps = _f === void 0 ? {} : _f, _g = fieldProps.inputProps, inputProps = _g === void 0 ? {} : _g, _h = fieldProps.getQueryResponse, getQueryResponse = _h === void 0 ? undefined : _h, _j = fieldProps.outputKey, outputKey = _j === void 0 ? '' : _j, _k = fieldProps.clearOnSelect, clearOnSelect = _k === void 0 ? false : _k, _l = fieldProps.onItemSelected, onItemSelected = _l === void 0 ? undefined : _l, _m = fieldProps.displayKey, displayKey = _m === void 0 ? 'label' : _m, _o = fieldProps.uniqueKey, uniqueKey = _o === void 0 ? 'key' : _o, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "clearOnSelect", "onItemSelected", "displayKey", "uniqueKey"]);
+    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.renderInputProps, renderInputProps = _f === void 0 ? {} : _f, _g = fieldProps.inputProps, inputProps = _g === void 0 ? {} : _g, _h = fieldProps.getQueryResponse, getQueryResponse = _h === void 0 ? undefined : _h, _j = fieldProps.outputKey, _k = fieldProps.clearOnSelect, clearOnSelect = _k === void 0 ? false : _k, _l = fieldProps.onItemSelected, onItemSelected = _l === void 0 ? undefined : _l, _m = fieldProps.displayKey, displayKey = _m === void 0 ? 'label' : _m, _o = fieldProps.uniqueKey, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "clearOnSelect", "onItemSelected", "displayKey", "uniqueKey"]);
     var _p = useState$2([]), defaultOptions = _p[0], setDefaultOptions = _p[1];
     var _q = useState$2(false), open = _q[0], setOpen = _q[1];
     var _r = useState$2(false), loading = _r[0], setLoading = _r[1];
     var _s = useState$2(''), globalTerm = _s[0], setGlobalTerm = _s[1];
     var _t = useState$2([]), globalQueries = _t[0], setGlobalQueries = _t[1];
+    var value = get(formikProps, "values." + (get(fieldProps, 'name') || '')) || (get(fieldProps, 'multiple') ? [] : null);
     var defaultGetOptionLabel = function (x) { return x[displayKey]; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
         var result, newOptions_1;
@@ -464,10 +465,11 @@ var MUIAutocomplete = function (props) {
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
-            else
+            else {
                 formikProps.setFieldValue(get(fieldProps, 'name'), value, false);
-            if (outputKey)
-                formikProps.setFieldValue(outputKey, value[uniqueKey], false);
+            }
+            // if (outputKey)
+            //     formikProps.setFieldValue(outputKey, value[uniqueKey], false)
         }
     };
     var defaultRenderOptions = function (option, _a) {
@@ -479,7 +481,7 @@ var MUIAutocomplete = function (props) {
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
             createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
-    return createElement(Autocomplete, __assign({ onChange: onItemSelect, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (createElement(Fragment, null,
+    return createElement(Autocomplete, __assign({ onChange: onItemSelect, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, value: value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (createElement(Fragment, null,
                     loading ? createElement(CircularProgress, { color: "primary", size: 20 }) : null,
                     autoCompleteProps.freeSolo && params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps));
 };
