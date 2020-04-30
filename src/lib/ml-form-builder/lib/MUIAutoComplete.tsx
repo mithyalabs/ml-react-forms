@@ -1,7 +1,7 @@
 import { CircularProgress, InputBaseComponentProps, TextField } from '@material-ui/core';
 import Autocomplete, { AutocompleteProps, RenderInputParams, RenderOptionState } from '@material-ui/lab/Autocomplete';
 import { FormikValues } from 'formik';
-import { filter, findIndex, get, reduce } from 'lodash';
+import { filter, findIndex, get, reduce, isString } from 'lodash';
 import * as React from 'react';
 
 import Highlighter from "react-highlight-words";
@@ -13,7 +13,7 @@ export interface IHighlighterProps { //Prop for default highlighter
     highlighterStyles?: object //additional highlight styles
 
 }
-type TOptions = Record<string, any>
+type TOptions = Record<string, any> | string
 const TIME_BETWEEN_REQS = 300;
 
 export interface TQueries {
@@ -65,7 +65,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
     const [globalTerm, setGlobalTerm] = React.useState<string>('')
     const [globalQueries, setGlobalQueries] = React.useState<TQueries[]>([])
     const value = get(formikProps, `values.${get(fieldProps, 'name') || ''}`) || (get(fieldProps, 'multiple') ? [] : null);
-    const defaultGetOptionLabel = (x: TOptions) => { return x[displayKey] }
+    const defaultGetOptionLabel = (x: TOptions) => { return isString(x) ? x : x[displayKey] }
     const handleQueryResponse = async (newTerm: string) => {
         setLoading(true);
         if (getQueryResponse) {
@@ -147,10 +147,10 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             if (onItemSelected)
                 onItemSelected(value);
             else {
-                formikProps.setFieldValue(get(fieldProps, 'name'), value, false)
+                formikProps.setFieldValue(get(fieldProps, 'name'), isString(value) ? value : value[uniqueKey], false)
             }
             if (outputKey)
-                formikProps.setFieldValue(outputKey, value[uniqueKey], false)
+                formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
         }
 
     }
@@ -163,12 +163,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                     (highlighterProps.highlightText === false) ?
                         //NO HIGHLIGHT
                         <span>
-                            {option[displayKey]}
+                            {isString(option) ? option : option[displayKey]}
                         </span> :
                         //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
                         <Highlighter
                             searchWords={[inputValue]}
-                            textToHighlight={option[displayKey]}
+                            textToHighlight={isString(option) ? option : option[displayKey]}
                             highlightStyle={{
                                 backgroundColor: highlighterProps.highlightColor,
                                 ...highlighterProps.highlighterStyles
