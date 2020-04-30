@@ -149,8 +149,8 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             else {
                 formikProps.setFieldValue(get(fieldProps, 'name'), value, false)
             }
-            if (outputKey)
-                formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
+            // if (outputKey)
+            //     formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
         }
 
     }
@@ -199,7 +199,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                     endAdornment: (
                         <React.Fragment>
                             {loading ? <CircularProgress color="primary" size={20} /> : null}
-                            {autoCompleteProps.freeSolo && params.InputProps.endAdornment}
+                            {!clearOnSelect && params.InputProps.endAdornment}
                         </React.Fragment>
                     ),
                     ...inputProps,
