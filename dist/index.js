@@ -369,7 +369,7 @@ var MUIAutocomplete = function (props) {
     var _s = React.useState(''), globalTerm = _s[0], setGlobalTerm = _s[1];
     var _t = React.useState([]), globalQueries = _t[0], setGlobalQueries = _t[1];
     var value = lodash.get(formikProps, "values." + (lodash.get(fieldProps, 'name') || '')) || (lodash.get(fieldProps, 'multiple') ? [] : null);
-    var defaultGetOptionLabel = function (x) { return x[displayKey]; };
+    var defaultGetOptionLabel = function (x) { return lodash.isString(x) ? x : x[displayKey]; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
         var result, newOptions_1;
         return __generator(this, function (_a) {
@@ -477,7 +477,7 @@ var MUIAutocomplete = function (props) {
                 formikProps.setFieldValue(lodash.get(fieldProps, 'name'), value, false);
             }
             if (outputKey)
-                formikProps.setFieldValue(outputKey, value[uniqueKey], false);
+                formikProps.setFieldValue(outputKey, lodash.isString(value) ? value : value[uniqueKey], false);
         }
     };
     var defaultRenderOptions = function (option, _a) {
@@ -485,9 +485,9 @@ var MUIAutocomplete = function (props) {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (React.createElement("div", null, (highlighterProps.highlightText === false) ?
             //NO HIGHLIGHT
-            React.createElement("span", null, option[displayKey]) :
+            React.createElement("span", null, lodash.isString(option) ? option : option[displayKey]) :
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
-            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
+            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: lodash.isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
     return React.createElement(Autocomplete, __assign({ onChange: onItemSelect, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, value: value, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
                     loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,

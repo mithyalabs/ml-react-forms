@@ -7,7 +7,7 @@ export interface IHighlighterProps {
     highlightColor?: string;
     highlighterStyles?: object;
 }
-declare type TOptions = Record<string, any>;
+declare type TOptions = Record<string, any> | string;
 export interface TQueries {
     term: string;
     sendAt: number;

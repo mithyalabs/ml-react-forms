@@ -361,7 +361,7 @@ var MUIAutocomplete = function (props) {
     var _s = useState$2(''), globalTerm = _s[0], setGlobalTerm = _s[1];
     var _t = useState$2([]), globalQueries = _t[0], setGlobalQueries = _t[1];
     var value = get(formikProps, "values." + (get(fieldProps, 'name') || '')) || (get(fieldProps, 'multiple') ? [] : null);
-    var defaultGetOptionLabel = function (x) { return x[displayKey]; };
+    var defaultGetOptionLabel = function (x) { return isString(x) ? x : x[displayKey]; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
         var result, newOptions_1;
         return __generator(this, function (_a) {
@@ -469,7 +469,7 @@ var MUIAutocomplete = function (props) {
                 formikProps.setFieldValue(get(fieldProps, 'name'), value, false);
             }
             if (outputKey)
-                formikProps.setFieldValue(outputKey, value[uniqueKey], false);
+                formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false);
         }
     };
     var defaultRenderOptions = function (option, _a) {
@@ -477,9 +477,9 @@ var MUIAutocomplete = function (props) {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (createElement("div", null, (highlighterProps.highlightText === false) ?
             //NO HIGHLIGHT
-            createElement("span", null, option[displayKey]) :
+            createElement("span", null, isString(option) ? option : option[displayKey]) :
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
-            createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
+            createElement(Highlighter, { searchWords: [inputValue], textToHighlight: isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
     return createElement(Autocomplete, __assign({ onChange: onItemSelect, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, value: value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (createElement(Fragment, null,
                     loading ? createElement(CircularProgress, { color: "primary", size: 20 }) : null,
