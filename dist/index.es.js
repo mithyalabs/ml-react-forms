@@ -475,13 +475,15 @@ var MUIAutocomplete = function (props) {
         }
     };
     var onInputChange = function (event, values, reason) {
-        event.preventDefault();
-        if (reason === 'clear') {
-            if (onItemSelected) {
-                onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
-            }
-            else {
-                formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false);
+        if (event) {
+            event.preventDefault();
+            if (reason === 'clear') {
+                if (onItemSelected) {
+                    onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
+                }
+                else {
+                    formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false);
+                }
             }
         }
     };

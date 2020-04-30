@@ -483,13 +483,15 @@ var MUIAutocomplete = function (props) {
         }
     };
     var onInputChange = function (event, values, reason) {
-        event.preventDefault();
-        if (reason === 'clear') {
-            if (onItemSelected) {
-                onItemSelected(lodash.get(fieldProps, 'multiple') ? [] : (lodash.isString(value) ? values : null));
-            }
-            else {
-                formikProps.setFieldValue(lodash.get(fieldProps, 'name'), lodash.get(fieldProps, 'multiple') ? [] : (lodash.isString(value) ? values : null), false);
+        if (event) {
+            event.preventDefault();
+            if (reason === 'clear') {
+                if (onItemSelected) {
+                    onItemSelected(lodash.get(fieldProps, 'multiple') ? [] : (lodash.isString(value) ? values : null));
+                }
+                else {
+                    formikProps.setFieldValue(lodash.get(fieldProps, 'name'), lodash.get(fieldProps, 'multiple') ? [] : (lodash.isString(value) ? values : null), false);
+                }
             }
         }
     };

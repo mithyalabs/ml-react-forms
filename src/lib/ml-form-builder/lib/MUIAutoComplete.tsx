@@ -158,13 +158,15 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
     }
 
     const onInputChange = (event: React.ChangeEvent<{}>, values: string, reason: "input" | "reset" | "clear") => {
-        event.preventDefault();
-        if (reason === 'clear') {
-            if (onItemSelected) {
-                onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
-            } else {
-                formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false)
+        if (event) {
+            event.preventDefault();
+            if (reason === 'clear') {
+                if (onItemSelected) {
+                    onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
+                } else {
+                    formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false)
 
+                }
             }
         }
     }
