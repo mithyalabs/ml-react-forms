@@ -30,7 +30,7 @@ export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOption
     highlighterProps?: IHighlighterProps
     getQueryResponse?: (newTerm: string) => Promise<Array<TOptions>>
     outputKey?: string
-    onItemSelected?: (value: TOptions | TOptions[]) => void
+    onItemSelected?: (value: TOptions | TOptions[] | null) => void
     displayKey?: string
     uniqueKey?: string
     clearOnSelect?: boolean; // default: false
@@ -154,6 +154,19 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         }
 
     }
+
+    const onInputChange = (event: React.ChangeEvent<{}>, values: string, reason: "input" | "reset" | "clear") => {
+        event.preventDefault();
+        if (reason === 'clear') {
+            if (onItemSelected) {
+                onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
+            } else {
+                formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false)
+
+            }
+        }
+    }
+
     const defaultRenderOptions = (option: TOptions, { inputValue }: RenderOptionState) => {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (
@@ -180,6 +193,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
     }
     return <Autocomplete
         onChange={onItemSelect}
+        onInputChange={onInputChange}
         getOptionLabel={defaultGetOptionLabel}
         onOpen={() => { setOpen(true) }}
         open={(open && (query !== undefined && query !== ''))}

@@ -472,6 +472,17 @@ var MUIAutocomplete = function (props) {
             //     formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
         }
     };
+    var onInputChange = function (event, values, reason) {
+        event.preventDefault();
+        if (reason === 'clear') {
+            if (onItemSelected) {
+                onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
+            }
+            else {
+                formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false);
+            }
+        }
+    };
     var defaultRenderOptions = function (option, _a) {
         var inputValue = _a.inputValue;
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
@@ -481,7 +492,7 @@ var MUIAutocomplete = function (props) {
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
             createElement(Highlighter, { searchWords: [inputValue], textToHighlight: isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
-    return createElement(Autocomplete, __assign({ onChange: onItemSelect, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, value: value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (createElement(Fragment, null,
+    return createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, value: value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (createElement(Fragment, null,
                     loading ? createElement(CircularProgress, { color: "primary", size: 20 }) : null,
                     !clearOnSelect && params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps));
 };
