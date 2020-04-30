@@ -358,16 +358,18 @@ var MUITimePicker = function (props) {
 var TIME_BETWEEN_REQS = 300;
 var MUIAutocomplete = function (props) {
     var _a = React.useState(), query = _a[0], setQuery = _a[1];
-    var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
-    var _d = fieldProps.highlighterProps, highlighterProps = _d === void 0 ? {
+    var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c, _d = props.fieldConfig, fieldConfig = _d === void 0 ? {} : _d;
+    var fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
+    var _e = fieldProps.highlighterProps, highlighterProps = _e === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
-    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.renderInputProps, renderInputProps = _f === void 0 ? {} : _f, _g = fieldProps.inputProps, inputProps = _g === void 0 ? {} : _g, _h = fieldProps.getQueryResponse, getQueryResponse = _h === void 0 ? undefined : _h, _j = fieldProps.outputKey, _k = fieldProps.clearOnSelect, clearOnSelect = _k === void 0 ? false : _k, _l = fieldProps.onItemSelected, onItemSelected = _l === void 0 ? undefined : _l, _m = fieldProps.displayKey, displayKey = _m === void 0 ? 'label' : _m, _o = fieldProps.uniqueKey, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "clearOnSelect", "onItemSelected", "displayKey", "uniqueKey"]);
-    var _p = React.useState([]), defaultOptions = _p[0], setDefaultOptions = _p[1];
-    var _q = React.useState(false), open = _q[0], setOpen = _q[1];
-    var _r = React.useState(false), loading = _r[0], setLoading = _r[1];
-    var _s = React.useState(''), globalTerm = _s[0], setGlobalTerm = _s[1];
-    var _t = React.useState([]), globalQueries = _t[0], setGlobalQueries = _t[1];
+    } : _e, _f = fieldProps.options, options = _f === void 0 ? [] : _f, _g = fieldProps.renderInputProps, renderInputProps = _g === void 0 ? {} : _g, _h = fieldProps.inputProps, inputProps = _h === void 0 ? {} : _h, _j = fieldProps.getQueryResponse, getQueryResponse = _j === void 0 ? undefined : _j, _k = fieldProps.outputKey, _l = fieldProps.clearOnSelect, clearOnSelect = _l === void 0 ? false : _l, _m = fieldProps.onItemSelected, onItemSelected = _m === void 0 ? undefined : _m, _o = fieldProps.displayKey, displayKey = _o === void 0 ? 'label' : _o, _p = fieldProps.uniqueKey, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "clearOnSelect", "onItemSelected", "displayKey", "uniqueKey"]);
+    var classes = useStyles();
+    var _q = React.useState([]), defaultOptions = _q[0], setDefaultOptions = _q[1];
+    var _r = React.useState(false), open = _r[0], setOpen = _r[1];
+    var _s = React.useState(false), loading = _s[0], setLoading = _s[1];
+    var _t = React.useState(''), globalTerm = _t[0], setGlobalTerm = _t[1];
+    var _u = React.useState([]), globalQueries = _u[0], setGlobalQueries = _u[1];
     var value = lodash.get(formikProps, "values." + (lodash.get(fieldProps, 'name') || '')) || (lodash.get(fieldProps, 'multiple') ? [] : null);
     var defaultGetOptionLabel = function (x) { return lodash.isString(x) ? x : x[displayKey]; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
@@ -500,10 +502,31 @@ var MUIAutocomplete = function (props) {
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
             React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: lodash.isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
-    return React.createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, value: value, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
-                    loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
-                    !clearOnSelect && params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps));
+    return React.createElement(React.Fragment, null,
+        React.createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, value: value, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: fieldError, className: fieldError ? classes.autocompleteError : '', InputProps: __assign(__assign(__assign({}, params.InputProps), { classes: {
+                        root: fieldError ? classes.autocompleteError : ''
+                    }, endAdornment: (React.createElement(React.Fragment, null,
+                        loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
+                        !clearOnSelect && params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps)),
+        "  ",
+        fieldError && React.createElement(core.Typography, { variant: 'overline', className: fieldError ? classes.errorField : '' }, fieldError));
 };
+var useStyles = core.makeStyles(function () {
+    return (core.createStyles({
+        errorField: {
+            color: '#B71840',
+            fontSize: 12,
+            fontWeight: 'bold',
+            textTransform: 'none'
+        },
+        autocompleteError: {
+            color: '#B71840',
+            '&::after': {
+                borderColor: '#B71840 !important'
+            }
+        }
+    }));
+});
 
 /* interface IArrayItemProps extends TextFieldProps {
     fieldValue?: string
@@ -525,7 +548,7 @@ var MUIFieldArray = function (props) {
     var itemType = fieldProps.itemType, _c = fieldProps.addButtonText, addButtonText = _c === void 0 ? 'Add' : _c, addButtonProps = fieldProps.addButtonProps, addButton = fieldProps.addButton, removeButton = fieldProps.removeButton, removeButtonProps = fieldProps.removeButtonProps;
     var values = lodash.get(formikProps, "values." + fieldProps.name);
     var itemComponentConfig = getComponentConfig(itemType);
-    var classes = useStyles();
+    var classes = useStyles$1();
     return (React__default.createElement(formik.FieldArray, { name: fieldProps.name, render: function (arrayHelpers) { return (React__default.createElement("div", null,
             (values || []).map(function (value, index) { return (React__default.createElement("div", { key: fieldProps.name + "-" + index, className: classes.arrayItem },
                 React__default.cloneElement(itemComponentConfig.component, __assign({ name: fieldProps.name, itemIndex: index, arrayHelpers: arrayHelpers, fieldValue: value, formikProps: formikProps }, itemComponentConfig.props)),
@@ -533,7 +556,7 @@ var MUIFieldArray = function (props) {
                     React__default.createElement(CloseIcon, null))))); }),
             (addButton) ? addButton : (React__default.createElement(core.Button, __assign({ type: "button", onClick: function () { return arrayHelpers.push({}); } }, addButtonProps), addButtonText)))); } }));
 };
-var useStyles = styles.makeStyles(function () {
+var useStyles$1 = styles.makeStyles(function () {
     return (styles.createStyles({
         arrayItem: {
             position: 'relative'

@@ -1,11 +1,12 @@
-import { CircularProgress, InputBaseComponentProps, TextField } from '@material-ui/core';
+import { CircularProgress, InputBaseComponentProps, TextField, Typography, makeStyles, Theme, createStyles } from '@material-ui/core';
 import Autocomplete, { AutocompleteProps, RenderInputParams, RenderOptionState } from '@material-ui/lab/Autocomplete';
 import { FormikValues } from 'formik';
 import { filter, findIndex, get, reduce, isString } from 'lodash';
 import * as React from 'react';
 
 import Highlighter from "react-highlight-words";
-import { IFieldProps } from '..';
+import { IFieldProps, FormConfig } from '..';
+import { getFieldError } from '../Utils';
 
 export interface IHighlighterProps { //Prop for default highlighter 
     highlightText?: boolean //this props will be used if nad only if this is true
@@ -41,7 +42,8 @@ export interface IProps extends IFieldProps {
 
 export const MUIAutocomplete: React.FC<IProps> = (props) => {
     const [query, setQuery] = React.useState<string>();
-    const { fieldProps = {} as IMUIAutoCompleteProps, formikProps = {} as FormikValues } = props
+    const { fieldProps = {} as IMUIAutoCompleteProps, formikProps = {} as FormikValues, fieldConfig = {} as FormConfig } = props
+    const fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
     const {
         highlighterProps = {
             highlightText: false,
@@ -58,7 +60,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         uniqueKey = 'key',
         ...autoCompleteProps
     } = fieldProps
-
+    const classes = useStyles();
     const [defaultOptions, setDefaultOptions] = React.useState<TOptions[]>([]);
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false)
@@ -191,7 +193,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             </div>
         );
     }
-    return <Autocomplete
+    return <><Autocomplete
         onChange={onItemSelect}
         onInputChange={onInputChange}
         getOptionLabel={defaultGetOptionLabel}
@@ -208,8 +210,13 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                 value={query}
                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => handleChange(e.target.value as string)}
                 fullWidth
+                error={fieldError}
+                className={fieldError ? classes.autocompleteError : ''}
                 InputProps={{
                     ...params.InputProps,
+                    classes: {
+                        root: fieldError ? classes.autocompleteError : ''
+                    },
                     endAdornment: (
                         <React.Fragment>
                             {loading ? <CircularProgress color="primary" size={20} /> : null}
@@ -222,5 +229,24 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             />
         }
         {...autoCompleteProps}
-    />
+    />  {
+            fieldError && <Typography variant='overline' className={fieldError ? classes.errorField : ''}>{fieldError}</Typography>
+        }
+    </>
 }
+const useStyles = makeStyles<Theme>(() => {
+    return (createStyles({
+        errorField: {
+            color: '#B71840',
+            fontSize: 12,
+            fontWeight: 'bold',
+            textTransform: 'none'
+        },
+        autocompleteError: {
+            color: '#B71840',
+            '&::after': {
+                borderColor: '#B71840 !important'
+            }
+        }
+    }))
+})
