@@ -210,7 +210,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                 value={query}
                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => handleChange(e.target.value as string)}
                 fullWidth
-                error={fieldError}
+                error={fieldError ? true : false}
                 className={fieldError ? classes.autocompleteError : ''}
                 InputProps={{
                     ...params.InputProps,
@@ -243,7 +243,6 @@ const useStyles = makeStyles<Theme>(() => {
             textTransform: 'none'
         },
         autocompleteError: {
-            color: '#B71840',
             '&::after': {
                 borderColor: '#B71840 !important'
             }
