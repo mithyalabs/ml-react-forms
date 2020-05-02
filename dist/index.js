@@ -399,13 +399,13 @@ var MUIAutocomplete = function (props) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (options.length > 0)
+                            return [2 /*return*/];
                         setQuery(newTerm);
                         if (!newTerm) {
                             setDefaultOptions([]);
                             return [2 /*return*/];
                         }
-                        if (options.length > 0)
-                            return [2 /*return*/];
                         if ((isWaitingReq && globalTerm !== newTerm) || !newTerm)
                             return [2 /*return*/];
                         setGlobalTerm(newTerm);
@@ -505,11 +505,11 @@ var MUIAutocomplete = function (props) {
             React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: lodash.isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
     return React.createElement(React.Fragment, null,
-        React.createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], renderOption: defaultRenderOptions, filterOptions: function (options) { return options; }, value: value, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: fieldError ? true : false, className: fieldError ? classes.autocompleteError : '', InputProps: __assign(__assign(__assign({}, params.InputProps), { classes: {
+        React.createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, disableClearable: clearOnSelect, value: value, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: fieldError ? true : false, className: fieldError ? classes.autocompleteError : '', InputProps: __assign(__assign(__assign({}, params.InputProps), { classes: {
                         root: fieldError ? classes.autocompleteError : ''
                     }, endAdornment: (React.createElement(React.Fragment, null,
                         loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
-                        !clearOnSelect && params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps)),
+                        params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps)),
         "  ",
         fieldError && React.createElement(core.Typography, { variant: 'overline', className: fieldError ? classes.errorField : '' }, fieldError));
 };

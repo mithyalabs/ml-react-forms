@@ -82,9 +82,9 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         return [];
     }
     const handleChange = async (newTerm: string, isWaitingReq: boolean = false): Promise<void> => {
+        if (options.length > 0) return
         setQuery(newTerm)
         if (!newTerm) { setDefaultOptions([]); return }
-        if (options.length > 0) return
         if ((isWaitingReq && globalTerm !== newTerm) || !newTerm) return;
         setGlobalTerm(newTerm)
         let queries = [...globalQueries]
@@ -200,11 +200,11 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         onInputChange={onInputChange}
         getOptionLabel={defaultGetOptionLabel}
         onOpen={() => { setOpen(true) }}
-        open={(open && (query !== undefined && query !== ''))}
+        open={open}
         onClose={() => { setOpen(false) }}
-        options={open ? (options.length > 0 ? options : defaultOptions) : []}
+        options={options.length > 0 ? options : defaultOptions}
         renderOption={defaultRenderOptions}
-        filterOptions={(options: TOptions[]) => { return options }}
+        disableClearable={clearOnSelect}
         value={value}
         renderInput={
             params => <TextField
@@ -222,7 +222,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                     endAdornment: (
                         <React.Fragment>
                             {loading ? <CircularProgress color="primary" size={20} /> : null}
-                            {!clearOnSelect && params.InputProps.endAdornment}
+                            {params.InputProps.endAdornment}
                         </React.Fragment>
                     ),
                     ...inputProps,
