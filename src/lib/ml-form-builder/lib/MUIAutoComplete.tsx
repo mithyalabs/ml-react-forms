@@ -1,11 +1,12 @@
-import { CircularProgress, InputBaseComponentProps, TextField } from '@material-ui/core';
+import { CircularProgress, InputBaseComponentProps, TextField, Typography, makeStyles, Theme, createStyles } from '@material-ui/core';
 import Autocomplete, { AutocompleteProps, RenderInputParams, RenderOptionState } from '@material-ui/lab/Autocomplete';
-import axios from 'axios';
 import { FormikValues } from 'formik';
-import { filter, findIndex, get, reduce } from 'lodash';
+import { filter, findIndex, get, reduce, isString } from 'lodash';
 import * as React from 'react';
-import { IFieldProps } from '..';
+
 import Highlighter from "react-highlight-words";
+import { IFieldProps, FormConfig } from '..';
+import { getFieldError } from '../Utils';
 
 export interface IHighlighterProps { //Prop for default highlighter 
     highlightText?: boolean //this props will be used if nad only if this is true
@@ -13,7 +14,7 @@ export interface IHighlighterProps { //Prop for default highlighter
     highlighterStyles?: object //additional highlight styles
 
 }
-type TOptions = { key: string, label: string }
+type TOptions = Record<string, any> | string
 const TIME_BETWEEN_REQS = 300;
 
 export interface TQueries {
@@ -23,19 +24,16 @@ export interface TQueries {
     options?: TOptions[]
 }
 
-//let globalTerm = "";
 export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOptions>> {
     options?: TOptions[]
     renderInputProps?: RenderInputParams
     inputProps?: InputBaseComponentProps
-    apiUrl?: string
-    params?: object //static options
-    getOptionLabel?: (x: any) => string //get label for the option
-    getRequestParam?: (query: string) => any //get param according to the search key
     highlighterProps?: IHighlighterProps
-    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions | string>>
+    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions>>
     outputKey?: string
-    onItemSelected?: (value: TOptions) => void;
+    onItemSelected?: (value: TOptions | TOptions[] | null) => void
+    displayKey?: string
+    uniqueKey?: string
     clearOnSelect?: boolean; // default: false
 }
 export interface IProps extends IFieldProps {
@@ -44,87 +42,49 @@ export interface IProps extends IFieldProps {
 
 export const MUIAutocomplete: React.FC<IProps> = (props) => {
     const [query, setQuery] = React.useState<string>();
-    const { fieldProps = {} as IMUIAutoCompleteProps, formikProps = {} as FormikValues } = props
+    const { fieldProps = {} as IMUIAutoCompleteProps, formikProps = {} as FormikValues, fieldConfig = {} as FormConfig } = props
+    const fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
     const {
         highlighterProps = {
             highlightText: false,
             highlightColor: '#ffff00'
         } as IHighlighterProps,
         options = [],
-        apiUrl = '' as string,
-        params = {},
         renderInputProps = {} as RenderInputParams,
         inputProps = {} as InputBaseComponentProps,
-        getOptionLabel = undefined,
-        getRequestParam = undefined,
         getQueryResponse = undefined,
-        renderOption = undefined,
         outputKey = '',
         clearOnSelect = false,
         onItemSelected = undefined,
+        displayKey = 'label',
+        uniqueKey = 'key',
         ...autoCompleteProps
     } = fieldProps
+    const classes = useStyles();
     const [defaultOptions, setDefaultOptions] = React.useState<TOptions[]>([]);
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false)
-    const defaultGetOptionLabel = (x: TOptions) => { return x.label }
     const [globalTerm, setGlobalTerm] = React.useState<string>('')
     const [globalQueries, setGlobalQueries] = React.useState<TQueries[]>([])
+    const value = get(formikProps, `values.${get(fieldProps, 'name') || ''}`) || (get(fieldProps, 'multiple') ? [] : null);
+    const defaultGetOptionLabel = (x: TOptions) => { return isString(x) ? x : x[displayKey] }
     const handleQueryResponse = async (newTerm: string) => {
         setLoading(true);
         if (getQueryResponse) {
             const result = await getQueryResponse(newTerm);
             let newOptions: Array<TOptions> = []
             result.forEach((element) => {
-                if (typeof element === 'string') {
-                    newOptions.push({
-                        key: element,
-                        label: element
-                    })
-                } else {
-                    newOptions.push(element)
-                }
+                newOptions.push(element)
             })
             setLoading(false)
             return newOptions
-
-        } else {
-            const additionalParams = getRequestParam ? getRequestParam(newTerm) : {}
-            const response = await axios.request<Array<{ name?: string, title?: string, label: string } | string>>({
-                url: apiUrl,
-                method: 'GET',
-                params: {
-                    ...params,
-                    ...additionalParams
-                }
-            })
-            const result = response.data;
-            var newOptions: Array<TOptions> = []
-            result.forEach((element) => {
-                if (typeof element === 'string') {
-                    newOptions.push({
-                        key: element,
-                        label: element
-                    })
-                } else {
-                    var value = element.name || element.title || element.label || ''
-                    newOptions.push({
-                        key: value,
-                        label: value
-                    })
-                }
-            })
-
-            setLoading(false)
-            return newOptions;
         }
-
-
+        return [];
     }
     const handleChange = async (newTerm: string, isWaitingReq: boolean = false): Promise<void> => {
+        if (options.length > 0) return
         setQuery(newTerm)
         if (!newTerm) { setDefaultOptions([]); return }
-        if (options.length > 0) return
         if ((isWaitingReq && globalTerm !== newTerm) || !newTerm) return;
         setGlobalTerm(newTerm)
         let queries = [...globalQueries]
@@ -170,7 +130,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                     setDefaultOptions(newOptions);
                 }
                 else {
-                    console.log('Ignoring results of:', newTerm)
+                    // console.log('Ignoring results of:', newTerm)
                 }
                 setGlobalQueries([...queries])
             } catch (error) {
@@ -182,20 +142,35 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         }
     }
 
-    const onItemSelect = (event: React.ChangeEvent<{}>, value: TOptions | null) => {
+    const onItemSelect = (event: React.ChangeEvent<{}>, value: TOptions | TOptions[] | null) => {
         event.preventDefault();
         if (clearOnSelect) setQuery('');
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
-            else
-                formikProps.setFieldValue(get(fieldProps, 'name'), value.label, false)
-            if (outputKey)
-                formikProps.setFieldValue(outputKey, value.key, false)
-
+            else {
+                formikProps.setFieldValue(get(fieldProps, 'name'), value, false)
+            }
+            // if (outputKey)
+            //     formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
         }
 
     }
+
+    const onInputChange = (event: React.ChangeEvent<{}>, values: string, reason: "input" | "reset" | "clear") => {
+        if (event) {
+            event.preventDefault();
+            if (reason === 'clear') {
+                if (onItemSelected) {
+                    onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
+                } else {
+                    formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false)
+
+                }
+            }
+        }
+    }
+
     const defaultRenderOptions = (option: TOptions, { inputValue }: RenderOptionState) => {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (
@@ -205,12 +180,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                     (highlighterProps.highlightText === false) ?
                         //NO HIGHLIGHT
                         <span>
-                            {option.label}
+                            {isString(option) ? option : option[displayKey]}
                         </span> :
                         //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
                         <Highlighter
                             searchWords={[inputValue]}
-                            textToHighlight={option.label}
+                            textToHighlight={isString(option) ? option : option[displayKey]}
                             highlightStyle={{
                                 backgroundColor: highlighterProps.highlightColor,
                                 ...highlighterProps.highlighterStyles
@@ -220,35 +195,63 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             </div>
         );
     }
-    return <Autocomplete
+    return <><Autocomplete
         onChange={onItemSelect}
-        getOptionLabel={getOptionLabel ? getOptionLabel : defaultGetOptionLabel}
+        onInputChange={onInputChange}
+        getOptionLabel={defaultGetOptionLabel}
         onOpen={() => { setOpen(true) }}
-        open={(open && (query !== undefined && query !== ''))}
+        open={open}
         onClose={() => { setOpen(false) }}
-        options={open ? (options.length > 0 ? options : defaultOptions) : []}
-        getOptionSelected={(option, value) => option.key === value.key}
-        renderOption={renderOption ? renderOption : defaultRenderOptions}
-        filterOptions={(options: TOptions[]) => { return options }}
+        options={options.length > 0 ? options : defaultOptions}
+        renderOption={defaultRenderOptions}
+        disableClearable={clearOnSelect}
+        value={value}
         renderInput={
             params => <TextField
                 {...params}
                 value={query}
                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => handleChange(e.target.value as string)}
                 fullWidth
+                error={fieldError ? true : false}
+                className={fieldError ? classes.autocompleteError : ''}
                 InputProps={{
                     ...params.InputProps,
+                    classes: {
+                        root: fieldError ? classes.autocompleteError : ''
+                    },
                     endAdornment: (
                         <React.Fragment>
                             {loading ? <CircularProgress color="primary" size={20} /> : null}
-                            {autoCompleteProps.freeSolo && params.InputProps.endAdornment}
+                            {params.InputProps.endAdornment}
                         </React.Fragment>
                     ),
                     ...inputProps,
+                    inputProps: {
+                        ...params.inputProps,
+                        autoComplete: 'nope'
+                    }
                 }}
                 {...renderInputProps}
             />
         }
         {...autoCompleteProps}
-    />
+    />  {
+            fieldError && <Typography variant='overline' className={fieldError ? classes.errorField : ''}>{fieldError}</Typography>
+        }
+    </>
 }
+const useStyles = makeStyles<Theme>(() => {
+    return (createStyles({
+        errorField: {
+            color: '#B71840',
+            fontSize: 12,
+            fontWeight: 'bold',
+            textTransform: 'none'
+        },
+        autocompleteError: {
+            '&::after': {
+                borderColor: '#B71840 !important'
+            }
+        }
+    }))
+})

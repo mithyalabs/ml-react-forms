@@ -17,7 +17,6 @@ var PlacesAutocomplete__default = _interopDefault(PlacesAutocomplete);
 var icons = require('@material-ui/icons');
 var pickers = require('@material-ui/pickers');
 var Autocomplete = _interopDefault(require('@material-ui/lab/Autocomplete'));
-var axios = _interopDefault(require('axios'));
 var Highlighter = _interopDefault(require('react-highlight-words'));
 var formik = require('formik');
 var CloseIcon = _interopDefault(require('@material-ui/icons/Close'));
@@ -359,19 +358,22 @@ var MUITimePicker = function (props) {
 var TIME_BETWEEN_REQS = 300;
 var MUIAutocomplete = function (props) {
     var _a = React.useState(), query = _a[0], setQuery = _a[1];
-    var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
-    var _d = fieldProps.highlighterProps, highlighterProps = _d === void 0 ? {
+    var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c, _d = props.fieldConfig, fieldConfig = _d === void 0 ? {} : _d;
+    var fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
+    var _e = fieldProps.highlighterProps, highlighterProps = _e === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
-    } : _d, _e = fieldProps.options, options = _e === void 0 ? [] : _e, _f = fieldProps.apiUrl, apiUrl = _f === void 0 ? '' : _f, _g = fieldProps.params, params = _g === void 0 ? {} : _g, _h = fieldProps.renderInputProps, renderInputProps = _h === void 0 ? {} : _h, _j = fieldProps.inputProps, inputProps = _j === void 0 ? {} : _j, _k = fieldProps.getOptionLabel, getOptionLabel = _k === void 0 ? undefined : _k, _l = fieldProps.getRequestParam, getRequestParam = _l === void 0 ? undefined : _l, _m = fieldProps.getQueryResponse, getQueryResponse = _m === void 0 ? undefined : _m, _o = fieldProps.renderOption, renderOption = _o === void 0 ? undefined : _o, _p = fieldProps.outputKey, outputKey = _p === void 0 ? '' : _p, _q = fieldProps.onItemSelected, onItemSelected = _q === void 0 ? undefined : _q, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "apiUrl", "params", "renderInputProps", "inputProps", "getOptionLabel", "getRequestParam", "getQueryResponse", "renderOption", "outputKey", "onItemSelected"]);
-    var _r = React.useState([]), defaultOptions = _r[0], setDefaultOptions = _r[1];
-    var _s = React.useState(false), open = _s[0], setOpen = _s[1];
-    var _t = React.useState(false), loading = _t[0], setLoading = _t[1];
-    var defaultGetOptionLabel = function (x) { return x.label; };
-    var _u = React.useState(''), globalTerm = _u[0], setGlobalTerm = _u[1];
-    var _v = React.useState([]), globalQueries = _v[0], setGlobalQueries = _v[1];
+    } : _e, _f = fieldProps.options, options = _f === void 0 ? [] : _f, _g = fieldProps.renderInputProps, renderInputProps = _g === void 0 ? {} : _g, _h = fieldProps.inputProps, inputProps = _h === void 0 ? {} : _h, _j = fieldProps.getQueryResponse, getQueryResponse = _j === void 0 ? undefined : _j, _k = fieldProps.outputKey, _l = fieldProps.clearOnSelect, clearOnSelect = _l === void 0 ? false : _l, _m = fieldProps.onItemSelected, onItemSelected = _m === void 0 ? undefined : _m, _o = fieldProps.displayKey, displayKey = _o === void 0 ? 'label' : _o, _p = fieldProps.uniqueKey, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "clearOnSelect", "onItemSelected", "displayKey", "uniqueKey"]);
+    var classes = useStyles();
+    var _q = React.useState([]), defaultOptions = _q[0], setDefaultOptions = _q[1];
+    var _r = React.useState(false), open = _r[0], setOpen = _r[1];
+    var _s = React.useState(false), loading = _s[0], setLoading = _s[1];
+    var _t = React.useState(''), globalTerm = _t[0], setGlobalTerm = _t[1];
+    var _u = React.useState([]), globalQueries = _u[0], setGlobalQueries = _u[1];
+    var value = lodash.get(formikProps, "values." + (lodash.get(fieldProps, 'name') || '')) || (lodash.get(fieldProps, 'multiple') ? [] : null);
+    var defaultGetOptionLabel = function (x) { return lodash.isString(x) ? x : x[displayKey]; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
-        var result, newOptions_1, additionalParams, response, result, newOptions;
+        var result, newOptions_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -382,46 +384,11 @@ var MUIAutocomplete = function (props) {
                     result = _a.sent();
                     newOptions_1 = [];
                     result.forEach(function (element) {
-                        if (typeof element === 'string') {
-                            newOptions_1.push({
-                                key: element,
-                                label: element
-                            });
-                        }
-                        else {
-                            newOptions_1.push(element);
-                        }
+                        newOptions_1.push(element);
                     });
                     setLoading(false);
                     return [2 /*return*/, newOptions_1];
-                case 2:
-                    additionalParams = getRequestParam ? getRequestParam(newTerm) : {};
-                    return [4 /*yield*/, axios.request({
-                            url: apiUrl,
-                            method: 'GET',
-                            params: __assign(__assign({}, params), additionalParams)
-                        })];
-                case 3:
-                    response = _a.sent();
-                    result = response.data;
-                    newOptions = [];
-                    result.forEach(function (element) {
-                        if (typeof element === 'string') {
-                            newOptions.push({
-                                key: element,
-                                label: element
-                            });
-                        }
-                        else {
-                            var value = element.name || element.title || element.label || '';
-                            newOptions.push({
-                                key: value,
-                                label: value
-                            });
-                        }
-                    });
-                    setLoading(false);
-                    return [2 /*return*/, newOptions];
+                case 2: return [2 /*return*/, []];
             }
         });
     }); };
@@ -432,13 +399,13 @@ var MUIAutocomplete = function (props) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (options.length > 0)
+                            return [2 /*return*/];
                         setQuery(newTerm);
                         if (!newTerm) {
                             setDefaultOptions([]);
                             return [2 /*return*/];
                         }
-                        if (options.length > 0)
-                            return [2 /*return*/];
                         if ((isWaitingReq && globalTerm !== newTerm) || !newTerm)
                             return [2 /*return*/];
                         setGlobalTerm(newTerm);
@@ -487,9 +454,6 @@ var MUIAutocomplete = function (props) {
                         if (latestRespOrder < queries[index].order) {
                             setDefaultOptions(newOptions);
                         }
-                        else {
-                            console.log('Ignoring results of:', newTerm);
-                        }
                         setGlobalQueries(__spreadArrays(queries));
                         return [3 /*break*/, 5];
                     case 4:
@@ -506,13 +470,29 @@ var MUIAutocomplete = function (props) {
     };
     var onItemSelect = function (event, value) {
         event.preventDefault();
+        if (clearOnSelect)
+            setQuery('');
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
-            else
-                formikProps.setFieldValue(lodash.get(fieldProps, 'name'), value.label, false);
-            if (outputKey)
-                formikProps.setFieldValue(outputKey, value.key, false);
+            else {
+                formikProps.setFieldValue(lodash.get(fieldProps, 'name'), value, false);
+            }
+            // if (outputKey)
+            //     formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
+        }
+    };
+    var onInputChange = function (event, values, reason) {
+        if (event) {
+            event.preventDefault();
+            if (reason === 'clear') {
+                if (onItemSelected) {
+                    onItemSelected(lodash.get(fieldProps, 'multiple') ? [] : (lodash.isString(value) ? values : null));
+                }
+                else {
+                    formikProps.setFieldValue(lodash.get(fieldProps, 'name'), lodash.get(fieldProps, 'multiple') ? [] : (lodash.isString(value) ? values : null), false);
+                }
+            }
         }
     };
     var defaultRenderOptions = function (option, _a) {
@@ -520,14 +500,34 @@ var MUIAutocomplete = function (props) {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (React.createElement("div", null, (highlighterProps.highlightText === false) ?
             //NO HIGHLIGHT
-            React.createElement("span", null, option.label) :
+            React.createElement("span", null, lodash.isString(option) ? option : option[displayKey]) :
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
-            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: option.label, highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
+            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: lodash.isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
-    return React.createElement(Autocomplete, __assign({ onChange: onItemSelect, getOptionLabel: getOptionLabel ? getOptionLabel : defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: (open && (query !== undefined && query !== '')), onClose: function () { setOpen(false); }, options: open ? (options.length > 0 ? options : defaultOptions) : [], getOptionSelected: function (option, value) { return option.key === value.key; }, renderOption: renderOption ? renderOption : defaultRenderOptions, filterOptions: function (options) { return options; }, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
-                    loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
-                    autoCompleteProps.freeSolo && params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps));
+    return React.createElement(React.Fragment, null,
+        React.createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, disableClearable: clearOnSelect, value: value, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: fieldError ? true : false, className: fieldError ? classes.autocompleteError : '', InputProps: __assign(__assign(__assign(__assign({}, params.InputProps), { classes: {
+                        root: fieldError ? classes.autocompleteError : ''
+                    }, endAdornment: (React.createElement(React.Fragment, null,
+                        loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
+                        params.InputProps.endAdornment)) }), inputProps), { inputProps: __assign(__assign({}, params.inputProps), { autoComplete: 'nope' }) }) }, renderInputProps)); } }, autoCompleteProps)),
+        "  ",
+        fieldError && React.createElement(core.Typography, { variant: 'overline', className: fieldError ? classes.errorField : '' }, fieldError));
 };
+var useStyles = core.makeStyles(function () {
+    return (core.createStyles({
+        errorField: {
+            color: '#B71840',
+            fontSize: 12,
+            fontWeight: 'bold',
+            textTransform: 'none'
+        },
+        autocompleteError: {
+            '&::after': {
+                borderColor: '#B71840 !important'
+            }
+        }
+    }));
+});
 
 /* interface IArrayItemProps extends TextFieldProps {
     fieldValue?: string
@@ -549,7 +549,7 @@ var MUIFieldArray = function (props) {
     var itemType = fieldProps.itemType, _c = fieldProps.addButtonText, addButtonText = _c === void 0 ? 'Add' : _c, addButtonProps = fieldProps.addButtonProps, addButton = fieldProps.addButton, removeButton = fieldProps.removeButton, removeButtonProps = fieldProps.removeButtonProps;
     var values = lodash.get(formikProps, "values." + fieldProps.name);
     var itemComponentConfig = getComponentConfig(itemType);
-    var classes = useStyles();
+    var classes = useStyles$1();
     return (React__default.createElement(formik.FieldArray, { name: fieldProps.name, render: function (arrayHelpers) { return (React__default.createElement("div", null,
             (values || []).map(function (value, index) { return (React__default.createElement("div", { key: fieldProps.name + "-" + index, className: classes.arrayItem },
                 React__default.cloneElement(itemComponentConfig.component, __assign({ name: fieldProps.name, itemIndex: index, arrayHelpers: arrayHelpers, fieldValue: value, formikProps: formikProps }, itemComponentConfig.props)),
@@ -557,7 +557,7 @@ var MUIFieldArray = function (props) {
                     React__default.createElement(CloseIcon, null))))); }),
             (addButton) ? addButton : (React__default.createElement(core.Button, __assign({ type: "button", onClick: function () { return arrayHelpers.push({}); } }, addButtonProps), addButtonText)))); } }));
 };
-var useStyles = styles.makeStyles(function () {
+var useStyles$1 = styles.makeStyles(function () {
     return (styles.createStyles({
         arrayItem: {
             position: 'relative'
@@ -584,7 +584,8 @@ var getOptions = function (startTime, endTime, interval, amPm) {
 };
 var MUIDropDownTimePicker = function (props) {
     var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.fieldConfig, fieldConfig = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c;
-    var _d = fieldProps.formControlProps, formControlProps = _d === void 0 ? {} : _d, _e = fieldProps.startTime, startTime = _e === void 0 ? '00:00' : _e, _f = fieldProps.endTime, endTime = _f === void 0 ? '23:45' : _f, _g = fieldProps.interval, interval = _g === void 0 ? 15 : _g, _h = fieldProps.amPm, amPm = _h === void 0 ? false : _h, label = fieldProps.label, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, _j = fieldProps.inputLabelProps, inputLabelProps = _j === void 0 ? {} : _j, formHelperTextProps = fieldProps.formHelperTextProps, _k = fieldProps.menuItemProps, menuItemProps = _k === void 0 ? {} : _k, _l = fieldProps.emptyMenuItemProps, emptyMenuItemProps = _l === void 0 ? {} : _l, selectProps = __rest(fieldProps, ["formControlProps", "startTime", "endTime", "interval", "amPm", "label", "emptyItem", "helperText", "inputLabelProps", "formHelperTextProps", "menuItemProps", "emptyMenuItemProps"]);
+    var fieldError = getFieldError((fieldProps.name || ''), formikProps);
+    var _d = fieldProps.formControlProps, formControlProps = _d === void 0 ? {} : _d, _e = fieldProps.startTime, startTime = _e === void 0 ? '00:00' : _e, _f = fieldProps.endTime, endTime = _f === void 0 ? '23:45' : _f, _g = fieldProps.interval, interval = _g === void 0 ? 15 : _g, _h = fieldProps.amPm, amPm = _h === void 0 ? false : _h, label = fieldProps.label, emptyItem = fieldProps.emptyItem, helperText = fieldProps.helperText, _j = fieldProps.inputLabelProps, inputLabelProps = _j === void 0 ? {} : _j, formHelperTextProps = fieldProps.formHelperTextProps, _k = fieldProps.menuItemProps, menuItemProps = _k === void 0 ? {} : _k, _l = fieldProps.emptyMenuItemProps, emptyMenuItemProps = _l === void 0 ? {} : _l, _m = fieldProps.error, selectProps = __rest(fieldProps, ["formControlProps", "startTime", "endTime", "interval", "amPm", "label", "emptyItem", "helperText", "inputLabelProps", "formHelperTextProps", "menuItemProps", "emptyMenuItemProps", "error"]);
     var labelId = fieldConfig.id + "_label";
     var value = lodash.get(formikProps, "values." + fieldProps.name) || '';
     var list = getOptions(startTime, endTime, interval, amPm);
@@ -694,7 +695,7 @@ attachField('autocomplete', React.createElement(MUIAutocomplete, null));
 attachField('array', React.createElement(MUIFieldArray, null));
 attachField('time-picker-select', React.createElement(MUIDropDownTimePicker, null));
 var BuildFormRow = function (props) {
-    var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horiontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
+    var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horizontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
     var columnItems = lodash.get(schema, 'columns');
     var rowSettings = __assign(__assign({}, settings), lodash.get(schema, 'settings'));
     var colItems = (lodash.isArray(schema) ? schema : ((lodash.isArray(columnItems) ? columnItems : [schema])));
@@ -702,7 +703,7 @@ var BuildFormRow = function (props) {
     var rowStyle = { marginBottom: (rowSettings.verticalSpacing || 10) };
     return (React.createElement("div", { className: classes.row, style: rowStyle }, lodash.map(colItems, function (item, index) {
         var componentConfig = ComponentMapConfig[item.type];
-        var horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horiontalSpacing || 10);
+        var horizontalSpacing = (index === (colItems.length - 1)) ? 0 : (rowSettings.horizontalSpacing || 10);
         if (!componentConfig)
             return React.createElement("div", { key: rowId + "_field_" + index });
         var conditionalProps = getConditionalProps(item, formikProps);
@@ -771,7 +772,7 @@ var useFormStyles = styles.makeStyles(function () {
             '&.action-right': {
                 justifyContent: 'flex-end'
             },
-            '&.action-fullwidth > button': {
+            '&.action-fullWidth > button': {
                 flex: 1
             }
         },
