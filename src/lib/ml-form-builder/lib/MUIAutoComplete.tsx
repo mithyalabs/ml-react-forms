@@ -226,6 +226,10 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                         </React.Fragment>
                     ),
                     ...inputProps,
+                    inputProps: {
+                        ...params.inputProps,
+                        autoComplete: 'nope'
+                    }
                 }}
                 {...renderInputProps}
             />

@@ -497,11 +497,11 @@ var MUIAutocomplete = function (props) {
             createElement(Highlighter, { searchWords: [inputValue], textToHighlight: isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
     return createElement(Fragment, null,
-        createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, disableClearable: clearOnSelect, value: value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: fieldError ? true : false, className: fieldError ? classes.autocompleteError : '', InputProps: __assign(__assign(__assign({}, params.InputProps), { classes: {
+        createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, disableClearable: clearOnSelect, value: value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: fieldError ? true : false, className: fieldError ? classes.autocompleteError : '', InputProps: __assign(__assign(__assign(__assign({}, params.InputProps), { classes: {
                         root: fieldError ? classes.autocompleteError : ''
                     }, endAdornment: (createElement(Fragment, null,
                         loading ? createElement(CircularProgress, { color: "primary", size: 20 }) : null,
-                        params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps)),
+                        params.InputProps.endAdornment)) }), inputProps), { inputProps: __assign(__assign({}, params.inputProps), { autoComplete: 'nope' }) }) }, renderInputProps)); } }, autoCompleteProps)),
         "  ",
         fieldError && createElement(Typography, { variant: 'overline', className: fieldError ? classes.errorField : '' }, fieldError));
 };
