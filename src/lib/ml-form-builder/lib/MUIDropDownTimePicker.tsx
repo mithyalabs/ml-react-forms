@@ -1,4 +1,4 @@
-import { FormControl, FormControlProps, FormHelperTextProps, InputLabel, InputLabelProps, MenuItem, MenuItemProps, Select, SelectProps } from '@material-ui/core';
+import { FormControl, FormControlProps, FormHelperTextProps, InputLabel, InputLabelProps, MenuItem, MenuItemProps, Select, SelectProps, FormHelperText } from '@material-ui/core';
 import { FormikValues } from 'formik';
 import { get, isString, map } from 'lodash';
 import React, { FC } from 'react';
@@ -79,6 +79,7 @@ export const MUIDropDownTimePicker: FC<MUIDropDownTimePickerProps> = (props) => 
                 id={fieldConfig.id}
                 value={value}
                 onChange={onChange}
+                error={error}
                 {...selectProps}
             >
                 {
@@ -91,6 +92,7 @@ export const MUIDropDownTimePicker: FC<MUIDropDownTimePickerProps> = (props) => 
                     map(list, (item: MenuOptionObject, index: number) => (<MenuItem {...menuItemProps} key={`${fieldConfig.id}_menu_item_${index}`} value={item.value}>{item.name}</MenuItem>))
                 }
             </Select>
+            <FormHelperText>{helperText}</FormHelperText>
         </FormControl>
     )
 }
