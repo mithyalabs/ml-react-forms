@@ -509,7 +509,7 @@ var MUIAutocomplete = function (props) {
                         root: fieldError ? classes.autocompleteError : ''
                     }, endAdornment: (React.createElement(React.Fragment, null,
                         loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
-                        params.InputProps.endAdornment)) }), inputProps) }, renderInputProps)); } }, autoCompleteProps)),
+                        params.InputProps.endAdornment)) }), inputProps), inputProps: __assign(__assign({}, params.inputProps), { 'autocomplete': 'off' }) }, renderInputProps)); } }, autoCompleteProps)),
         "  ",
         fieldError && React.createElement(core.Typography, { variant: 'overline', className: fieldError ? classes.errorField : '' }, fieldError));
 };
