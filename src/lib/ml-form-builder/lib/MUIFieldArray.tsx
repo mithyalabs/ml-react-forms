@@ -41,7 +41,7 @@ export interface IProps extends IFieldProps {
 
 export const MUIFieldArray: React.FC<IProps> = (props) => {
     const { formikProps = {} as FormikValues, fieldProps = {} as IFieldArrayProps } = props;
-    const { itemType, addButtonText = 'Add', addButtonProps, addButton, removeButton, removeButtonProps } = fieldProps;
+    const { itemType, addButtonText = 'Add', addButtonProps, addButton, removeButton, removeButtonProps, textFieldProps = {} } = fieldProps;
     const values = get(formikProps, `values.${fieldProps.name}`);
     const itemComponentConfig = getComponentConfig(itemType);
     const classes = useStyles();
@@ -52,7 +52,7 @@ export const MUIFieldArray: React.FC<IProps> = (props) => {
                     {
                         (values || []).map((value: any, index: number) => (
                             <div key={`${fieldProps.name}-${index}`} className={classes.arrayItem}>
-                                {React.cloneElement(itemComponentConfig.component, { name: fieldProps.name, itemIndex: index, arrayHelpers, fieldValue: value, formikProps, ...itemComponentConfig.props })}
+                                {React.cloneElement(itemComponentConfig.component, { name: fieldProps.name, itemIndex: index, arrayHelpers, fieldValue: value, formikProps, ...textFieldProps, ...itemComponentConfig.props })}
                                 {
                                     (removeButton) ? removeButton : (
                                         <IconButton className={classes.arrayRemoveIcon} size="small" onClick={() => arrayHelpers.remove(index)} {...removeButtonProps}><CloseIcon /></IconButton>
