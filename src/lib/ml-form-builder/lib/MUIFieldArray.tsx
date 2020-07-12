@@ -52,7 +52,7 @@ export const MUIFieldArray: React.FC<IProps> = (props) => {
                     {
                         (values || []).map((value: any, index: number) => (
                             <div key={`${fieldProps.name}-${index}`} className={classes.arrayItem}>
-                                {React.cloneElement(itemComponentConfig.component, { name: fieldProps.name, itemIndex: index, arrayHelpers, fieldValue: value, formikProps, ...textFieldProps, ...itemComponentConfig.props })}
+                                {React.cloneElement(itemComponentConfig.component, { name: fieldProps.name, itemIndex: index, arrayHelpers, fieldValue: value, formikProps, ...itemComponentConfig.props, ...textFieldProps })}
                                 {
                                     (removeButton) ? removeButton : (
                                         <IconButton className={classes.arrayRemoveIcon} size="small" onClick={() => arrayHelpers.remove(index)} {...removeButtonProps}><CloseIcon /></IconButton>
