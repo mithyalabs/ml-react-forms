@@ -42,9 +42,10 @@ export interface IReactFormProps extends FormikValues {
     actionConfig: IFormActionProps
     formSettings?: BuilderSettingsProps
     isInProgress?: boolean
+    isReadOnly?: boolean
 }
 export const ReactForm: React.FC<IReactFormProps> = (props) => {
-    const { config, formId, initialValues = {}, onSubmit, actionConfig, formSettings, isInProgress = false, ...formikProps } = props;
+    const { config, formId, initialValues = {}, onSubmit, actionConfig, formSettings, isInProgress = false, isReadOnly = false, ...formikProps } = props;
 
     return (
         <Formik
@@ -57,7 +58,7 @@ export const ReactForm: React.FC<IReactFormProps> = (props) => {
                     schema={config}
                     formId={formId}
                     actionConfig={actionConfig}
-                    settings={formSettings}
+                    settings={{ ...formSettings, isReadOnly }}
                     formikProps={formProps}
                     isInProgress={isInProgress}
                 />)

@@ -3,6 +3,9 @@ import { ButtonProps } from '@material-ui/core/Button';
 import { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import { FormikValues } from 'formik';
 import { TFieldConditions } from './lib/ConditionalOperation';
+export interface ReadOnlyProps {
+    renderer: (props: IFieldProps) => React.ReactNode;
+}
 export interface FormConfig {
     type: string;
     name?: string;
@@ -13,6 +16,7 @@ export interface FormConfig {
     styles?: object;
     classNames?: Array<string>;
     condition?: TFieldConditions;
+    readOnlyProps?: ReadOnlyProps;
 }
 interface RowSettingsProps {
     horizontalSpacing?: number;
@@ -20,6 +24,7 @@ interface RowSettingsProps {
     columnHorizontalPadding?: number;
 }
 export interface BuilderSettingsProps extends RowSettingsProps {
+    isReadOnly?: boolean;
 }
 export declare type RowSchema = Array<FormConfig> | FormConfig | {
     columns: Array<FormConfig>;
@@ -52,6 +57,7 @@ export interface BuilderProps {
 export interface IFieldProps {
     formikProps?: FormikValues;
     fieldConfig?: FormConfig;
+    isReadOnly?: boolean;
 }
 export declare const getComponentConfig: (type: string) => {
     component: JSX.Element;

@@ -14,13 +14,14 @@ export interface IProps extends IFieldProps {
 }
 
 export const MUISwitch: React.FC<IProps> = (props) => {
-    const { formikProps = {} as FormikValues, fieldProps = {} as IMUISwitchProps } = props;
+    const { formikProps = {} as FormikValues, fieldProps = {} as IMUISwitchProps, isReadOnly = false } = props;
     const { label, ...switchProps } = fieldProps;
     const value = get(formikProps, `values.${fieldProps.name}`);
 
     const handleOnChange = () => {
         formikProps.setFieldValue(fieldProps.name, !value);
     }
+    console.log('Switch props', { ...{ ...switchProps, disabled: (switchProps.disabled || isReadOnly) } });
     return (
         <FormControlLabel
             control={
@@ -30,7 +31,7 @@ export const MUISwitch: React.FC<IProps> = (props) => {
                     onBlur={formikProps.handleBlur}
                     inputProps={{ 'aria-label': 'secondary checkbox' }}
                     value={value}
-                    {...switchProps}
+                    {...{ ...switchProps, disabled: (switchProps.disabled || isReadOnly) }}
                 />
             }
             label={label || ''}

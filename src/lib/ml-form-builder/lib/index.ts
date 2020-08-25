@@ -8,3 +8,4 @@ export { MUIDatePicker, MUITimePicker } from './MUIDateTimePicker';
 export { MUIAutocomplete } from './MUIAutoComplete';
 export { MUIFieldArray } from './MUIFieldArray';
 export { MUIDropDownTimePicker } from './MUIDropDownTimePicker'
+export { MUIReadOnly } from './MUIReadOnly';

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { map, isArray, uniqueId, get } from 'lodash';
+import { map, isArray, uniqueId, get, isFunction } from 'lodash';
 import Button, { ButtonProps } from '@material-ui/core/Button';
 import CircularProgress, { CircularProgressProps } from '@material-ui/core/CircularProgress';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
@@ -12,6 +12,9 @@ import { getConditionalProps, TFieldConditions } from './lib/ConditionalOperatio
 
 const { useEffect, useState } = React;
 
+export interface ReadOnlyProps {
+    renderer: (props: IFieldProps) => React.ReactNode
+}
 export interface FormConfig {
     type: string
     name?: string
@@ -22,6 +25,7 @@ export interface FormConfig {
     styles?: object
     classNames?: Array<string>,
     condition?: TFieldConditions
+    readOnlyProps?: ReadOnlyProps
 }
 
 interface RowSettingsProps {
@@ -30,7 +34,7 @@ interface RowSettingsProps {
     columnHorizontalPadding?: number
 }
 export interface BuilderSettingsProps extends RowSettingsProps {
-
+    isReadOnly?: boolean
 }
 
 export type RowSchema = Array<FormConfig> | FormConfig | { columns: Array<FormConfig>, settings?: RowSettingsProps };
@@ -65,6 +69,7 @@ export interface BuilderProps {
 export interface IFieldProps {
     formikProps?: FormikValues,
     fieldConfig?: FormConfig
+    isReadOnly?: boolean
 }
 
 let ComponentMapConfig: { [key: string]: { component: JSX.Element, props?: object } } = {};
@@ -103,7 +108,7 @@ attachField('time-picker-select', <MUIDropDownTimePicker />)
 
 
 export const BuildFormRow: React.FC<FormRowProps> = props => {
-    const { schema, rowId, formikProps = {}, settings = { horizontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } } = props;
+    const { schema, rowId, formikProps = {}, settings = { horizontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0, isReadOnly: false } } = props;
     let columnItems = get(schema, 'columns') as Array<FormConfig>;
     let rowSettings = { ...settings, ...get(schema, 'settings') } as RowSettingsProps;
     const colItems = (isArray(schema) ? schema : ((isArray(columnItems) ? columnItems : [schema])));
@@ -135,8 +140,9 @@ export const BuildFormRow: React.FC<FormRowProps> = props => {
                             }
                         }>
                             {
-
-                                React.cloneElement(Component, { fieldProps, formikProps, fieldConfig: item })
+                                (settings.isReadOnly && item.readOnlyProps && isFunction(item.readOnlyProps.renderer)) ?
+                                    (item.readOnlyProps.renderer({ formikProps, fieldConfig: item, isReadOnly: settings.isReadOnly })) :
+                                    React.cloneElement(Component, { fieldProps, formikProps, fieldConfig: item, isReadOnly: settings.isReadOnly })
                             }
                         </div>
                     )

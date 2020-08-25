@@ -11,6 +11,7 @@ var Button = _interopDefault(require('@material-ui/core/Button'));
 var CircularProgress = _interopDefault(require('@material-ui/core/CircularProgress'));
 var styles = require('@material-ui/core/styles');
 var TextField = _interopDefault(require('@material-ui/core/TextField'));
+var Typography = _interopDefault(require('@material-ui/core/Typography'));
 var core = require('@material-ui/core');
 var PlacesAutocomplete = require('react-places-autocomplete');
 var PlacesAutocomplete__default = _interopDefault(PlacesAutocomplete);
@@ -159,10 +160,20 @@ var getFieldError = function (fieldName, formikProps) {
     return fieldError;
 };
 
+var MUIReadOnly = function (props) {
+    return (React.createElement("div", null,
+        React.createElement(Typography, { variant: "subtitle1" }, props.label || ''),
+        React.createElement(Typography, null, props.value || 'NA')));
+};
+
 var MUITextField = function (props) {
-    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b;
+    var _a = props.fieldProps, fieldProps = _a === void 0 ? {} : _a, _b = props.formikProps, formikProps = _b === void 0 ? {} : _b, _c = props.isReadOnly, isReadOnly = _c === void 0 ? false : _c;
     var fieldError = getFieldError((fieldProps.name || ''), formikProps);
     var updatedProps = __assign(__assign({}, fieldProps), { error: !!fieldError, helperText: fieldError || fieldProps.helperText || '', onChange: formikProps.handleChange, onBlur: formikProps.handleBlur, value: lodash.get(formikProps, "values." + fieldProps.name) || '' });
+    console.log('Text field props read only', isReadOnly);
+    if (isReadOnly) {
+        return (React.createElement(MUIReadOnly, { label: updatedProps.label, value: updatedProps.value }));
+    }
     return (React.createElement(TextField, __assign({}, updatedProps)));
 };
 
@@ -201,13 +212,14 @@ var MUICheckBox = function (props) {
 };
 
 var MUISwitch = function (props) {
-    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b;
+    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.isReadOnly, isReadOnly = _c === void 0 ? false : _c;
     var label = fieldProps.label, switchProps = __rest(fieldProps, ["label"]);
     var value = lodash.get(formikProps, "values." + fieldProps.name);
     var handleOnChange = function () {
         formikProps.setFieldValue(fieldProps.name, !value);
     };
-    return (React.createElement(core.FormControlLabel, { control: React.createElement(core.Switch, __assign({ checked: !!value, onChange: handleOnChange, onBlur: formikProps.handleBlur, inputProps: { 'aria-label': 'secondary checkbox' }, value: value }, switchProps)), label: label || '' }));
+    console.log('Switch props', __assign({}, __assign(__assign({}, switchProps), { disabled: (switchProps.disabled || isReadOnly) })));
+    return (React.createElement(core.FormControlLabel, { control: React.createElement(core.Switch, __assign({ checked: !!value, onChange: handleOnChange, onBlur: formikProps.handleBlur, inputProps: { 'aria-label': 'secondary checkbox' }, value: value }, __assign(__assign({}, switchProps), { disabled: (switchProps.disabled || isReadOnly) }))), label: label || '' }));
 };
 
 var MUIRadio = function (props) {
@@ -696,7 +708,7 @@ attachField('autocomplete', React.createElement(MUIAutocomplete, null));
 attachField('array', React.createElement(MUIFieldArray, null));
 attachField('time-picker-select', React.createElement(MUIDropDownTimePicker, null));
 var BuildFormRow = function (props) {
-    var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horizontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0 } : _b;
+    var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horizontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0, isReadOnly: false } : _b;
     var columnItems = lodash.get(schema, 'columns');
     var rowSettings = __assign(__assign({}, settings), lodash.get(schema, 'settings'));
     var colItems = (lodash.isArray(schema) ? schema : ((lodash.isArray(columnItems) ? columnItems : [schema])));
@@ -712,7 +724,9 @@ var BuildFormRow = function (props) {
         var Component = componentConfig.component;
         if (conditionalProps.hidden === true)
             return React.createElement("div", { key: rowId + "_field_" + index });
-        return (React.createElement("div", { key: rowId + "_field_" + index, className: clsx(item.classNames, classes.column), style: __assign({ flex: (item.flex || 1), marginRight: horizontalSpacing, paddingLeft: rowSettings.columnHorizontalPadding, paddingRight: rowSettings.columnHorizontalPadding }, item.styles) }, React.cloneElement(Component, { fieldProps: fieldProps, formikProps: formikProps, fieldConfig: item })));
+        return (React.createElement("div", { key: rowId + "_field_" + index, className: clsx(item.classNames, classes.column), style: __assign({ flex: (item.flex || 1), marginRight: horizontalSpacing, paddingLeft: rowSettings.columnHorizontalPadding, paddingRight: rowSettings.columnHorizontalPadding }, item.styles) }, (settings.isReadOnly && item.readOnlyProps && lodash.isFunction(item.readOnlyProps.renderer)) ?
+            (item.readOnlyProps.renderer({ formikProps: formikProps, fieldConfig: item, isReadOnly: settings.isReadOnly })) :
+            React.cloneElement(Component, { fieldProps: fieldProps, formikProps: formikProps, fieldConfig: item, isReadOnly: settings.isReadOnly })));
     })));
 };
 var getUpdateSchema = function (schema, formId) {
@@ -788,8 +802,8 @@ var useFormStyles = styles.makeStyles(function () {
 });
 
 var ReactForm = function (props) {
-    var config = props.config, formId = props.formId, _a = props.initialValues, initialValues = _a === void 0 ? {} : _a, onSubmit = props.onSubmit, actionConfig = props.actionConfig, formSettings = props.formSettings, _b = props.isInProgress, isInProgress = _b === void 0 ? false : _b, formikProps = __rest(props, ["config", "formId", "initialValues", "onSubmit", "actionConfig", "formSettings", "isInProgress"]);
-    return (React.createElement(formik.Formik, __assign({ initialValues: initialValues, onSubmit: onSubmit }, formikProps), function (formProps) { return (React.createElement(MLFormBuilder, { schema: config, formId: formId, actionConfig: actionConfig, settings: formSettings, formikProps: formProps, isInProgress: isInProgress })); }));
+    var config = props.config, formId = props.formId, _a = props.initialValues, initialValues = _a === void 0 ? {} : _a, onSubmit = props.onSubmit, actionConfig = props.actionConfig, formSettings = props.formSettings, _b = props.isInProgress, isInProgress = _b === void 0 ? false : _b, _c = props.isReadOnly, isReadOnly = _c === void 0 ? false : _c, formikProps = __rest(props, ["config", "formId", "initialValues", "onSubmit", "actionConfig", "formSettings", "isInProgress", "isReadOnly"]);
+    return (React.createElement(formik.Formik, __assign({ initialValues: initialValues, onSubmit: onSubmit }, formikProps), function (formProps) { return (React.createElement(MLFormBuilder, { schema: config, formId: formId, actionConfig: actionConfig, settings: __assign(__assign({}, formSettings), { isReadOnly: isReadOnly }), formikProps: formProps, isInProgress: isInProgress })); }));
 };
 
 var index = './lib/ReactForm';
@@ -805,6 +819,7 @@ exports.MUIDropDownTimePicker = MUIDropDownTimePicker;
 exports.MUIFieldArray = MUIFieldArray;
 exports.MUIPlaceSuggest = MUIPlaceSuggest;
 exports.MUIRadio = MUIRadio;
+exports.MUIReadOnly = MUIReadOnly;
 exports.MUISelectField = MUISelectField;
 exports.MUISwitch = MUISwitch;
 exports.MUITextField = MUITextField;
