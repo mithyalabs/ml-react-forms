@@ -618,6 +618,11 @@ var MUIDropDownTimePicker = function (props) {
         React__default.createElement(core.FormHelperText, null, helperText)));
 };
 
+var MUIFileInput = function (props) {
+    var multiple = props.multiple, accept = props.accept, hasTooltip = props.hasTooltip, invisible = props.invisible;
+    return (React.createElement("input", { type: "file", multiple: multiple, style: invisible ? { opacity: 0, width: '100%', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 } : {}, title: hasTooltip ? " " : undefined, accept: accept }));
+};
+
 var compare = function (value1, operator, value2) {
     switch (operator) {
         case '>': return value1 > value2;
@@ -817,6 +822,7 @@ exports.MUICheckBox = MUICheckBox;
 exports.MUIDatePicker = MUIDatePicker;
 exports.MUIDropDownTimePicker = MUIDropDownTimePicker;
 exports.MUIFieldArray = MUIFieldArray;
+exports.MUIFileInput = MUIFileInput;
 exports.MUIPlaceSuggest = MUIPlaceSuggest;
 exports.MUIRadio = MUIRadio;
 exports.MUIReadOnly = MUIReadOnly;

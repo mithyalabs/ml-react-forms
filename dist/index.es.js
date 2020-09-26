@@ -610,6 +610,11 @@ var MUIDropDownTimePicker = function (props) {
         React__default.createElement(FormHelperText, null, helperText)));
 };
 
+var MUIFileInput = function (props) {
+    var multiple = props.multiple, accept = props.accept, hasTooltip = props.hasTooltip, invisible = props.invisible;
+    return (createElement("input", { type: "file", multiple: multiple, style: invisible ? { opacity: 0, width: '100%', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 } : {}, title: hasTooltip ? " " : undefined, accept: accept }));
+};
+
 var compare = function (value1, operator, value2) {
     switch (operator) {
         case '>': return value1 > value2;
@@ -801,5 +806,5 @@ var ReactForm = function (props) {
 var index = './lib/ReactForm';
 
 export default index;
-export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUIAutocomplete, MUICheckBox, MUIDatePicker, MUIDropDownTimePicker, MUIFieldArray, MUIPlaceSuggest, MUIRadio, MUIReadOnly, MUISelectField, MUISwitch, MUITextField, MUITimePicker, ReactForm, attachField, getComponentConfig, setDefaultProps };
+export { BuildFormRow, MLFormAction, MLFormBuilder, MLFormContent, MUIAutocomplete, MUICheckBox, MUIDatePicker, MUIDropDownTimePicker, MUIFieldArray, MUIFileInput, MUIPlaceSuggest, MUIRadio, MUIReadOnly, MUISelectField, MUISwitch, MUITextField, MUITimePicker, ReactForm, attachField, getComponentConfig, setDefaultProps };
 //# sourceMappingURL=index.es.js.map
