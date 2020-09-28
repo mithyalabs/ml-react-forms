@@ -7,7 +7,8 @@ interface MUIFileInputProps {
 	disableDefaultTooltip?: boolean
 	invisible?: boolean
 	readAs?: keyof Pick<FileReader, 'readAsDataURL' | 'readAsBinaryString'>;
-	onChange?: (data: File | File[]) => void
+	onChange?: (((data: File) => void) | ((data: File[]) => void))
+	/* File for when multiple is false and File[] for when multiple is true*/
 	inputProps?: any
 }
 
