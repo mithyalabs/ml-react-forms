@@ -21,7 +21,7 @@ export interface IFile {
 }
 
 export const MUIFileInput: React.FC<MUIFileInputProps> = (props: MUIFileInputProps) => {
-	const { multiple, accept, disableDefaultTooltip, invisible, disabled, onChange, inputProps } = props
+	const { multiple, accept, disableDefaultTooltip, invisible, disabled, onChange, inputProps={} } = props
 
 	return (
 		<input type="file" disabled={disabled}
