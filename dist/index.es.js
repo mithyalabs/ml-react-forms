@@ -611,8 +611,8 @@ var MUIDropDownTimePicker = function (props) {
 };
 
 var MUIFileInput = function (props) {
-    var multiple = props.multiple, accept = props.accept, disableDefaultTooltip = props.disableDefaultTooltip, invisible = props.invisible;
-    return (createElement("input", { type: "file", multiple: multiple, style: invisible ? { opacity: 0, width: '100%', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 } : {}, title: disableDefaultTooltip ? " " : undefined, accept: accept }));
+    var multiple = props.multiple, accept = props.accept, disableDefaultTooltip = props.disableDefaultTooltip, invisible = props.invisible, disabled = props.disabled, onChange = props.onChange, inputProps = props.inputProps;
+    return (React__default.createElement("input", __assign({ type: "file", disabled: disabled, multiple: multiple, style: invisible ? { opacity: 0, width: '100%', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, cursor: 'pointer' } : {}, title: disableDefaultTooltip ? " " : undefined, accept: accept, onChange: onChange }, inputProps)));
 };
 
 var compare = function (value1, operator, value2) {
