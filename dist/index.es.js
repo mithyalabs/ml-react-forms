@@ -1,5 +1,5 @@
 import React__default, { createElement, useEffect as useEffect$1, useState as useState$2, Fragment, cloneElement } from 'react';
-import { map, isString, get, isEmpty, indexOf, filter, findIndex, reduce, forEach, isArray, isFunction, uniqueId } from 'lodash';
+import _, { map, isString, get, isEmpty, indexOf, filter, findIndex, reduce, forEach, isArray, isFunction, uniqueId } from 'lodash';
 import Button$1 from '@material-ui/core/Button';
 import CircularProgress$1 from '@material-ui/core/CircularProgress';
 import { makeStyles as makeStyles$1, createStyles as createStyles$1 } from '@material-ui/core/styles';
@@ -612,8 +612,38 @@ var MUIDropDownTimePicker = function (props) {
 
 var MUIFileInput = function (props) {
     var multiple = props.multiple, accept = props.accept, disableDefaultTooltip = props.disableDefaultTooltip, invisible = props.invisible, disabled = props.disabled, onChange = props.onChange, _a = props.inputProps, inputProps = _a === void 0 ? {} : _a;
-    return (React__default.createElement("input", __assign({ type: "file", disabled: disabled, multiple: multiple, style: invisible ? { opacity: 0, width: '100%', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, cursor: 'pointer' } : {}, title: disableDefaultTooltip ? " " : undefined, accept: accept, onChange: onChange }, inputProps)));
+    var classes = useStyles$2();
+    var handleChange = function (event) {
+        var selectedFiles = event.target.files;
+        if (selectedFiles) {
+            var allFiles_1 = [];
+            _.each(selectedFiles, function (file) {
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var fileInfo = {
+                        name: file.name,
+                        type: file.type,
+                        size: Math.round(file.size / 1000) + ' kB',
+                        base64: reader.result,
+                        file: file,
+                    };
+                    allFiles_1.push(fileInfo);
+                    if (allFiles_1.length === (selectedFiles && selectedFiles.length)) {
+                        if (multiple)
+                            onChange === null || onChange === void 0 ? void 0 : onChange(allFiles_1[0]);
+                        else
+                            onChange === null || onChange === void 0 ? void 0 : onChange(allFiles_1);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    };
+    return (React__default.createElement("input", __assign({ type: "file", disabled: disabled, multiple: multiple, className: invisible ? classes.invisibleInput : "", title: disableDefaultTooltip ? " " : undefined, accept: accept, onChange: handleChange }, inputProps)));
 };
+var useStyles$2 = makeStyles(function () { return createStyles({
+    invisibleInput: { opacity: 0, width: '100%', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, cursor: 'pointer' }
+}); });
 
 var compare = function (value1, operator, value2) {
     switch (operator) {

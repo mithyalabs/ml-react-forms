@@ -5,8 +5,7 @@ interface MUIFileInputProps {
     accept?: string;
     disableDefaultTooltip?: boolean;
     invisible?: boolean;
-    readAs?: keyof Pick<FileReader, 'readAsDataURL' | 'readAsBinaryString'>;
-    onChange?: (((data: File) => void) | ((data: File[]) => void));
+    onChange?: ((data: IFile[] | IFile) => void);
     inputProps?: any;
 }
 export interface IFile {
