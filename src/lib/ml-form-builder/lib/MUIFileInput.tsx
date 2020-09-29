@@ -2,54 +2,63 @@ import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
 import _ from 'lodash';
 
-interface MUIFileInputProps {
+export interface MUIFileInputProps {
+	readAs?: string
 	disabled?: boolean
 	multiple?: boolean
 	accept?: string
 	disableDefaultTooltip?: boolean
 	invisible?: boolean
-	onChange?: ((data: IFile[] | IFile) => void)
-	/* IFile for when multiple is false and IFile[] for when multiple is true */
+	onChange?: ((files: FileList) => void)
+	onDone?: (files: TFile[], remFiles: TFile[]) => void
+	/* File for when multiple is false and File[] for when multiple is true */
 	inputProps?: any
 }
 
-export interface IFile {
+export interface TFile {
 	name: string,
 	type: string,
-	size: number | string,
-	base64: string | ArrayBuffer | null,
-	file: any,
+	size: string | number,
+	base64?: string | ArrayBuffer | null,
+	file: File
 }
 
 export const MUIFileInput: React.FC<MUIFileInputProps> = (props: MUIFileInputProps) => {
-	const { multiple, accept, disableDefaultTooltip, invisible, disabled, onChange, inputProps = {} } = props
+	const { multiple, accept, disableDefaultTooltip, invisible, disabled, onChange, inputProps = {}, onDone } = props
 	const classes = useStyles();
-	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const selectedFiles = event.target.files
-		if (selectedFiles) {
-			let allFiles: IFile[] = [];
-			_.each(selectedFiles, (file: any) => {
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		let files = e.target.files || new FileList()
+		if (onChange) {
+			onChange(files);
+		}
+		let allFiles: Array<TFile> = [];
+		let remFiles: any[] = [];
+		Array.from(files).forEach(file => {
+			if (file.type.includes('image')) {
 				let reader = new FileReader();
 				reader.onload = () => {
-					let fileInfo = {
+					let fileInfo: TFile = {
 						name: file.name,
 						type: file.type,
 						size: Math.round(file.size / 1000) + ' kB',
-						base64: reader.result,
+						base64: file.type.includes('image') ? reader.result : null,
 						file: file,
 					};
 					allFiles.push(fileInfo);
-					if (allFiles.length === (selectedFiles && selectedFiles.length)) {
-						if (multiple)
-							onChange?.(allFiles[0])
-						else
-							onChange?.(allFiles)
+					if ((allFiles.length + remFiles.length) === files.length) {
+						onDone?.(allFiles, remFiles);
 					}
 				}
-				reader.readAsDataURL(file);
-			});
 
-		}
+				reader[props.readAs || 'readAsDataURL'](file);
+			} else {
+				remFiles.push(file);
+				if ((allFiles.length + remFiles.length) === files.length) {
+					if (props.onDone)
+						props.onDone(allFiles, remFiles);
+				}
+			}
+		});
 	}
 	return (
 		<input type="file" disabled={disabled}

@@ -1,19 +1,20 @@
 import React from 'react';
-interface MUIFileInputProps {
+export interface MUIFileInputProps {
+    readAs?: string;
     disabled?: boolean;
     multiple?: boolean;
     accept?: string;
     disableDefaultTooltip?: boolean;
     invisible?: boolean;
-    onChange?: ((data: IFile[] | IFile) => void);
+    onChange?: ((files: FileList) => void);
+    onDone?: (files: TFile[], remFiles: TFile[]) => void;
     inputProps?: any;
 }
-export interface IFile {
+export interface TFile {
     name: string;
     type: string;
-    size: number | string;
-    base64: string | ArrayBuffer | null;
-    file: any;
+    size: string | number;
+    base64?: string | ArrayBuffer | null;
+    file: File;
 }
 export declare const MUIFileInput: React.FC<MUIFileInputProps>;
-export {};
