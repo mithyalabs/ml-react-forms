@@ -1,5 +1,5 @@
 import React__default, { createElement, useEffect as useEffect$1, useState as useState$2, Fragment, cloneElement } from 'react';
-import { map, isString, get, isEmpty, indexOf, filter, findIndex, reduce, forEach, isArray, isFunction, uniqueId } from 'lodash';
+import _, { map, isString, get, isEmpty, indexOf, filter, findIndex, reduce, forEach, isArray, isFunction, uniqueId } from 'lodash';
 import Button$1 from '@material-ui/core/Button';
 import CircularProgress$1 from '@material-ui/core/CircularProgress';
 import { makeStyles as makeStyles$1, createStyles as createStyles$1 } from '@material-ui/core/styles';
@@ -611,12 +611,21 @@ var MUIDropDownTimePicker = function (props) {
 };
 
 var MUIFileInput = function (props) {
-    var multiple = props.multiple, accept = props.accept, disableDefaultTooltip = props.disableDefaultTooltip, invisible = props.invisible, disabled = props.disabled, onChange = props.onChange, _a = props.inputProps, inputProps = _a === void 0 ? {} : _a, onDone = props.onDone;
+    var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b;
+    var onDone = fieldProps.onDone, multiple = fieldProps.multiple, invisible = fieldProps.invisible, disableDefaultTooltip = fieldProps.disableDefaultTooltip, accept = fieldProps.accept, readAs = fieldProps.readAs, disabled = fieldProps.disabled, onChange = fieldProps.onChange, WrapWith = fieldProps.WrapWith;
+    var setValue = function (files) {
+        if (typeof formikProps.setFieldValue === "function") {
+            formikProps.setFieldValue(_.get(fieldProps, 'name'), files);
+        }
+    };
     var classes = useStyles$2();
     var handleChange = function (e) {
+        // e.persist()
+        // onChange?.(e)
         var files = e.target.files || new FileList();
         if (onChange) {
             onChange(files);
+            setValue(files);
         }
         var allFiles = [];
         var remFiles = [];
@@ -634,20 +643,21 @@ var MUIFileInput = function (props) {
                     allFiles.push(fileInfo);
                     if ((allFiles.length + remFiles.length) === files.length) {
                         onDone === null || onDone === void 0 ? void 0 : onDone(allFiles, remFiles);
+                        setValue(allFiles.concat(remFiles));
                     }
                 };
-                reader_1[props.readAs || 'readAsDataURL'](file);
+                reader_1[readAs || 'readAsDataURL'](file);
             }
             else {
                 remFiles.push(file);
                 if ((allFiles.length + remFiles.length) === files.length) {
-                    if (props.onDone)
-                        props.onDone(allFiles, remFiles);
+                    onDone === null || onDone === void 0 ? void 0 : onDone(allFiles, remFiles);
+                    setValue(allFiles.concat(remFiles));
                 }
             }
         });
     };
-    return (React__default.createElement("input", __assign({ type: "file", disabled: disabled, multiple: multiple, className: invisible ? classes.invisibleInput : "", title: disableDefaultTooltip ? " " : undefined, accept: accept, onChange: handleChange }, inputProps)));
+    return (React__default.createElement(React__default.Fragment, null, WrapWith ? WrapWith(React__default.createElement("input", { type: "file", disabled: disabled, multiple: multiple, className: classes.invisibleInput, title: disableDefaultTooltip ? " " : undefined, accept: accept, onChange: handleChange })) : React__default.createElement("input", { type: "file", disabled: disabled, multiple: multiple, className: invisible ? classes.invisibleInput : "", title: disableDefaultTooltip ? " " : undefined, accept: accept, onChange: handleChange })));
 };
 var useStyles$2 = makeStyles(function () { return createStyles({
     invisibleInput: { opacity: 0, width: '100%', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, cursor: 'pointer' }
@@ -742,6 +752,7 @@ attachField('radio', createElement(MUIRadio, null));
 attachField('autocomplete', createElement(MUIAutocomplete, null));
 attachField('array', createElement(MUIFieldArray, null));
 attachField('time-picker-select', createElement(MUIDropDownTimePicker, null));
+attachField('file', createElement(MUIFileInput, null));
 var BuildFormRow = function (props) {
     var schema = props.schema, rowId = props.rowId, _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.settings, settings = _b === void 0 ? { horizontalSpacing: 10, verticalSpacing: 10, columnHorizontalPadding: 0, isReadOnly: false } : _b;
     var columnItems = get(schema, 'columns');

@@ -1,18 +1,29 @@
 import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core';
 import _ from 'lodash';
+import { FormikValues } from 'formik';
+import { IFieldProps } from '../../ReactForm';
 
-export interface MUIFileInputProps {
-	readAs?: string
+
+
+export interface IMUIFileInputProps {
+	name?: string
+	readAs?: keyof Pick<FileReader, 'readAsBinaryString' | 'readAsDataURL'>
 	disabled?: boolean
 	multiple?: boolean
 	accept?: string
 	disableDefaultTooltip?: boolean
 	invisible?: boolean
-	onChange?: ((files: FileList) => void)
-	onDone?: (files: TFile[], remFiles: TFile[]) => void
+	onChange?: (files: FileList) => void
+	onDone?: (files: TFile[], remFiles?: TFile[]) => void
 	/* File for when multiple is false and File[] for when multiple is true */
-	inputProps?: any
+	WrapWith?: (input: JSX.Element) => JSX.Element
+	/* Function passed to WrapWith should take the input Element and return the same within the wrapped element.
+	The input element is always invisible if WrapWith is provided*/
+}
+
+export interface IProps extends IFieldProps {
+	fieldProps?: IMUIFileInputProps
 }
 
 export interface TFile {
@@ -23,13 +34,32 @@ export interface TFile {
 	file: File
 }
 
-export const MUIFileInput: React.FC<MUIFileInputProps> = (props: MUIFileInputProps) => {
-	const { multiple, accept, disableDefaultTooltip, invisible, disabled, onChange, inputProps = {}, onDone } = props
+export const MUIFileInput: React.FC<IProps> = (props) => {
+	const { formikProps = {} as FormikValues, fieldProps = {} as IMUIFileInputProps } = props;
+	const {
+		onDone,
+		multiple,
+		invisible,
+		disableDefaultTooltip,
+		accept,
+		readAs,
+		disabled,
+		onChange,
+		WrapWith,
+	} = fieldProps
+	const setValue = (files: any) => {
+		if (typeof formikProps.setFieldValue === "function") {
+			formikProps.setFieldValue(_.get(fieldProps, 'name'), files)
+		}
+	}
 	const classes = useStyles();
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		// e.persist()
+		// onChange?.(e)
 		let files = e.target.files || new FileList()
 		if (onChange) {
 			onChange(files);
+			setValue(files)
 		}
 		let allFiles: Array<TFile> = [];
 		let remFiles: any[] = [];
@@ -47,28 +77,36 @@ export const MUIFileInput: React.FC<MUIFileInputProps> = (props: MUIFileInputPro
 					allFiles.push(fileInfo);
 					if ((allFiles.length + remFiles.length) === files.length) {
 						onDone?.(allFiles, remFiles);
+						setValue(allFiles.concat(remFiles))
 					}
 				}
-
-				reader[props.readAs || 'readAsDataURL'](file);
+				reader[readAs || 'readAsDataURL'](file);
 			} else {
 				remFiles.push(file);
 				if ((allFiles.length + remFiles.length) === files.length) {
-					if (props.onDone)
-						props.onDone(allFiles, remFiles);
+					onDone?.(allFiles, remFiles);
+					setValue(allFiles.concat(remFiles))
 				}
 			}
 		});
 	}
-	return (
-		<input type="file" disabled={disabled}
-			multiple={multiple}
-			className={invisible ? classes.invisibleInput : ""}
-			title={disableDefaultTooltip ? " " : undefined}
-			accept={accept}
-			onChange={handleChange}
-			{...inputProps}
-		/>
+	return (<>
+		{
+			WrapWith ? WrapWith(<input type="file" disabled={disabled}
+				multiple={multiple}
+				className={classes.invisibleInput}
+				title={disableDefaultTooltip ? " " : undefined}
+				accept={accept}
+				onChange={handleChange}
+			/>) : <input type="file" disabled={disabled}
+				multiple={multiple}
+				className={invisible ? classes.invisibleInput : ""}
+				title={disableDefaultTooltip ? " " : undefined}
+				accept={accept}
+				onChange={handleChange}
+				/>
+		}</>
+
 	)
 }
 
