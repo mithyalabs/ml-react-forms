@@ -144,7 +144,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
 
     const onItemSelect = (event: React.ChangeEvent<{}>, value: TOptions | TOptions[] | null) => {
         event.preventDefault();
-        if (clearOnSelect) setQuery('');
+        if (clearOnSelect) {
+
+            setQuery('');
+            const elem = document.getElementById(fieldConfig.valueKey);
+            elem?.blur();
+        }
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
@@ -204,6 +209,7 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         onClose={() => { setOpen(false) }}
         options={options.length > 0 ? options : defaultOptions}
         renderOption={defaultRenderOptions}
+        id={fieldConfig.valueKey}
         disableClearable={clearOnSelect}
         value={value}
         renderInput={
