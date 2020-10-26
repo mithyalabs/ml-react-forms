@@ -12,8 +12,9 @@ export interface IMUICheckboxProps extends CheckboxProps {
     formControlLabelProps?: FormControlLabelProps;
     formControlProps?: FormControlProps;
     formHelperTextProps?: FormHelperTextProps;
+    isLabelHtmlString?: boolean;
 }
-export interface IProps extends IFieldProps {
+export interface ICheckboxProps extends IFieldProps {
     fieldProps?: IMUICheckboxProps;
 }
-export declare const MUICheckBox: React.FC<IProps>;
+export declare const MUICheckBox: React.FC<ICheckboxProps>;

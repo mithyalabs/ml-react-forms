@@ -14,15 +14,17 @@ export interface IMUICheckboxProps extends CheckboxProps {
     checkGroupProps?: FormGroupProps
     formControlLabelProps?: FormControlLabelProps
     formControlProps?: FormControlProps
-    formHelperTextProps?: FormHelperTextProps
+    formHelperTextProps?: FormHelperTextProps;
+
+    isLabelHtmlString?: boolean;
 
 }
-export interface IProps extends IFieldProps {
+export interface ICheckboxProps extends IFieldProps {
     fieldProps?: IMUICheckboxProps
 }
-export const MUICheckBox: React.FC<IProps> = (props) => {
+export const MUICheckBox: React.FC<ICheckboxProps> = (props) => {
     const { fieldConfig = {} as FormConfig, formikProps = {} as FormikValues, fieldProps = {} as IMUICheckboxProps } = props;
-    const { label, helperText, options = [], header, headerProps, checkGroupProps, formControlProps, formHelperTextProps, formControlLabelProps, ...checkboxProps } = fieldProps;
+    const { label = '', helperText, options = [], header, headerProps, checkGroupProps, formControlProps, formHelperTextProps, formControlLabelProps, isLabelHtmlString = false, ...checkboxProps } = fieldProps;
     const fieldError = getFieldError((fieldProps.name || ''), formikProps);
     const value = get(formikProps, `values.${fieldProps.name}`);
     const menuOptions = getMenuOptions(options);
@@ -49,7 +51,7 @@ export const MUICheckBox: React.FC<IProps> = (props) => {
                         ) : (
                             <FormControlLabel
                                 control={<Checkbox checked={(value || false)} onBlur={formikProps.handleBlur} onChange={formikProps.handleChange}  {...checkboxProps} />}
-                                label={label || ''}
+                                label={isLabelHtmlString ? <div dangerouslySetInnerHTML={{ __html: label }} /> : label}
                                 {...formControlLabelProps}
                             />
                         )
