@@ -12,5 +12,5 @@ export interface IMUIPhoneFieldProps {
 export interface MUIPhoneFieldProps extends IFieldProps {
     fieldProps?: IMUIPhoneFieldProps;
 }
-declare const MUIPhoneField: FC<MUIPhoneFieldProps>;
+export declare const MUIPhoneField: FC<MUIPhoneFieldProps>;
 export default MUIPhoneField;

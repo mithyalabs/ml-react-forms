@@ -21,7 +21,7 @@ export interface MUIPhoneFieldProps extends IFieldProps {
 	fieldProps?: IMUIPhoneFieldProps
 }
 
-const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
+export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
 	const { formikProps = {} as FormikValues, fieldProps = {} as IMUIPhoneFieldProps, fieldConfig } = props;
 	const [code, setCode] = useState<string>('')
 	const error = getFieldError(fieldProps.name || '', formikProps)
