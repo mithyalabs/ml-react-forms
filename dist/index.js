@@ -6090,14 +6090,14 @@ var COUNTRY_LIST = [
 
 var MUIPhoneField = function (props) {
     var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, fieldConfig = props.fieldConfig;
-    var _c = React.useState(''), code = _c[0], setCode = _c[1];
-    var error = getFieldError(fieldProps.name || '', formikProps);
+    var _c = React.useState(""), code = _c[0], setCode = _c[1];
+    var error = getFieldError(fieldProps.name || "", formikProps);
     var classes = useStyles$3();
-    var value = _.get(formikProps, "values." + fieldProps.name) || '';
+    var value = _.get(formikProps, "values." + fieldProps.name) || "";
     var countryCodeProps = fieldProps.countryCodeProps, phoneNumberProps = fieldProps.phoneNumberProps, countryCodeLabel = fieldProps.countryCodeLabel, phoneLabel = fieldProps.phoneLabel, countryCodeFormControlProps = fieldProps.countryCodeFormControlProps;
     var onChange = function (event) {
         event.preventDefault();
-        var number = event.target.value.replace('-', '');
+        var number = event.target.value.replace("-", "");
         formikProps.setFieldValue("" + fieldProps.name, code + "-" + number);
     };
     var codeChange = function (e) {
@@ -6109,29 +6109,31 @@ var MUIPhoneField = function (props) {
     };
     var newError = formikProps.errors["" + fieldProps.name];
     return (React__default.createElement(React__default.Fragment, null,
-        React__default.createElement(core.Box, { width: '100%', display: 'flex', alignItems: 'flex-end' },
-            React__default.createElement(core.Box, { width: '15%' },
+        React__default.createElement(core.Box, { width: "100%", display: "flex", alignItems: "flex-end" },
+            React__default.createElement(core.Box, { width: "30%" },
                 React__default.createElement(core.FormControl, __assign({ fullWidth: true }, countryCodeFormControlProps),
-                    React__default.createElement(core.InputLabel, { id: fieldProps.name }, countryCodeLabel || 'Country code'),
-                    React__default.createElement(core.Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps), COUNTRY_LIST.map(function (country) {
-                        return React__default.createElement(core.MenuItem, { value: country.dial_code }, " " + country.dial_code + " (" + country.name + ")");
+                    React__default.createElement(core.InputLabel, { id: fieldProps.name }, countryCodeLabel || "Country code"),
+                    React__default.createElement(core.Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps, { native: true }), COUNTRY_LIST.map(function (country) {
+                        if (!country.dial_code)
+                            return null;
+                        return (React__default.createElement("option", { key: country.dial_code, value: country.dial_code }, country.name + " (" + country.dial_code + ")"));
                     })))),
-            React__default.createElement(core.Box, { width: '85%', marginLeft: '5px' },
-                React__default.createElement(core.TextField, __assign({ fullWidth: true, label: phoneLabel || 'Phone', InputProps: {
-                        name: fieldConfig === null || fieldConfig === void 0 ? void 0 : fieldConfig.valueKey
-                    }, onBlur: handleBlur, autoComplete: 'nope', type: 'tel', value: value.split('-')[1] || '', error: error ? true : false, onChange: onChange }, phoneNumberProps)))),
-        newError && React__default.createElement(core.Typography, { variant: 'overline', className: newError ? classes.errorField : '' }, newError)));
+            React__default.createElement(core.Box, { width: "70%", marginLeft: "5px" },
+                React__default.createElement(core.TextField, __assign({ fullWidth: true, label: phoneLabel || "Phone", InputProps: {
+                        name: fieldConfig === null || fieldConfig === void 0 ? void 0 : fieldConfig.valueKey,
+                    }, onBlur: handleBlur, autoComplete: "nope", type: "tel", value: value.split("-")[1] || "", error: error ? true : false, onChange: onChange }, phoneNumberProps)))),
+        newError && (React__default.createElement(core.Typography, { variant: "overline", className: newError ? classes.errorField : "" }, newError))));
 };
 var useStyles$3 = makeStyles(function () {
-    return (styles.createStyles({
+    return styles.createStyles({
         errorField: {
-            color: '#B71840',
+            color: "#B71840",
             fontSize: 12,
-            fontWeight: 'bold',
-            textTransform: 'none',
-            marginleft: '15%'
+            fontWeight: "bold",
+            textTransform: "none",
+            marginLeft: "30%",
         },
-    }));
+    });
 });
 
 var compare = function (value1, operator, value2) {
