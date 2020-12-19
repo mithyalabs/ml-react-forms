@@ -26,9 +26,9 @@ const compare = (value1: compareValueType, operator: string, value2: compareValu
     }
 }
 interface ConditionCompareItem {
-    key: string
-    compareValue: string
-    operator: string
+  key: string;
+  compareValue: compareValueType;
+  operator: string;
 }
 export interface IConditionalProps {
     hidden?: boolean,
