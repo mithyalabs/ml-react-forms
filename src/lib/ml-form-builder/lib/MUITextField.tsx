@@ -21,7 +21,6 @@ export const MUITextField: React.FC<IProps> = (props) => {
         onBlur: formikProps.handleBlur,
         value: get(formikProps, `values.${fieldProps.name}`) || ''
     };
-    console.log('Text field props read only', isReadOnly);
     if (isReadOnly) {
         return (<MUIReadOnly label={updatedProps.label} value={updatedProps.value} />);
     }
