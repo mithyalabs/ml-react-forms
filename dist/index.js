@@ -370,32 +370,29 @@ var MUITimePicker = function (props) {
 var TIME_BETWEEN_REQS = 300;
 var MUIAutocomplete = function (props) {
     var _a = React.useState(), query = _a[0], setQuery = _a[1];
-    var ref = React.useRef(null);
     var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c, _d = props.fieldConfig, fieldConfig = _d === void 0 ? {} : _d;
     var fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
-    var error = !!fieldError;
     var _e = fieldProps.highlighterProps, highlighterProps = _e === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
-    } : _e, _f = fieldProps.options, options = _f === void 0 ? [] : _f, _g = fieldProps.renderInputProps, renderInputProps = _g === void 0 ? {} : _g, _h = fieldProps.inputProps, inputProps = _h === void 0 ? {} : _h, _j = fieldProps.getQueryResponse, getQueryResponse = _j === void 0 ? undefined : _j, _k = fieldProps.clearOnSelect, clearOnSelect = _k === void 0 ? false : _k, _l = fieldProps.onItemSelected, onItemSelected = _l === void 0 ? undefined : _l, _m = fieldProps.getOptionLabel, getOptionLabel = _m === void 0 ? function () { return ''; } : _m, transformValues = fieldProps.transformValues, multiple = fieldProps.multiple, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "clearOnSelect", "onItemSelected", "getOptionLabel", "transformValues", "multiple"]);
-    var _o = React.useState([]), defaultOptions = _o[0], setDefaultOptions = _o[1];
-    var _p = React.useState(false), open = _p[0], setOpen = _p[1];
-    var _q = React.useState(false), loading = _q[0], setLoading = _q[1];
-    var _r = React.useState(''), globalTerm = _r[0], setGlobalTerm = _r[1];
-    var _s = React.useState([]), globalQueries = _s[0], setGlobalQueries = _s[1];
-    var value = _.get(formikProps, "values." + (_.get(fieldConfig, 'valueKey') || '')) || (multiple ? [] : null);
+    } : _e, _f = fieldProps.options, options = _f === void 0 ? [] : _f, _g = fieldProps.renderInputProps, renderInputProps = _g === void 0 ? {} : _g, _h = fieldProps.inputProps, inputProps = _h === void 0 ? {} : _h, _j = fieldProps.getQueryResponse, getQueryResponse = _j === void 0 ? undefined : _j, _k = fieldProps.outputKey, _l = fieldProps.clearOnSelect, clearOnSelect = _l === void 0 ? false : _l, _m = fieldProps.onItemSelected, onItemSelected = _m === void 0 ? undefined : _m, _o = fieldProps.displayKey, displayKey = _o === void 0 ? 'label' : _o, _p = fieldProps.uniqueKey, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "clearOnSelect", "onItemSelected", "displayKey", "uniqueKey"]);
+    var classes = useStyles();
+    var _q = React.useState([]), defaultOptions = _q[0], setDefaultOptions = _q[1];
+    var _r = React.useState(false), open = _r[0], setOpen = _r[1];
+    var _s = React.useState(false), loading = _s[0], setLoading = _s[1];
+    var _t = React.useState(''), globalTerm = _t[0], setGlobalTerm = _t[1];
+    var _u = React.useState([]), globalQueries = _u[0], setGlobalQueries = _u[1];
+    var value = _.get(formikProps, "values." + (_.get(fieldProps, 'name') || '')) || (_.get(fieldProps, 'multiple') ? [] : null);
+    var defaultGetOptionLabel = function (x) { return _.isString(x) ? x : x[displayKey]; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
-        var result, newOptions_1, e_1;
+        var result, newOptions_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     setLoading(true);
-                    if (!getQueryResponse) return [3 /*break*/, 4];
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    if (!getQueryResponse) return [3 /*break*/, 2];
                     return [4 /*yield*/, getQueryResponse(newTerm)];
-                case 2:
+                case 1:
                     result = _a.sent();
                     newOptions_1 = [];
                     result.forEach(function (element) {
@@ -403,11 +400,7 @@ var MUIAutocomplete = function (props) {
                     });
                     setLoading(false);
                     return [2 /*return*/, newOptions_1];
-                case 3:
-                    e_1 = _a.sent();
-                    setLoading(false);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/, []];
+                case 2: return [2 /*return*/, []];
             }
         });
     }); };
@@ -491,13 +484,17 @@ var MUIAutocomplete = function (props) {
         event.preventDefault();
         if (clearOnSelect) {
             setQuery('');
+            var elem = document.getElementById(fieldConfig.valueKey);
+            elem === null || elem === void 0 ? void 0 : elem.blur();
         }
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
             else {
-                formikProps.setFieldValue(_.get(fieldConfig, 'valueKey'), value, false);
+                formikProps.setFieldValue(_.get(fieldProps, 'name'), value, false);
             }
+            // if (outputKey)
+            //     formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
         }
     };
     var onInputChange = function (event, values, reason) {
@@ -505,14 +502,11 @@ var MUIAutocomplete = function (props) {
             event.preventDefault();
             if (reason === 'clear') {
                 if (onItemSelected) {
-                    onItemSelected((multiple ? [] : (_.isString(value) ? values : null)));
+                    onItemSelected(_.get(fieldProps, 'multiple') ? [] : (_.isString(value) ? values : null));
                 }
                 else {
-                    formikProps.setFieldValue(_.get(fieldConfig, 'valueKey'), multiple ? [] : (_.isString(value) ? values : null), false);
+                    formikProps.setFieldValue(_.get(fieldProps, 'name'), _.get(fieldProps, 'multiple') ? [] : (_.isString(value) ? values : null), false);
                 }
-            }
-            else if (reason === 'input') {
-                console.log(value, event);
             }
         }
     };
@@ -521,15 +515,32 @@ var MUIAutocomplete = function (props) {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (React.createElement("div", null, (highlighterProps.highlightText === false) ?
             //NO HIGHLIGHT
-            React.createElement("span", null, getOptionLabel(option)) :
+            React.createElement("span", null, _.isString(option) ? option : option[displayKey]) :
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
-            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: getOptionLabel(option), highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
+            React.createElement(Highlighter, { searchWords: [inputValue], textToHighlight: _.isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
-    var multipleProp = multiple ? { multiple: true } : {};
-    return React.createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: getOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, id: fieldConfig.valueKey, disableClearable: clearOnSelect, value: transformValues ? transformValues(value) : value, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, ref: ref, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: error, helperText: fieldError }, renderInputProps, { InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
-                    loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
-                    params.InputProps.endAdornment)) }), renderInputProps.InputProps || {}), inputProps: __assign(__assign(__assign({}, params.inputProps), inputProps), { autoComplete: 'new-password' }) })); } }, multipleProp, autoCompleteProps));
+    return React.createElement(React.Fragment, null,
+        React.createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, id: fieldConfig.valueKey, disableClearable: clearOnSelect, value: value, renderInput: function (params) { return React.createElement(core.TextField, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: fieldError ? true : false, className: fieldError ? classes.autocompleteError : '' }, renderInputProps, { InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (React.createElement(React.Fragment, null,
+                        loading ? React.createElement(core.CircularProgress, { color: "primary", size: 20 }) : null,
+                        params.InputProps.endAdornment)) }), renderInputProps.InputProps || {}), inputProps: __assign(__assign(__assign({}, params.inputProps), inputProps), { autoComplete: 'new-password' }) })); } }, autoCompleteProps)),
+        "  ",
+        fieldError && React.createElement(core.Typography, { variant: 'overline', className: fieldError ? classes.errorField : '' }, fieldError));
 };
+var useStyles = core.makeStyles(function () {
+    return (core.createStyles({
+        errorField: {
+            color: '#B71840',
+            fontSize: 12,
+            fontWeight: 'bold',
+            textTransform: 'none'
+        },
+        autocompleteError: {
+            '&::after': {
+                borderColor: '#B71840 !important'
+            }
+        }
+    }));
+});
 
 /* interface IArrayItemProps extends TextFieldProps {
     fieldValue?: string
@@ -551,7 +562,7 @@ var MUIFieldArray = function (props) {
     var itemType = fieldProps.itemType, _c = fieldProps.addButtonText, addButtonText = _c === void 0 ? 'Add' : _c, addButtonProps = fieldProps.addButtonProps, addButton = fieldProps.addButton, removeButton = fieldProps.removeButton, removeButtonProps = fieldProps.removeButtonProps, _d = fieldProps.textFieldProps, textFieldProps = _d === void 0 ? {} : _d;
     var values = _.get(formikProps, "values." + fieldProps.name);
     var itemComponentConfig = getComponentConfig(itemType);
-    var classes = useStyles();
+    var classes = useStyles$1();
     return (React__default.createElement(formik.FieldArray, { name: fieldProps.name, render: function (arrayHelpers) { return (React__default.createElement("div", null,
             (values || []).map(function (value, index) { return (React__default.createElement("div", { key: fieldProps.name + "-" + index, className: classes.arrayItem },
                 React__default.cloneElement(itemComponentConfig.component, __assign(__assign({ name: fieldProps.name, itemIndex: index, arrayHelpers: arrayHelpers, fieldValue: value, formikProps: formikProps }, itemComponentConfig.props), textFieldProps)),
@@ -559,7 +570,7 @@ var MUIFieldArray = function (props) {
                     React__default.createElement(CloseIcon, null))))); }),
             (addButton) ? addButton : (React__default.createElement(core.Button, __assign({ type: "button", onClick: function () { return arrayHelpers.push({}); } }, addButtonProps), addButtonText)))); } }));
 };
-var useStyles = styles.makeStyles(function () {
+var useStyles$1 = styles.makeStyles(function () {
     return (styles.createStyles({
         arrayItem: {
             position: 'relative'
@@ -610,7 +621,7 @@ var MUIDropDownTimePicker = function (props) {
 
 var MUIFileInput = function (props) {
     var multiple = props.multiple, accept = props.accept, disableDefaultTooltip = props.disableDefaultTooltip, invisible = props.invisible, disabled = props.disabled, onChange = props.onChange, _a = props.inputProps, inputProps = _a === void 0 ? {} : _a;
-    var classes = useStyles$1();
+    var classes = useStyles$2();
     var handleChange = function (event) {
         var selectedFiles = event.target.files;
         if (selectedFiles) {
@@ -639,7 +650,7 @@ var MUIFileInput = function (props) {
     };
     return (React__default.createElement("input", __assign({ type: "file", disabled: disabled, multiple: multiple, className: invisible ? classes.invisibleInput : "", title: disableDefaultTooltip ? " " : undefined, accept: accept, onChange: handleChange }, inputProps)));
 };
-var useStyles$1 = core.makeStyles(function () { return core.createStyles({
+var useStyles$2 = core.makeStyles(function () { return core.createStyles({
     invisibleInput: { opacity: 0, width: '100%', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, cursor: 'pointer' }
 }); });
 
@@ -6078,7 +6089,7 @@ var MUIPhoneField = function (props) {
     var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, fieldConfig = props.fieldConfig;
     var _c = React.useState(""), code = _c[0], setCode = _c[1];
     var error = getFieldError(fieldProps.name || "", formikProps);
-    var classes = useStyles$2();
+    var classes = useStyles$3();
     var value = _.get(formikProps, "values." + fieldProps.name) || "";
     var countryCodeProps = fieldProps.countryCodeProps, phoneNumberProps = fieldProps.phoneNumberProps, countryCodeLabel = fieldProps.countryCodeLabel, phoneLabel = fieldProps.phoneLabel, countryCodeFormControlProps = fieldProps.countryCodeFormControlProps;
     var onChange = function (event) {
@@ -6110,7 +6121,7 @@ var MUIPhoneField = function (props) {
                     }, onBlur: handleBlur, autoComplete: "nope", type: "tel", value: value.split("-")[1] || "", error: error ? true : false, onChange: onChange }, phoneNumberProps)))),
         newError && (React__default.createElement(core.Typography, { variant: "overline", className: newError ? classes.errorField : "" }, newError))));
 };
-var useStyles$2 = makeStyles(function () {
+var useStyles$3 = makeStyles(function () {
     return styles.createStyles({
         errorField: {
             color: "#B71840",

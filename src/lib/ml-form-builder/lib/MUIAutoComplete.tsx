@@ -1,13 +1,12 @@
-import { CircularProgress, InputBaseComponentProps, TextField } from '@material-ui/core';
+import { CircularProgress, InputBaseComponentProps, TextField, Typography, makeStyles, Theme, createStyles } from '@material-ui/core';
 import Autocomplete, { AutocompleteProps, RenderInputParams, RenderOptionState } from '@material-ui/lab/Autocomplete';
 import { FormikValues } from 'formik';
-import { filter, findIndex, get, isString, reduce } from 'lodash';
+import { filter, findIndex, get, reduce, isString } from 'lodash';
 import * as React from 'react';
+
 import Highlighter from "react-highlight-words";
-import { FormConfig, IFieldProps } from '..';
+import { IFieldProps, FormConfig } from '..';
 import { getFieldError } from '../Utils';
-
-
 
 export interface IHighlighterProps { //Prop for default highlighter 
     highlightText?: boolean //this props will be used if nad only if this is true
@@ -15,35 +14,36 @@ export interface IHighlighterProps { //Prop for default highlighter
     highlighterStyles?: object //additional highlight styles
 
 }
+type TOptions = Record<string, any> | string
 const TIME_BETWEEN_REQS = 300;
 
-export interface TQueries<T> {
+export interface TQueries {
     term: string,
     sendAt: number,
     order: number,
-    options?: T[]
+    options?: TOptions[]
 }
-export interface IMUIAutoCompleteProps<T> extends Partial<AutocompleteProps<T>> {
-    options?: T[]
+
+export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOptions>> {
+    options?: TOptions[]
     renderInputProps?: RenderInputParams
     inputProps?: InputBaseComponentProps
     highlighterProps?: IHighlighterProps
-    getQueryResponse?: (newTerm: string) => Promise<Array<T>>
-    onItemSelected?: (value: T | T[] | null) => void
-    multiple?: boolean
-    transformValues?: (values: any) => T | T[],
+    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions>>
+    outputKey?: string
+    onItemSelected?: (value: TOptions | TOptions[] | null) => void
+    displayKey?: string
+    uniqueKey?: string
     clearOnSelect?: boolean; // default: false
 }
-export interface IProps<T> extends IFieldProps {
-    fieldProps?: IMUIAutoCompleteProps<T>
+export interface IProps extends IFieldProps {
+    fieldProps?: IMUIAutoCompleteProps
 }
 
-export const MUIAutocomplete = <T extends Record<string, any> | string>(props: IProps<T>) => {
+export const MUIAutocomplete: React.FC<IProps> = (props) => {
     const [query, setQuery] = React.useState<string>();
-    const ref = React.useRef<HTMLDivElement | null>(null);
-    const { fieldProps = {} as IMUIAutoCompleteProps<T>, formikProps = {} as FormikValues, fieldConfig = {} as FormConfig } = props
+    const { fieldProps = {} as IMUIAutoCompleteProps, formikProps = {} as FormikValues, fieldConfig = {} as FormConfig } = props
     const fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
-    const error = !!fieldError;
     const {
         highlighterProps = {
             highlightText: false,
@@ -53,34 +53,31 @@ export const MUIAutocomplete = <T extends Record<string, any> | string>(props: I
         renderInputProps = {} as RenderInputParams,
         inputProps = {} as InputBaseComponentProps,
         getQueryResponse = undefined,
+        outputKey = '',
         clearOnSelect = false,
         onItemSelected = undefined,
-        getOptionLabel = () => '',
-        transformValues,
-        multiple,
+        displayKey = 'label',
+        uniqueKey = 'key',
         ...autoCompleteProps
     } = fieldProps
-    const [defaultOptions, setDefaultOptions] = React.useState<T[]>([]);
+    const classes = useStyles();
+    const [defaultOptions, setDefaultOptions] = React.useState<TOptions[]>([]);
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false)
     const [globalTerm, setGlobalTerm] = React.useState<string>('')
-    const [globalQueries, setGlobalQueries] = React.useState<TQueries<T>[]>([])
-    const value = get(formikProps, `values.${get(fieldConfig, 'valueKey') || ''}`) || (multiple ? [] : null);
+    const [globalQueries, setGlobalQueries] = React.useState<TQueries[]>([])
+    const value = get(formikProps, `values.${get(fieldProps, 'name') || ''}`) || (get(fieldProps, 'multiple') ? [] : null);
+    const defaultGetOptionLabel = (x: TOptions) => { return isString(x) ? x : x[displayKey] }
     const handleQueryResponse = async (newTerm: string) => {
         setLoading(true);
         if (getQueryResponse) {
-            try {
-                const result = await getQueryResponse(newTerm)
-                let newOptions: Array<T> = []
-                result.forEach((element) => {
-                    newOptions.push(element)
-                })
-                setLoading(false)
-                return newOptions
-            } catch (e) {
-                setLoading(false)
-            }
-
+            const result = await getQueryResponse(newTerm);
+            let newOptions: Array<TOptions> = []
+            result.forEach((element) => {
+                newOptions.push(element)
+            })
+            setLoading(false)
+            return newOptions
         }
         return [];
     }
@@ -145,19 +142,24 @@ export const MUIAutocomplete = <T extends Record<string, any> | string>(props: I
         }
     }
 
-    const onItemSelect = (event: React.ChangeEvent<{}>, value: T | T[] | null) => {
+    const onItemSelect = (event: React.ChangeEvent<{}>, value: TOptions | TOptions[] | null) => {
         event.preventDefault();
         if (clearOnSelect) {
+
             setQuery('');
+            const elem = document.getElementById(fieldConfig.valueKey);
+            elem?.blur();
         }
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
             else {
-                formikProps.setFieldValue(get(fieldConfig, 'valueKey'), value, false)
+                formikProps.setFieldValue(get(fieldProps, 'name'), value, false)
             }
-
+            // if (outputKey)
+            //     formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
         }
+
     }
 
     const onInputChange = (event: React.ChangeEvent<{}>, values: string, reason: "input" | "reset" | "clear") => {
@@ -165,18 +167,16 @@ export const MUIAutocomplete = <T extends Record<string, any> | string>(props: I
             event.preventDefault();
             if (reason === 'clear') {
                 if (onItemSelected) {
-                    onItemSelected((multiple ? [] : (isString(value) ? values : null)) as T);
+                    onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
                 } else {
-                    formikProps.setFieldValue(get(fieldConfig, 'valueKey'), multiple ? [] : (isString(value) ? values : null), false)
+                    formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false)
 
                 }
-            } else if (reason === 'input') {
-                console.log(value, event)
             }
         }
     }
 
-    const defaultRenderOptions = (option: T, { inputValue }: RenderOptionState) => {
+    const defaultRenderOptions = (option: TOptions, { inputValue }: RenderOptionState) => {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (
             <div>
@@ -185,12 +185,12 @@ export const MUIAutocomplete = <T extends Record<string, any> | string>(props: I
                     (highlighterProps.highlightText === false) ?
                         //NO HIGHLIGHT
                         <span>
-                            {getOptionLabel(option)}
+                            {isString(option) ? option : option[displayKey]}
                         </span> :
                         //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
                         <Highlighter
                             searchWords={[inputValue]}
-                            textToHighlight={getOptionLabel(option)}
+                            textToHighlight={isString(option) ? option : option[displayKey]}
                             highlightStyle={{
                                 backgroundColor: highlighterProps.highlightColor,
                                 ...highlighterProps.highlighterStyles
@@ -200,11 +200,10 @@ export const MUIAutocomplete = <T extends Record<string, any> | string>(props: I
             </div>
         );
     }
-    const multipleProp = multiple ? { multiple: true as true } : {};
-    return <Autocomplete
+    return <><Autocomplete
         onChange={onItemSelect}
         onInputChange={onInputChange}
-        getOptionLabel={getOptionLabel}
+        getOptionLabel={defaultGetOptionLabel}
         onOpen={() => { setOpen(true) }}
         open={open}
         onClose={() => { setOpen(false) }}
@@ -212,16 +211,15 @@ export const MUIAutocomplete = <T extends Record<string, any> | string>(props: I
         renderOption={defaultRenderOptions}
         id={fieldConfig.valueKey}
         disableClearable={clearOnSelect}
-        value={transformValues ? transformValues(value) : value}
+        value={value}
         renderInput={
             params => <TextField
                 {...params}
                 value={query}
-                ref={ref}
                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => handleChange(e.target.value as string)}
                 fullWidth
-                error={error}
-                helperText={fieldError}
+                error={fieldError ? true : false}
+                className={fieldError ? classes.autocompleteError : ''}
                 {...renderInputProps}
                 InputProps={{
                     ...params.InputProps,
@@ -239,10 +237,26 @@ export const MUIAutocomplete = <T extends Record<string, any> | string>(props: I
                     ...inputProps,
                     autoComplete: 'new-password',
                 }}
-
             />
         }
-        {...multipleProp}
         {...autoCompleteProps}
-    />
+    />  {
+            fieldError && <Typography variant='overline' className={fieldError ? classes.errorField : ''}>{fieldError}</Typography>
+        }
+    </>
 }
+const useStyles = makeStyles<Theme>(() => {
+    return (createStyles({
+        errorField: {
+            color: '#B71840',
+            fontSize: 12,
+            fontWeight: 'bold',
+            textTransform: 'none'
+        },
+        autocompleteError: {
+            '&::after': {
+                borderColor: '#B71840 !important'
+            }
+        }
+    }))
+})
