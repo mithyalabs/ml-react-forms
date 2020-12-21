@@ -202,7 +202,6 @@ export const MUIAutocomplete = <T extends Record<string, any> | string>(props: I
         );
     }
     const multipleProp = multiple ? { multiple: true as true } : {};
-    console.log(inputProps)
     return <Autocomplete
         onChange={onItemSelect}
         onInputChange={onInputChange}
