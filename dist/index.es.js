@@ -1,4 +1,4 @@
-import React__default, { createElement, useEffect as useEffect$1, useState as useState$2, Fragment as Fragment$1, cloneElement } from 'react';
+import React__default, { createElement, useEffect as useEffect$1, useState as useState$2, useRef, Fragment as Fragment$1, cloneElement } from 'react';
 import _, { map, isString, get, isEmpty, indexOf, filter, findIndex, reduce, forEach, isArray, isFunction, uniqueId } from 'lodash';
 import Button$1 from '@material-ui/core/Button';
 import CircularProgress$1 from '@material-ui/core/CircularProgress';
@@ -361,20 +361,21 @@ var MUITimePicker = function (props) {
 var TIME_BETWEEN_REQS = 300;
 var MUIAutocomplete = function (props) {
     var _a = useState$2(), query = _a[0], setQuery = _a[1];
+    console.log(props);
+    var ref = useRef(null);
     var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c, _d = props.fieldConfig, fieldConfig = _d === void 0 ? {} : _d;
     var fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
     var error = !!fieldError;
     var _e = fieldProps.highlighterProps, highlighterProps = _e === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
-    } : _e, _f = fieldProps.options, options = _f === void 0 ? [] : _f, _g = fieldProps.renderInputProps, renderInputProps = _g === void 0 ? {} : _g, _h = fieldProps.inputProps, inputProps = _h === void 0 ? {} : _h, _j = fieldProps.getQueryResponse, getQueryResponse = _j === void 0 ? undefined : _j, _k = fieldProps.outputKey, _l = fieldProps.clearOnSelect, clearOnSelect = _l === void 0 ? false : _l, _m = fieldProps.onItemSelected, onItemSelected = _m === void 0 ? undefined : _m, _o = fieldProps.displayKey, displayKey = _o === void 0 ? 'label' : _o, _p = fieldProps.uniqueKey, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "clearOnSelect", "onItemSelected", "displayKey", "uniqueKey"]);
-    var _q = useState$2([]), defaultOptions = _q[0], setDefaultOptions = _q[1];
-    var _r = useState$2(false), open = _r[0], setOpen = _r[1];
-    var _s = useState$2(false), loading = _s[0], setLoading = _s[1];
-    var _t = useState$2(''), globalTerm = _t[0], setGlobalTerm = _t[1];
-    var _u = useState$2([]), globalQueries = _u[0], setGlobalQueries = _u[1];
-    var value = get(formikProps, "values." + (get(fieldProps, 'name') || '')) || (get(fieldProps, 'multiple') ? [] : null);
-    var defaultGetOptionLabel = function (x) { return isString(x) ? x : x[displayKey]; };
+    } : _e, _f = fieldProps.options, options = _f === void 0 ? [] : _f, _g = fieldProps.renderInputProps, renderInputProps = _g === void 0 ? {} : _g, _h = fieldProps.inputProps, inputProps = _h === void 0 ? {} : _h, _j = fieldProps.getQueryResponse, getQueryResponse = _j === void 0 ? undefined : _j, _k = fieldProps.clearOnSelect, clearOnSelect = _k === void 0 ? false : _k, _l = fieldProps.onItemSelected, onItemSelected = _l === void 0 ? undefined : _l, _m = fieldProps.getOptionLabel, getOptionLabel = _m === void 0 ? function () { return ''; } : _m, transformValues = fieldProps.transformValues, multiple = fieldProps.multiple, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "clearOnSelect", "onItemSelected", "getOptionLabel", "transformValues", "multiple"]);
+    var _o = useState$2([]), defaultOptions = _o[0], setDefaultOptions = _o[1];
+    var _p = useState$2(false), open = _p[0], setOpen = _p[1];
+    var _q = useState$2(false), loading = _q[0], setLoading = _q[1];
+    var _r = useState$2(''), globalTerm = _r[0], setGlobalTerm = _r[1];
+    var _s = useState$2([]), globalQueries = _s[0], setGlobalQueries = _s[1];
+    var value = get(formikProps, "values." + (get(fieldConfig, 'valueKey') || '')) || (multiple ? [] : null);
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
         var result, newOptions_1, e_1;
         return __generator(this, function (_a) {
@@ -482,17 +483,13 @@ var MUIAutocomplete = function (props) {
         event.preventDefault();
         if (clearOnSelect) {
             setQuery('');
-            var elem = document.getElementById(fieldConfig.valueKey);
-            elem === null || elem === void 0 ? void 0 : elem.blur();
         }
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
             else {
-                formikProps.setFieldValue(get(fieldProps, 'name'), value, false);
+                formikProps.setFieldValue(get(fieldConfig, 'valueKey'), value, false);
             }
-            // if (outputKey)
-            //     formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
         }
     };
     var onInputChange = function (event, values, reason) {
@@ -500,11 +497,14 @@ var MUIAutocomplete = function (props) {
             event.preventDefault();
             if (reason === 'clear') {
                 if (onItemSelected) {
-                    onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
+                    onItemSelected((multiple ? [] : (isString(value) ? values : null)));
                 }
                 else {
-                    formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false);
+                    formikProps.setFieldValue(get(fieldConfig, 'valueKey'), multiple ? [] : (isString(value) ? values : null), false);
                 }
+            }
+            else if (reason === 'input') {
+                console.log(value, event);
             }
         }
     };
@@ -513,13 +513,15 @@ var MUIAutocomplete = function (props) {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (createElement("div", null, (highlighterProps.highlightText === false) ?
             //NO HIGHLIGHT
-            createElement("span", null, isString(option) ? option : option[displayKey]) :
+            createElement("span", null, getOptionLabel(option)) :
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
-            createElement(Highlighter, { searchWords: [inputValue], textToHighlight: isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
+            createElement(Highlighter, { searchWords: [inputValue], textToHighlight: getOptionLabel(option), highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
-    return createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, id: fieldConfig.valueKey, disableClearable: clearOnSelect, value: value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: error, helperText: fieldError }, renderInputProps, { InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (createElement(Fragment$1, null,
+    var multipleProp = multiple ? { multiple: true } : {};
+    console.log(inputProps);
+    return createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: getOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, id: fieldConfig.valueKey, disableClearable: clearOnSelect, value: transformValues ? transformValues(value) : value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, ref: ref, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: error, helperText: fieldError }, renderInputProps, { InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (createElement(Fragment$1, null,
                     loading ? createElement(CircularProgress, { color: "primary", size: 20 }) : null,
-                    params.InputProps.endAdornment)) }), renderInputProps.InputProps || {}), inputProps: __assign(__assign(__assign({}, params.inputProps), inputProps), { autoComplete: 'new-password' }) })); } }, autoCompleteProps));
+                    params.InputProps.endAdornment)) }), renderInputProps.InputProps || {}), inputProps: __assign(__assign(__assign({}, params.inputProps), inputProps), { autoComplete: 'new-password' }) })); } }, multipleProp, autoCompleteProps));
 };
 
 /* interface IArrayItemProps extends TextFieldProps {

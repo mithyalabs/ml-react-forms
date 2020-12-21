@@ -1,33 +1,30 @@
+/// <reference types="react" />
 import { InputBaseComponentProps } from '@material-ui/core';
 import { AutocompleteProps, RenderInputParams } from '@material-ui/lab/Autocomplete';
-import * as React from 'react';
 import { IFieldProps } from '..';
 export interface IHighlighterProps {
     highlightText?: boolean;
     highlightColor?: string;
     highlighterStyles?: object;
 }
-declare type TOptions = Record<string, any> | string;
-export interface TQueries {
+export interface TQueries<T> {
     term: string;
     sendAt: number;
     order: number;
-    options?: TOptions[];
+    options?: T[];
 }
-export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOptions>> {
-    options?: TOptions[];
+export interface IMUIAutoCompleteProps<T> extends Partial<AutocompleteProps<T>> {
+    options?: T[];
     renderInputProps?: RenderInputParams;
     inputProps?: InputBaseComponentProps;
     highlighterProps?: IHighlighterProps;
-    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions>>;
-    outputKey?: string;
-    onItemSelected?: (value: TOptions | TOptions[] | null) => void;
-    displayKey?: string;
-    uniqueKey?: string;
+    getQueryResponse?: (newTerm: string) => Promise<Array<T>>;
+    onItemSelected?: (value: T | T[] | null) => void;
+    multiple?: boolean;
+    transformValues?: (values: any) => T | T[];
     clearOnSelect?: boolean;
 }
-export interface IProps extends IFieldProps {
-    fieldProps?: IMUIAutoCompleteProps;
+export interface IProps<T> extends IFieldProps {
+    fieldProps?: IMUIAutoCompleteProps<T>;
 }
-export declare const MUIAutocomplete: React.FC<IProps>;
-export {};
+export declare const MUIAutocomplete: <T extends string | Record<string, any>>(props: IProps<T>) => JSX.Element;

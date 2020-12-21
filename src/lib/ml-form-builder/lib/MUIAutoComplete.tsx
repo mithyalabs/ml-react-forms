@@ -8,41 +8,41 @@ import { FormConfig, IFieldProps } from '..';
 import { getFieldError } from '../Utils';
 
 
+
 export interface IHighlighterProps { //Prop for default highlighter 
     highlightText?: boolean //this props will be used if nad only if this is true
     highlightColor?: string //Highlight color
     highlighterStyles?: object //additional highlight styles
 
 }
-type TOptions = Record<string, any> | string
 const TIME_BETWEEN_REQS = 300;
 
-export interface TQueries {
+export interface TQueries<T> {
     term: string,
     sendAt: number,
     order: number,
-    options?: TOptions[]
+    options?: T[]
 }
-
-export interface IMUIAutoCompleteProps extends Partial<AutocompleteProps<TOptions>> {
-    options?: TOptions[]
+export interface IMUIAutoCompleteProps<T> extends Partial<AutocompleteProps<T>> {
+    options?: T[]
     renderInputProps?: RenderInputParams
     inputProps?: InputBaseComponentProps
     highlighterProps?: IHighlighterProps
-    getQueryResponse?: (newTerm: string) => Promise<Array<TOptions>>
-    outputKey?: string
-    onItemSelected?: (value: TOptions | TOptions[] | null) => void
-    displayKey?: string
-    uniqueKey?: string
+    getQueryResponse?: (newTerm: string) => Promise<Array<T>>
+    onItemSelected?: (value: T | T[] | null) => void
+    multiple?: boolean
+    transformValues?: (values: any) => T | T[],
     clearOnSelect?: boolean; // default: false
 }
-export interface IProps extends IFieldProps {
-    fieldProps?: IMUIAutoCompleteProps
+export interface IProps<T> extends IFieldProps {
+    fieldProps?: IMUIAutoCompleteProps<T>
 }
 
-export const MUIAutocomplete: React.FC<IProps> = (props) => {
+export const MUIAutocomplete = <T extends Record<string, any> | string>(props: IProps<T>) => {
     const [query, setQuery] = React.useState<string>();
-    const { fieldProps = {} as IMUIAutoCompleteProps, formikProps = {} as FormikValues, fieldConfig = {} as FormConfig } = props
+    console.log(props);
+    const ref = React.useRef<HTMLDivElement | null>(null);
+    const { fieldProps = {} as IMUIAutoCompleteProps<T>, formikProps = {} as FormikValues, fieldConfig = {} as FormConfig } = props
     const fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
     const error = !!fieldError;
     const {
@@ -54,26 +54,25 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         renderInputProps = {} as RenderInputParams,
         inputProps = {} as InputBaseComponentProps,
         getQueryResponse = undefined,
-        outputKey = '',
         clearOnSelect = false,
         onItemSelected = undefined,
-        displayKey = 'label',
-        uniqueKey = 'key',
+        getOptionLabel = () => '',
+        transformValues,
+        multiple,
         ...autoCompleteProps
     } = fieldProps
-    const [defaultOptions, setDefaultOptions] = React.useState<TOptions[]>([]);
+    const [defaultOptions, setDefaultOptions] = React.useState<T[]>([]);
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false)
     const [globalTerm, setGlobalTerm] = React.useState<string>('')
-    const [globalQueries, setGlobalQueries] = React.useState<TQueries[]>([])
-    const value = get(formikProps, `values.${get(fieldProps, 'name') || ''}`) || (get(fieldProps, 'multiple') ? [] : null);
-    const defaultGetOptionLabel = (x: TOptions) => { return isString(x) ? x : x[displayKey] }
+    const [globalQueries, setGlobalQueries] = React.useState<TQueries<T>[]>([])
+    const value = get(formikProps, `values.${get(fieldConfig, 'valueKey') || ''}`) || (multiple ? [] : null);
     const handleQueryResponse = async (newTerm: string) => {
         setLoading(true);
         if (getQueryResponse) {
             try {
                 const result = await getQueryResponse(newTerm)
-                let newOptions: Array<TOptions> = []
+                let newOptions: Array<T> = []
                 result.forEach((element) => {
                     newOptions.push(element)
                 })
@@ -147,24 +146,19 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         }
     }
 
-    const onItemSelect = (event: React.ChangeEvent<{}>, value: TOptions | TOptions[] | null) => {
+    const onItemSelect = (event: React.ChangeEvent<{}>, value: T | T[] | null) => {
         event.preventDefault();
         if (clearOnSelect) {
-
             setQuery('');
-            const elem = document.getElementById(fieldConfig.valueKey);
-            elem?.blur();
         }
         if (value) {
             if (onItemSelected)
                 onItemSelected(value);
             else {
-                formikProps.setFieldValue(get(fieldProps, 'name'), value, false)
+                formikProps.setFieldValue(get(fieldConfig, 'valueKey'), value, false)
             }
-            // if (outputKey)
-            //     formikProps.setFieldValue(outputKey, isString(value) ? value : value[uniqueKey], false)
-        }
 
+        }
     }
 
     const onInputChange = (event: React.ChangeEvent<{}>, values: string, reason: "input" | "reset" | "clear") => {
@@ -172,16 +166,18 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             event.preventDefault();
             if (reason === 'clear') {
                 if (onItemSelected) {
-                    onItemSelected(get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null));
+                    onItemSelected((multiple ? [] : (isString(value) ? values : null)) as T);
                 } else {
-                    formikProps.setFieldValue(get(fieldProps, 'name'), get(fieldProps, 'multiple') ? [] : (isString(value) ? values : null), false)
+                    formikProps.setFieldValue(get(fieldConfig, 'valueKey'), multiple ? [] : (isString(value) ? values : null), false)
 
                 }
+            } else if (reason === 'input') {
+                console.log(value, event)
             }
         }
     }
 
-    const defaultRenderOptions = (option: TOptions, { inputValue }: RenderOptionState) => {
+    const defaultRenderOptions = (option: T, { inputValue }: RenderOptionState) => {
         /*THIS WILL BE USED TO RENDER OPTION AND HIGHLIGHT IF USER DOESN'T PROVIDE ANY RENDER OPTIONS */
         return (
             <div>
@@ -190,12 +186,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                     (highlighterProps.highlightText === false) ?
                         //NO HIGHLIGHT
                         <span>
-                            {isString(option) ? option : option[displayKey]}
+                            {getOptionLabel(option)}
                         </span> :
                         //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
                         <Highlighter
                             searchWords={[inputValue]}
-                            textToHighlight={isString(option) ? option : option[displayKey]}
+                            textToHighlight={getOptionLabel(option)}
                             highlightStyle={{
                                 backgroundColor: highlighterProps.highlightColor,
                                 ...highlighterProps.highlighterStyles
@@ -205,10 +201,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
             </div>
         );
     }
+    const multipleProp = multiple ? { multiple: true as true } : {};
+    console.log(inputProps)
     return <Autocomplete
         onChange={onItemSelect}
         onInputChange={onInputChange}
-        getOptionLabel={defaultGetOptionLabel}
+        getOptionLabel={getOptionLabel}
         onOpen={() => { setOpen(true) }}
         open={open}
         onClose={() => { setOpen(false) }}
@@ -216,11 +214,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
         renderOption={defaultRenderOptions}
         id={fieldConfig.valueKey}
         disableClearable={clearOnSelect}
-        value={value}
+        value={transformValues ? transformValues(value) : value}
         renderInput={
             params => <TextField
                 {...params}
                 value={query}
+                ref={ref}
                 onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => handleChange(e.target.value as string)}
                 fullWidth
                 error={error}
@@ -240,11 +239,12 @@ export const MUIAutocomplete: React.FC<IProps> = (props) => {
                 inputProps={{
                     ...params.inputProps,
                     ...inputProps,
-                    autoComplete: 'new-password'
+                    autoComplete: 'new-password',
                 }}
 
             />
         }
+        {...multipleProp}
         {...autoCompleteProps}
     />
 }
