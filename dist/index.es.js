@@ -2,10 +2,10 @@ import React__default, { createElement, useEffect as useEffect$1, useState as us
 import _, { map, isString, get, isEmpty, indexOf, filter, findIndex, reduce, forEach, isArray, isFunction, uniqueId } from 'lodash';
 import Button$1 from '@material-ui/core/Button';
 import CircularProgress$1 from '@material-ui/core/CircularProgress';
-import { makeStyles as makeStyles$2, createStyles as createStyles$1 } from '@material-ui/core/styles';
+import { makeStyles as makeStyles$1, createStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText, CircularProgress, Typography as Typography$1, makeStyles as makeStyles$1, createStyles, Button, Box } from '@material-ui/core';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText, CircularProgress, Button, makeStyles as makeStyles$2, createStyles as createStyles$1, Box, Typography as Typography$1 } from '@material-ui/core';
 import PlacesAutocomplete, { getLatLng, geocodeByAddress } from 'react-places-autocomplete';
 import { Close } from '@material-ui/icons';
 import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
@@ -363,11 +363,11 @@ var MUIAutocomplete = function (props) {
     var _a = useState$2(), query = _a[0], setQuery = _a[1];
     var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c, _d = props.fieldConfig, fieldConfig = _d === void 0 ? {} : _d;
     var fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
+    var error = !!fieldError;
     var _e = fieldProps.highlighterProps, highlighterProps = _e === void 0 ? {
         highlightText: false,
         highlightColor: '#ffff00'
     } : _e, _f = fieldProps.options, options = _f === void 0 ? [] : _f, _g = fieldProps.renderInputProps, renderInputProps = _g === void 0 ? {} : _g, _h = fieldProps.inputProps, inputProps = _h === void 0 ? {} : _h, _j = fieldProps.getQueryResponse, getQueryResponse = _j === void 0 ? undefined : _j, _k = fieldProps.outputKey, _l = fieldProps.clearOnSelect, clearOnSelect = _l === void 0 ? false : _l, _m = fieldProps.onItemSelected, onItemSelected = _m === void 0 ? undefined : _m, _o = fieldProps.displayKey, displayKey = _o === void 0 ? 'label' : _o, _p = fieldProps.uniqueKey, autoCompleteProps = __rest(fieldProps, ["highlighterProps", "options", "renderInputProps", "inputProps", "getQueryResponse", "outputKey", "clearOnSelect", "onItemSelected", "displayKey", "uniqueKey"]);
-    var classes = useStyles();
     var _q = useState$2([]), defaultOptions = _q[0], setDefaultOptions = _q[1];
     var _r = useState$2(false), open = _r[0], setOpen = _r[1];
     var _s = useState$2(false), loading = _s[0], setLoading = _s[1];
@@ -376,14 +376,17 @@ var MUIAutocomplete = function (props) {
     var value = get(formikProps, "values." + (get(fieldProps, 'name') || '')) || (get(fieldProps, 'multiple') ? [] : null);
     var defaultGetOptionLabel = function (x) { return isString(x) ? x : x[displayKey]; };
     var handleQueryResponse = function (newTerm) { return __awaiter(void 0, void 0, void 0, function () {
-        var result, newOptions_1;
+        var result, newOptions_1, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     setLoading(true);
-                    if (!getQueryResponse) return [3 /*break*/, 2];
-                    return [4 /*yield*/, getQueryResponse(newTerm)];
+                    if (!getQueryResponse) return [3 /*break*/, 4];
+                    _a.label = 1;
                 case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, getQueryResponse(newTerm)];
+                case 2:
                     result = _a.sent();
                     newOptions_1 = [];
                     result.forEach(function (element) {
@@ -391,7 +394,11 @@ var MUIAutocomplete = function (props) {
                     });
                     setLoading(false);
                     return [2 /*return*/, newOptions_1];
-                case 2: return [2 /*return*/, []];
+                case 3:
+                    e_1 = _a.sent();
+                    setLoading(false);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/, []];
             }
         });
     }); };
@@ -510,30 +517,10 @@ var MUIAutocomplete = function (props) {
             //DEFAULT HIGHLIGHT WITH USER STYLES IF PROVIDED
             createElement(Highlighter, { searchWords: [inputValue], textToHighlight: isString(option) ? option : option[displayKey], highlightStyle: __assign({ backgroundColor: highlighterProps.highlightColor }, highlighterProps.highlighterStyles) })));
     };
-    return createElement(Fragment$1, null,
-        createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, id: fieldConfig.valueKey, disableClearable: clearOnSelect, value: value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: fieldError ? true : false, className: fieldError ? classes.autocompleteError : '', InputProps: __assign(__assign(__assign(__assign({}, params.InputProps), { classes: {
-                        root: fieldError ? classes.autocompleteError : ''
-                    }, endAdornment: (createElement(Fragment$1, null,
-                        loading ? createElement(CircularProgress, { color: "primary", size: 20 }) : null,
-                        params.InputProps.endAdornment)) }), inputProps), { inputProps: __assign(__assign({}, params.inputProps), { autoComplete: 'nope' }) }) }, renderInputProps)); } }, autoCompleteProps)),
-        "  ",
-        fieldError && createElement(Typography$1, { variant: 'overline', className: fieldError ? classes.errorField : '' }, fieldError));
+    return createElement(Autocomplete, __assign({ onChange: onItemSelect, onInputChange: onInputChange, getOptionLabel: defaultGetOptionLabel, onOpen: function () { setOpen(true); }, open: open, onClose: function () { setOpen(false); }, options: options.length > 0 ? options : defaultOptions, renderOption: defaultRenderOptions, id: fieldConfig.valueKey, disableClearable: clearOnSelect, value: value, renderInput: function (params) { return createElement(TextField$1, __assign({}, params, { value: query, onChange: function (e) { return handleChange(e.target.value); }, fullWidth: true, error: error, helperText: fieldError }, renderInputProps, { InputProps: __assign(__assign(__assign({}, params.InputProps), { endAdornment: (createElement(Fragment$1, null,
+                    loading ? createElement(CircularProgress, { color: "primary", size: 20 }) : null,
+                    params.InputProps.endAdornment)) }), renderInputProps.InputProps || {}), inputProps: __assign(__assign(__assign({}, params.inputProps), inputProps), { autoComplete: 'new-password' }) })); } }, autoCompleteProps));
 };
-var useStyles = makeStyles$1(function () {
-    return (createStyles({
-        errorField: {
-            color: '#B71840',
-            fontSize: 12,
-            fontWeight: 'bold',
-            textTransform: 'none'
-        },
-        autocompleteError: {
-            '&::after': {
-                borderColor: '#B71840 !important'
-            }
-        }
-    }));
-});
 
 /* interface IArrayItemProps extends TextFieldProps {
     fieldValue?: string
@@ -555,7 +542,7 @@ var MUIFieldArray = function (props) {
     var itemType = fieldProps.itemType, _c = fieldProps.addButtonText, addButtonText = _c === void 0 ? 'Add' : _c, addButtonProps = fieldProps.addButtonProps, addButton = fieldProps.addButton, removeButton = fieldProps.removeButton, removeButtonProps = fieldProps.removeButtonProps, _d = fieldProps.textFieldProps, textFieldProps = _d === void 0 ? {} : _d;
     var values = get(formikProps, "values." + fieldProps.name);
     var itemComponentConfig = getComponentConfig(itemType);
-    var classes = useStyles$1();
+    var classes = useStyles();
     return (React__default.createElement(FieldArray, { name: fieldProps.name, render: function (arrayHelpers) { return (React__default.createElement("div", null,
             (values || []).map(function (value, index) { return (React__default.createElement("div", { key: fieldProps.name + "-" + index, className: classes.arrayItem },
                 React__default.cloneElement(itemComponentConfig.component, __assign(__assign({ name: fieldProps.name, itemIndex: index, arrayHelpers: arrayHelpers, fieldValue: value, formikProps: formikProps }, itemComponentConfig.props), textFieldProps)),
@@ -563,8 +550,8 @@ var MUIFieldArray = function (props) {
                     React__default.createElement(CloseIcon, null))))); }),
             (addButton) ? addButton : (React__default.createElement(Button, __assign({ type: "button", onClick: function () { return arrayHelpers.push({}); } }, addButtonProps), addButtonText)))); } }));
 };
-var useStyles$1 = makeStyles$2(function () {
-    return (createStyles$1({
+var useStyles = makeStyles$1(function () {
+    return (createStyles({
         arrayItem: {
             position: 'relative'
         },
@@ -614,7 +601,7 @@ var MUIDropDownTimePicker = function (props) {
 
 var MUIFileInput = function (props) {
     var multiple = props.multiple, accept = props.accept, disableDefaultTooltip = props.disableDefaultTooltip, invisible = props.invisible, disabled = props.disabled, onChange = props.onChange, _a = props.inputProps, inputProps = _a === void 0 ? {} : _a;
-    var classes = useStyles$2();
+    var classes = useStyles$1();
     var handleChange = function (event) {
         var selectedFiles = event.target.files;
         if (selectedFiles) {
@@ -643,7 +630,7 @@ var MUIFileInput = function (props) {
     };
     return (React__default.createElement("input", __assign({ type: "file", disabled: disabled, multiple: multiple, className: invisible ? classes.invisibleInput : "", title: disableDefaultTooltip ? " " : undefined, accept: accept, onChange: handleChange }, inputProps)));
 };
-var useStyles$2 = makeStyles$1(function () { return createStyles({
+var useStyles$1 = makeStyles$2(function () { return createStyles$1({
     invisibleInput: { opacity: 0, width: '100%', position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, cursor: 'pointer' }
 }); });
 
@@ -6082,7 +6069,7 @@ var MUIPhoneField = function (props) {
     var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, fieldConfig = props.fieldConfig;
     var _c = useState$2(""), code = _c[0], setCode = _c[1];
     var error = getFieldError(fieldProps.name || "", formikProps);
-    var classes = useStyles$3();
+    var classes = useStyles$2();
     var value = get(formikProps, "values." + fieldProps.name) || "";
     var countryCodeProps = fieldProps.countryCodeProps, phoneNumberProps = fieldProps.phoneNumberProps, countryCodeLabel = fieldProps.countryCodeLabel, phoneLabel = fieldProps.phoneLabel, countryCodeFormControlProps = fieldProps.countryCodeFormControlProps;
     var onChange = function (event) {
@@ -6114,8 +6101,8 @@ var MUIPhoneField = function (props) {
                     }, onBlur: handleBlur, autoComplete: "nope", type: "tel", value: value.split("-")[1] || "", error: error ? true : false, onChange: onChange }, phoneNumberProps)))),
         newError && (React__default.createElement(Typography$1, { variant: "overline", className: newError ? classes.errorField : "" }, newError))));
 };
-var useStyles$3 = makeStyles(function () {
-    return createStyles$1({
+var useStyles$2 = makeStyles(function () {
+    return createStyles({
         errorField: {
             color: "#B71840",
             fontSize: 12,
@@ -6280,8 +6267,8 @@ var MLFormBuilder = function (props) {
         (actionConfig.displayActions !== false) &&
             (createElement(MLFormAction, __assign({ formId: props.formId, formikProps: formikProps }, actionConfig)))));
 };
-var useFormStyles = makeStyles$2(function () {
-    return (createStyles$1({
+var useFormStyles = makeStyles$1(function () {
+    return (createStyles({
         row: {
             display: 'flex'
         },
