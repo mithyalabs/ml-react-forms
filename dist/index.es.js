@@ -361,7 +361,6 @@ var MUITimePicker = function (props) {
 var TIME_BETWEEN_REQS = 300;
 var MUIAutocomplete = function (props) {
     var _a = useState$2(), query = _a[0], setQuery = _a[1];
-    console.log(props);
     var ref = useRef(null);
     var _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, _c = props.formikProps, formikProps = _c === void 0 ? {} : _c, _d = props.fieldConfig, fieldConfig = _d === void 0 ? {} : _d;
     var fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);

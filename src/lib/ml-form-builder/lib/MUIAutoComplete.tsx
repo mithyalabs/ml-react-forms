@@ -40,7 +40,6 @@ export interface IProps<T> extends IFieldProps {
 
 export const MUIAutocomplete = <T extends Record<string, any> | string>(props: IProps<T>) => {
     const [query, setQuery] = React.useState<string>();
-    console.log(props);
     const ref = React.useRef<HTMLDivElement | null>(null);
     const { fieldProps = {} as IMUIAutoCompleteProps<T>, formikProps = {} as FormikValues, fieldConfig = {} as FormConfig } = props
     const fieldError = getFieldError((fieldConfig.valueKey || ''), formikProps);
