@@ -7,8 +7,7 @@ import {
   Select,
   SelectProps,
   TextField,
-  TextFieldProps,
-  Typography,
+  TextFieldProps
 } from "@material-ui/core";
 import { createStyles, Theme } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/styles";
@@ -41,7 +40,6 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
     fieldConfig,
   } = props;
   const [code, setCode] = useState<string>("");
-  const error = getFieldError(fieldProps.name || "", formikProps);
   const classes = useStyles();
   const value = get(formikProps, `values.${fieldProps.name}`) || "";
   const {
@@ -67,7 +65,7 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (formikProps && formikProps.handleBlur) formikProps?.handleBlur(e);
   };
-  let newError = formikProps.errors[`${fieldProps.name}`];
+  let newError = getFieldError(fieldProps.name || '', formikProps) //formikProps.errors[`${fieldProps.name}`];
 
   return (
     <>
@@ -83,8 +81,9 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
               onChange={codeChange}
               {...countryCodeProps}
               native
+              error={!!newError}
             >
-              {COUNTRY_LIST.map((country,index) => {
+              {COUNTRY_LIST.map((country, index) => {
                 if (!country.dial_code) return null;
                 return (
                   <option
@@ -107,20 +106,22 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
             autoComplete="nope"
             type="tel"
             value={value.split("-")[1] || ""}
-            error={error ? true : false}
+            error={!!newError}
+            helperText={newError}
             onChange={onChange}
+            className={classes.tf}
             {...phoneNumberProps}
           ></TextField>
         </Box>
       </Box>
-      {newError && (
+      {/* {newError && (
         <Typography
           variant="overline"
           className={newError ? classes.errorField : ""}
         >
           {newError}
         </Typography>
-      )}
+      )} */}
     </>
   );
 };
@@ -134,6 +135,9 @@ const useStyles = makeStyles<Theme>(() => {
       textTransform: "none",
       marginLeft: "30%",
     },
+    tf: {
+
+    }
   });
 });
 

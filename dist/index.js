@@ -6077,7 +6077,6 @@ var COUNTRY_LIST = [
 var MUIPhoneField = function (props) {
     var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, fieldConfig = props.fieldConfig;
     var _c = React.useState(""), code = _c[0], setCode = _c[1];
-    var error = getFieldError(fieldProps.name || "", formikProps);
     var classes = useStyles$2();
     var value = _.get(formikProps, "values." + fieldProps.name) || "";
     var countryCodeProps = fieldProps.countryCodeProps, phoneNumberProps = fieldProps.phoneNumberProps, countryCodeLabel = fieldProps.countryCodeLabel, phoneLabel = fieldProps.phoneLabel, countryCodeFormControlProps = fieldProps.countryCodeFormControlProps, countryCodeContainerProps = fieldProps.countryCodeContainerProps, phoneContainerProps = fieldProps.phoneContainerProps;
@@ -6093,13 +6092,13 @@ var MUIPhoneField = function (props) {
         if (formikProps && formikProps.handleBlur)
             formikProps === null || formikProps === void 0 ? void 0 : formikProps.handleBlur(e);
     };
-    var newError = formikProps.errors["" + fieldProps.name];
+    var newError = getFieldError(fieldProps.name || '', formikProps); //formikProps.errors[`${fieldProps.name}`];
     return (React__default.createElement(React__default.Fragment, null,
         React__default.createElement(core.Box, { width: "100%", display: "flex", alignItems: "flex-end" },
             React__default.createElement(core.Box, __assign({ width: "30%" }, countryCodeContainerProps),
                 React__default.createElement(core.FormControl, __assign({ fullWidth: true }, countryCodeFormControlProps),
                     React__default.createElement(core.InputLabel, { id: fieldProps.name }, countryCodeLabel || "Country code"),
-                    React__default.createElement(core.Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps, { native: true }), COUNTRY_LIST.map(function (country, index) {
+                    React__default.createElement(core.Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps, { native: true, error: !!newError }), COUNTRY_LIST.map(function (country, index) {
                         if (!country.dial_code)
                             return null;
                         return (React__default.createElement("option", { key: index, value: country.dial_code }, country.name + " (" + country.dial_code + ")"));
@@ -6107,8 +6106,7 @@ var MUIPhoneField = function (props) {
             React__default.createElement(core.Box, __assign({ width: "70%", marginLeft: "5px" }, phoneContainerProps),
                 React__default.createElement(core.TextField, __assign({ fullWidth: true, label: phoneLabel || "Phone", InputProps: {
                         name: fieldConfig === null || fieldConfig === void 0 ? void 0 : fieldConfig.valueKey,
-                    }, onBlur: handleBlur, autoComplete: "nope", type: "tel", value: value.split("-")[1] || "", error: error ? true : false, onChange: onChange }, phoneNumberProps)))),
-        newError && (React__default.createElement(core.Typography, { variant: "overline", className: newError ? classes.errorField : "" }, newError))));
+                    }, onBlur: handleBlur, autoComplete: "nope", type: "tel", value: value.split("-")[1] || "", error: !!newError, helperText: newError, onChange: onChange, className: classes.tf }, phoneNumberProps))))));
 };
 var useStyles$2 = makeStyles(function () {
     return styles.createStyles({
@@ -6119,6 +6117,7 @@ var useStyles$2 = makeStyles(function () {
             textTransform: "none",
             marginLeft: "30%",
         },
+        tf: {}
     });
 });
 
