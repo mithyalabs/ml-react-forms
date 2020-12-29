@@ -6093,12 +6093,13 @@ var MUIPhoneField = function (props) {
             formikProps === null || formikProps === void 0 ? void 0 : formikProps.handleBlur(e);
     };
     var newError = getFieldError(fieldProps.name || '', formikProps); //formikProps.errors[`${fieldProps.name}`];
+    var error = !!newError;
     return (React__default.createElement(React__default.Fragment, null,
         React__default.createElement(core.Box, { width: "100%", display: "flex", alignItems: "flex-end" },
             React__default.createElement(core.Box, __assign({ width: "30%" }, countryCodeContainerProps),
-                React__default.createElement(core.FormControl, __assign({ fullWidth: true }, countryCodeFormControlProps),
+                React__default.createElement(core.FormControl, __assign({ fullWidth: true }, countryCodeFormControlProps, { error: error }),
                     React__default.createElement(core.InputLabel, { id: fieldProps.name }, countryCodeLabel || "Country code"),
-                    React__default.createElement(core.Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps, { native: true, error: !!newError }), COUNTRY_LIST.map(function (country, index) {
+                    React__default.createElement(core.Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps, { native: true }), COUNTRY_LIST.map(function (country, index) {
                         if (!country.dial_code)
                             return null;
                         return (React__default.createElement("option", { key: index, value: country.dial_code }, country.name + " (" + country.dial_code + ")"));
@@ -6106,7 +6107,8 @@ var MUIPhoneField = function (props) {
             React__default.createElement(core.Box, __assign({ width: "70%", marginLeft: "5px" }, phoneContainerProps),
                 React__default.createElement(core.TextField, __assign({ fullWidth: true, label: phoneLabel || "Phone", InputProps: {
                         name: fieldConfig === null || fieldConfig === void 0 ? void 0 : fieldConfig.valueKey,
-                    }, onBlur: handleBlur, autoComplete: "nope", type: "tel", value: value.split("-")[1] || "", error: !!newError, helperText: newError, onChange: onChange, className: classes.tf }, phoneNumberProps))))));
+                    }, onBlur: handleBlur, autoComplete: "nope", type: "tel", value: value.split("-")[1] || "", error: error, onChange: onChange, className: classes.tf }, phoneNumberProps)))),
+        error && (React__default.createElement(core.Typography, { variant: "overline", className: newError ? classes.errorField : "" }, newError))));
 };
 var useStyles$2 = makeStyles(function () {
     return styles.createStyles({
@@ -6115,7 +6117,6 @@ var useStyles$2 = makeStyles(function () {
             fontSize: 12,
             fontWeight: "bold",
             textTransform: "none",
-            marginLeft: "30%",
         },
         tf: {}
     });

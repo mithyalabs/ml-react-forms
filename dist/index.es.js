@@ -5,7 +5,7 @@ import CircularProgress$1 from '@material-ui/core/CircularProgress';
 import { makeStyles as makeStyles$1, createStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText, CircularProgress, Button, makeStyles as makeStyles$2, createStyles as createStyles$1, Box } from '@material-ui/core';
+import { FormControl, InputLabel, Select, MenuItem, FormHelperText, FormLabel, FormGroup, FormControlLabel, Checkbox, Switch, RadioGroup, Radio, InputAdornment, IconButton, TextField as TextField$1, Paper, List, ListItem, ListItemText, CircularProgress, Button, makeStyles as makeStyles$2, createStyles as createStyles$1, Box, Typography as Typography$1 } from '@material-ui/core';
 import PlacesAutocomplete, { getLatLng, geocodeByAddress } from 'react-places-autocomplete';
 import { Close } from '@material-ui/icons';
 import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
@@ -6084,12 +6084,13 @@ var MUIPhoneField = function (props) {
             formikProps === null || formikProps === void 0 ? void 0 : formikProps.handleBlur(e);
     };
     var newError = getFieldError(fieldProps.name || '', formikProps); //formikProps.errors[`${fieldProps.name}`];
+    var error = !!newError;
     return (React__default.createElement(React__default.Fragment, null,
         React__default.createElement(Box, { width: "100%", display: "flex", alignItems: "flex-end" },
             React__default.createElement(Box, __assign({ width: "30%" }, countryCodeContainerProps),
-                React__default.createElement(FormControl, __assign({ fullWidth: true }, countryCodeFormControlProps),
+                React__default.createElement(FormControl, __assign({ fullWidth: true }, countryCodeFormControlProps, { error: error }),
                     React__default.createElement(InputLabel, { id: fieldProps.name }, countryCodeLabel || "Country code"),
-                    React__default.createElement(Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps, { native: true, error: !!newError }), COUNTRY_LIST.map(function (country, index) {
+                    React__default.createElement(Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps, { native: true }), COUNTRY_LIST.map(function (country, index) {
                         if (!country.dial_code)
                             return null;
                         return (React__default.createElement("option", { key: index, value: country.dial_code }, country.name + " (" + country.dial_code + ")"));
@@ -6097,7 +6098,8 @@ var MUIPhoneField = function (props) {
             React__default.createElement(Box, __assign({ width: "70%", marginLeft: "5px" }, phoneContainerProps),
                 React__default.createElement(TextField$1, __assign({ fullWidth: true, label: phoneLabel || "Phone", InputProps: {
                         name: fieldConfig === null || fieldConfig === void 0 ? void 0 : fieldConfig.valueKey,
-                    }, onBlur: handleBlur, autoComplete: "nope", type: "tel", value: value.split("-")[1] || "", error: !!newError, helperText: newError, onChange: onChange, className: classes.tf }, phoneNumberProps))))));
+                    }, onBlur: handleBlur, autoComplete: "nope", type: "tel", value: value.split("-")[1] || "", error: error, onChange: onChange, className: classes.tf }, phoneNumberProps)))),
+        error && (React__default.createElement(Typography$1, { variant: "overline", className: newError ? classes.errorField : "" }, newError))));
 };
 var useStyles$2 = makeStyles(function () {
     return createStyles({
@@ -6106,7 +6108,6 @@ var useStyles$2 = makeStyles(function () {
             fontSize: 12,
             fontWeight: "bold",
             textTransform: "none",
-            marginLeft: "30%",
         },
         tf: {}
     });

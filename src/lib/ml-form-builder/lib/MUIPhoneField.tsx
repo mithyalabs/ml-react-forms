@@ -7,7 +7,8 @@ import {
   Select,
   SelectProps,
   TextField,
-  TextFieldProps
+  TextFieldProps,
+  Typography
 } from "@material-ui/core";
 import { createStyles, Theme } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/styles";
@@ -16,7 +17,9 @@ import { get } from "lodash";
 import React, { FC, useState } from "react";
 import { IFieldProps } from "..";
 import { getFieldError } from "../Utils";
-import { COUNTRY_LIST } from "./Constants/CountryList";
+import { COUNTRY_LIST } from "./Constants";
+
+
 
 export interface IMUIPhoneFieldProps {
   name?: string;
@@ -65,13 +68,13 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     if (formikProps && formikProps.handleBlur) formikProps?.handleBlur(e);
   };
-  let newError = getFieldError(fieldProps.name || '', formikProps) //formikProps.errors[`${fieldProps.name}`];
-
+  const newError = getFieldError(fieldProps.name || '', formikProps) //formikProps.errors[`${fieldProps.name}`];
+  const error = !!newError
   return (
     <>
       <Box width="100%" display="flex" alignItems="flex-end">
         <Box width="30%" {...countryCodeContainerProps}>
-          <FormControl fullWidth {...countryCodeFormControlProps}>
+          <FormControl fullWidth {...countryCodeFormControlProps} error={error}>
             <InputLabel id={fieldProps.name}>
               {countryCodeLabel || "Country code"}
             </InputLabel>
@@ -81,7 +84,6 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
               onChange={codeChange}
               {...countryCodeProps}
               native
-              error={!!newError}
             >
               {COUNTRY_LIST.map((country, index) => {
                 if (!country.dial_code) return null;
@@ -106,22 +108,21 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
             autoComplete="nope"
             type="tel"
             value={value.split("-")[1] || ""}
-            error={!!newError}
-            helperText={newError}
+            error={error}
             onChange={onChange}
             className={classes.tf}
             {...phoneNumberProps}
           ></TextField>
         </Box>
       </Box>
-      {/* {newError && (
+      {error && (
         <Typography
           variant="overline"
           className={newError ? classes.errorField : ""}
         >
           {newError}
         </Typography>
-      )} */}
+      )}
     </>
   );
 };
@@ -133,7 +134,6 @@ const useStyles = makeStyles<Theme>(() => {
       fontSize: 12,
       fontWeight: "bold",
       textTransform: "none",
-      marginLeft: "30%",
     },
     tf: {
 
