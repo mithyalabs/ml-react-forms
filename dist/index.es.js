@@ -6070,6 +6070,12 @@ var MUIPhoneField = function (props) {
     var _c = useState$2(""), code = _c[0], setCode = _c[1];
     var classes = useStyles$2();
     var value = get(formikProps, "values." + fieldProps.name) || "";
+    useEffect$1(function () {
+        if (value) {
+            setCode(value.split('-')[0] || '');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fieldProps.name]);
     var countryCodeProps = fieldProps.countryCodeProps, phoneNumberProps = fieldProps.phoneNumberProps, countryCodeLabel = fieldProps.countryCodeLabel, phoneLabel = fieldProps.phoneLabel, countryCodeFormControlProps = fieldProps.countryCodeFormControlProps, countryCodeContainerProps = fieldProps.countryCodeContainerProps, phoneContainerProps = fieldProps.phoneContainerProps;
     var onChange = function (event) {
         event.preventDefault();

@@ -14,7 +14,7 @@ import { createStyles, Theme } from "@material-ui/core/styles";
 import { makeStyles } from "@material-ui/styles";
 import { FormikValues } from "formik";
 import { get } from "lodash";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { IFieldProps } from "..";
 import { getFieldError } from "../Utils";
 import { COUNTRY_LIST } from "./Constants";
@@ -45,6 +45,12 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
   const [code, setCode] = useState<string>("");
   const classes = useStyles();
   const value = get(formikProps, `values.${fieldProps.name}`) || "";
+  useEffect(() => {
+    if (value) {
+      setCode(value.split('-')[0] || '')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldProps.name])
   const {
     countryCodeProps,
     phoneNumberProps,
