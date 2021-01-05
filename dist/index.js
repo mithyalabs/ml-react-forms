@@ -6092,8 +6092,8 @@ var MUIPhoneField = function (props) {
         formikProps.setFieldValue("" + fieldProps.name, code + "-" + number);
     };
     var codeChange = function (e) {
-        var number = value.replace("-", "");
-        formikProps.setFieldValue("" + fieldProps.name, e.target.value + "-" + number);
+        var number = value.split("-");
+        formikProps.setFieldValue("" + fieldProps.name, e.target.value + "-" + (number[1] || ''));
         setCode(e.target.value);
     };
     var handleBlur = function (e) {

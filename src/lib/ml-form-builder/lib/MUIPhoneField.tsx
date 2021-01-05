@@ -72,8 +72,8 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
     formikProps.setFieldValue(`${fieldProps.name}`, `${code}-${number}`);
   };
   const codeChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-    let number = value.replace("-", "");
-    formikProps.setFieldValue(`${fieldProps.name}`, `${e.target.value as string}-${number}`);
+    let number = value.split("-");
+    formikProps.setFieldValue(`${fieldProps.name}`, `${e.target.value as string}-${number[1] || ''}`);
     setCode(e.target.value as string);
   };
 
