@@ -10,6 +10,8 @@ export interface IMUIPhoneFieldProps {
     phoneLabel?: string;
     countryCodeContainerProps: BoxProps;
     phoneContainerProps: BoxProps;
+    emptyItem?: string | boolean;
+    emptyItemText?: string;
 }
 export interface MUIPhoneFieldProps extends IFieldProps {
     fieldProps?: IMUIPhoneFieldProps;

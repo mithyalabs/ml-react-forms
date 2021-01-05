@@ -30,6 +30,8 @@ export interface IMUIPhoneFieldProps {
   phoneLabel?: string;
   countryCodeContainerProps: BoxProps;
   phoneContainerProps: BoxProps;
+  emptyItem?: string | boolean;
+  emptyItemText?: string
 }
 
 export interface MUIPhoneFieldProps extends IFieldProps {
@@ -44,7 +46,7 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
   } = props;
   const [code, setCode] = useState<string>("");
   const classes = useStyles();
-  const value = get(formikProps, `values.${fieldProps.name}`) || "";
+  const value = (get(formikProps, `values.${fieldProps.name}`) || "") as string;
   useEffect(() => {
     if (value) {
       setCode(value.split('-')[0] || '')
@@ -59,6 +61,8 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
     countryCodeFormControlProps,
     countryCodeContainerProps,
     phoneContainerProps,
+    emptyItem,
+    emptyItemText
   } = fieldProps;
   const onChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -68,6 +72,8 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
     formikProps.setFieldValue(`${fieldProps.name}`, `${code}-${number}`);
   };
   const codeChange = (e: React.ChangeEvent<{ value: unknown }>) => {
+    let number = value.replace("-", "");
+    formikProps.setFieldValue(`${fieldProps.name}`, `${e.target.value as string}-${number}`);
     setCode(e.target.value as string);
   };
 
@@ -75,7 +81,7 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
     if (formikProps && formikProps.handleBlur) formikProps?.handleBlur(e);
   };
   const newError = getFieldError(fieldProps.name || '', formikProps) //formikProps.errors[`${fieldProps.name}`];
-  const error = !!newError
+  const error = !!newError;
   return (
     <>
       <Box width="100%" display="flex" alignItems="flex-end">
@@ -91,6 +97,12 @@ export const MUIPhoneField: FC<MUIPhoneFieldProps> = (props) => {
               {...countryCodeProps}
               native
             >
+              {
+                (emptyItem) &&
+                (<option value=''>
+                  {emptyItemText}
+                </option>)
+              }
               {COUNTRY_LIST.map((country, index) => {
                 if (!country.dial_code) return null;
                 return (

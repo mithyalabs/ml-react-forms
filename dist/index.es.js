@@ -6069,20 +6069,22 @@ var MUIPhoneField = function (props) {
     var _a = props.formikProps, formikProps = _a === void 0 ? {} : _a, _b = props.fieldProps, fieldProps = _b === void 0 ? {} : _b, fieldConfig = props.fieldConfig;
     var _c = useState$2(""), code = _c[0], setCode = _c[1];
     var classes = useStyles$2();
-    var value = get(formikProps, "values." + fieldProps.name) || "";
+    var value = (get(formikProps, "values." + fieldProps.name) || "");
     useEffect$1(function () {
         if (value) {
             setCode(value.split('-')[0] || '');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fieldProps.name]);
-    var countryCodeProps = fieldProps.countryCodeProps, phoneNumberProps = fieldProps.phoneNumberProps, countryCodeLabel = fieldProps.countryCodeLabel, phoneLabel = fieldProps.phoneLabel, countryCodeFormControlProps = fieldProps.countryCodeFormControlProps, countryCodeContainerProps = fieldProps.countryCodeContainerProps, phoneContainerProps = fieldProps.phoneContainerProps;
+    var countryCodeProps = fieldProps.countryCodeProps, phoneNumberProps = fieldProps.phoneNumberProps, countryCodeLabel = fieldProps.countryCodeLabel, phoneLabel = fieldProps.phoneLabel, countryCodeFormControlProps = fieldProps.countryCodeFormControlProps, countryCodeContainerProps = fieldProps.countryCodeContainerProps, phoneContainerProps = fieldProps.phoneContainerProps, emptyItem = fieldProps.emptyItem, emptyItemText = fieldProps.emptyItemText;
     var onChange = function (event) {
         event.preventDefault();
         var number = event.target.value.replace("-", "");
         formikProps.setFieldValue("" + fieldProps.name, code + "-" + number);
     };
     var codeChange = function (e) {
+        var number = value.replace("-", "");
+        formikProps.setFieldValue("" + fieldProps.name, e.target.value + "-" + number);
         setCode(e.target.value);
     };
     var handleBlur = function (e) {
@@ -6096,11 +6098,14 @@ var MUIPhoneField = function (props) {
             React__default.createElement(Box, __assign({ width: "30%" }, countryCodeContainerProps),
                 React__default.createElement(FormControl, __assign({ fullWidth: true }, countryCodeFormControlProps, { error: error }),
                     React__default.createElement(InputLabel, { id: fieldProps.name }, countryCodeLabel || "Country code"),
-                    React__default.createElement(Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps, { native: true }), COUNTRY_LIST.map(function (country, index) {
-                        if (!country.dial_code)
-                            return null;
-                        return (React__default.createElement("option", { key: index, value: country.dial_code }, country.name + " (" + country.dial_code + ")"));
-                    })))),
+                    React__default.createElement(Select, __assign({ labelId: fieldProps.name, value: code, onChange: codeChange }, countryCodeProps, { native: true }),
+                        (emptyItem) &&
+                            (React__default.createElement("option", { value: '' }, emptyItemText)),
+                        COUNTRY_LIST.map(function (country, index) {
+                            if (!country.dial_code)
+                                return null;
+                            return (React__default.createElement("option", { key: index, value: country.dial_code }, country.name + " (" + country.dial_code + ")"));
+                        })))),
             React__default.createElement(Box, __assign({ width: "70%", marginLeft: "5px" }, phoneContainerProps),
                 React__default.createElement(TextField$1, __assign({ fullWidth: true, label: phoneLabel || "Phone", InputProps: {
                         name: fieldConfig === null || fieldConfig === void 0 ? void 0 : fieldConfig.valueKey,
