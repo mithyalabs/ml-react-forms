@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { map, isString, get } from 'lodash';
 import { FormikValues } from 'formik';
+import { MenuItemProps } from '@material-ui/core';
 
 
-export type MenuOptionObject = { name: string | React.ReactNode, value: string };
+export type MenuOptionObject = { name: string | React.ReactNode, value: string, menuItemProps?: MenuItemProps };
 export type MenuOptions = Array<string> | Array<MenuOptionObject>;
 
-export const getMenuOptions = (options: MenuOptions) => {
+export const getMenuOptions = (options: MenuOptions):Array<MenuOptionObject> => {
     return map(options, (item) => {
         if (isString(item))
             return { name: item, value: item };
-        return item;
+        return item as MenuOptionObject;
     });
 }
 

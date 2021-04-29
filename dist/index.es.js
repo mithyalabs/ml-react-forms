@@ -182,7 +182,8 @@ var MUISelectField = function (props) {
         createElement(Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange, onBlur: formikProps.handleBlur }, selectProps),
             (emptyItem) &&
                 (createElement(MenuItem, __assign({ value: '' }, emptyMenuItemProps), emptyItemText)),
-            map(menuOptions, function (item, index) { return (createElement(MenuItem, __assign({ key: fieldConfig.id + "_menu_item_" + index, value: item.value }, menuItemProps), item.name)); })),
+            // @ts-ignore MenuItem props types have some ambiguity in Mui type Definition
+            map(menuOptions, function (item, index) { return (createElement(MenuItem, __assign({ key: fieldConfig.id + "_menu_item_" + index, value: item.value }, menuItemProps, (item.menuItemProps || {})), item.name)); })),
         (fieldError || fieldProps.helperText) &&
             (createElement(FormHelperText, __assign({}, formHelperTextProps), fieldError || fieldProps.helperText))));
 };

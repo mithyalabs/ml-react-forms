@@ -61,7 +61,8 @@ export const MUISelectField: React.FC<IProps> = (props) => {
                     </MenuItem>)
                 }
                 {
-                    map(menuOptions, (item: MenuOptionObject, index: number) => (<MenuItem key={`${fieldConfig.id}_menu_item_${index}`} value={item.value} {...menuItemProps}>{item.name}</MenuItem>))
+                    // @ts-ignore MenuItem props types have some ambiguity in Mui type Definition
+                    map(menuOptions, (item: MenuOptionObject, index: number) => (<MenuItem key={`${fieldConfig.id}_menu_item_${index}`} value={item.value} {...menuItemProps} {...(item.menuItemProps || {})} >{item.name}</MenuItem>))
                 }
             </Select>
             {

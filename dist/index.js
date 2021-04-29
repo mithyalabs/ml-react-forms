@@ -191,7 +191,8 @@ var MUISelectField = function (props) {
         React.createElement(core.Select, __assign({ labelId: labelId, id: fieldConfig.id, value: value, onChange: formikProps.handleChange, onBlur: formikProps.handleBlur }, selectProps),
             (emptyItem) &&
                 (React.createElement(core.MenuItem, __assign({ value: '' }, emptyMenuItemProps), emptyItemText)),
-            _.map(menuOptions, function (item, index) { return (React.createElement(core.MenuItem, __assign({ key: fieldConfig.id + "_menu_item_" + index, value: item.value }, menuItemProps), item.name)); })),
+            // @ts-ignore MenuItem props types have some ambiguity in Mui type Definition
+            _.map(menuOptions, function (item, index) { return (React.createElement(core.MenuItem, __assign({ key: fieldConfig.id + "_menu_item_" + index, value: item.value }, menuItemProps, (item.menuItemProps || {})), item.name)); })),
         (fieldError || fieldProps.helperText) &&
             (React.createElement(core.FormHelperText, __assign({}, formHelperTextProps), fieldError || fieldProps.helperText))));
 };
